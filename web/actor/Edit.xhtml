@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.EditActorTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.EditActorLabel_id}" for="id" />
+                    <h:inputText id="id" value="#{actorController.selected.id}" title="#{bundle.EditActorTitle_id}" required="true" requiredMessage="#{bundle.EditActorRequiredMessage_id}"/>
+                    <h:outputLabel value="#{bundle.EditActorLabel_nombre}" for="nombre" />
+                    <h:inputText id="nombre" value="#{actorController.selected.nombre}" title="#{bundle.EditActorTitle_nombre}" required="true" requiredMessage="#{bundle.EditActorRequiredMessage_nombre}"/>
+                    <h:outputLabel value="#{bundle.EditActorLabel_positionX}" for="positionX" />
+                    <h:inputText id="positionX" value="#{actorController.selected.positionX}" title="#{bundle.EditActorTitle_positionX}" />
+                    <h:outputLabel value="#{bundle.EditActorLabel_positionY}" for="positionY" />
+                    <h:inputText id="positionY" value="#{actorController.selected.positionY}" title="#{bundle.EditActorTitle_positionY}" />
+                    <h:outputLabel value="#{bundle.EditActorLabel_actorCasoDeUso}" for="actorCasoDeUso" />
+                    <h:selectOneMenu id="actorCasoDeUso" value="#{actorController.selected.actorCasoDeUso}" title="#{bundle.EditActorTitle_actorCasoDeUso}" >
+                        <f:selectItems value="#{actorCasoDeUsoController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                </h:panelGrid>
+                <h:commandLink action="#{actorController.update}" value="#{bundle.EditActorSaveLink}"/>
+                <br />
+                <br />
+                <h:link outcome="View" value="#{bundle.EditActorViewLink}"/>
+                <br />
+                <h:commandLink action="#{actorController.prepareList}" value="#{bundle.EditActorShowAllLink}" immediate="true"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.EditActorIndexLink}" />
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>
