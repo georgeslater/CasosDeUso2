@@ -5,6 +5,7 @@
 package com.example.entities;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,12 +13,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -30,28 +34,31 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "CasoDeUso.findAll", query = "SELECT c FROM CasoDeUso c"),
     @NamedQuery(name = "CasoDeUso.findById", query = "SELECT c FROM CasoDeUso c WHERE c.id = :id"),
     @NamedQuery(name = "CasoDeUso.findByText", query = "SELECT c FROM CasoDeUso c WHERE c.text = :text"),
-    @NamedQuery(name = "CasoDeUso.findByPositionX", query = "SELECT c FROM CasoDeUso c WHERE c.positionX = :positionX"),
-    @NamedQuery(name = "CasoDeUso.findByPositionY", query = "SELECT c FROM CasoDeUso c WHERE c.positionY = :positionY")})
+    @NamedQuery(name = "CasoDeUso.findByPositionx", query = "SELECT c FROM CasoDeUso c WHERE c.positionx = :positionx"),
+    @NamedQuery(name = "CasoDeUso.findByPositiony", query = "SELECT c FROM CasoDeUso c WHERE c.positiony = :positiony")})
 public class CasoDeUso implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "ID")
     private Integer id;
-    @Size(max = 45)
-    @Column(name = "Text")
+    @Size(max = 255)
+    @Column(name = "TEXT")
     private String text;
-    @Size(max = 45)
-    @Column(name = "PositionX")
-    private String positionX;
-    @Size(max = 45)
-    @Column(name = "PositionY")
-    private String positionY;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "casoDeUso")
-    private CasosDeUsoRelaciones casosDeUsoRelaciones;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "casoDeUso")
-    private ActorCasoDeUso actorCasoDeUso;
+    @Column(name = "POSITIONX")
+    private Integer positionx;
+    @Column(name = "POSITIONY")
+    private Integer positiony;
+    @JoinColumn(name = "DIAGRAMID", referencedColumnName = "ID")
+    @ManyToOne
+    private Diagrama diagramid;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "casodeuso2id")
+    private Collection<CasosDeUsoRelaciones> casosDeUsoRelacionesCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "casodeuso1id")
+    private Collection<CasosDeUsoRelaciones> casosDeUsoRelacionesCollection1;
+    @OneToMany(mappedBy = "casodeusoid")
+    private Collection<ActorCasoDeUso> actorCasoDeUsoCollection;
 
     public CasoDeUso() {
     }
@@ -76,36 +83,55 @@ public class CasoDeUso implements Serializable {
         this.text = text;
     }
 
-    public String getPositionX() {
-        return positionX;
+    public Integer getPositionx() {
+        return positionx;
     }
 
-    public void setPositionX(String positionX) {
-        this.positionX = positionX;
+    public void setPositionx(Integer positionx) {
+        this.positionx = positionx;
     }
 
-    public String getPositionY() {
-        return positionY;
+    public Integer getPositiony() {
+        return positiony;
     }
 
-    public void setPositionY(String positionY) {
-        this.positionY = positionY;
+    public void setPositiony(Integer positiony) {
+        this.positiony = positiony;
     }
 
-    public CasosDeUsoRelaciones getCasosDeUsoRelaciones() {
-        return casosDeUsoRelaciones;
+    public Diagrama getDiagramid() {
+        return diagramid;
     }
 
-    public void setCasosDeUsoRelaciones(CasosDeUsoRelaciones casosDeUsoRelaciones) {
-        this.casosDeUsoRelaciones = casosDeUsoRelaciones;
+    public void setDiagramid(Diagrama diagramid) {
+        this.diagramid = diagramid;
     }
 
-    public ActorCasoDeUso getActorCasoDeUso() {
-        return actorCasoDeUso;
+    @XmlTransient
+    public Collection<CasosDeUsoRelaciones> getCasosDeUsoRelacionesCollection() {
+        return casosDeUsoRelacionesCollection;
     }
 
-    public void setActorCasoDeUso(ActorCasoDeUso actorCasoDeUso) {
-        this.actorCasoDeUso = actorCasoDeUso;
+    public void setCasosDeUsoRelacionesCollection(Collection<CasosDeUsoRelaciones> casosDeUsoRelacionesCollection) {
+        this.casosDeUsoRelacionesCollection = casosDeUsoRelacionesCollection;
+    }
+
+    @XmlTransient
+    public Collection<CasosDeUsoRelaciones> getCasosDeUsoRelacionesCollection1() {
+        return casosDeUsoRelacionesCollection1;
+    }
+
+    public void setCasosDeUsoRelacionesCollection1(Collection<CasosDeUsoRelaciones> casosDeUsoRelacionesCollection1) {
+        this.casosDeUsoRelacionesCollection1 = casosDeUsoRelacionesCollection1;
+    }
+
+    @XmlTransient
+    public Collection<ActorCasoDeUso> getActorCasoDeUsoCollection() {
+        return actorCasoDeUsoCollection;
+    }
+
+    public void setActorCasoDeUsoCollection(Collection<ActorCasoDeUso> actorCasoDeUsoCollection) {
+        this.actorCasoDeUsoCollection = actorCasoDeUsoCollection;
     }
 
     @Override
@@ -130,7 +156,7 @@ public class CasoDeUso implements Serializable {
 
     @Override
     public String toString() {
-        return "com.example.entities.CasoDeUso[ id=" + id + " ]";
+        return "com.example.controllers.CasoDeUso[ id=" + id + " ]";
     }
     
 }

@@ -12,11 +12,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -32,14 +31,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class CasosDeUsoRelaciones implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @NotNull
     @Column(name = "ID")
     private Integer id;
-    @JoinColumn(name = "ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    @OneToOne(optional = false)
-    private CasoDeUso casoDeUso;
+    @JoinColumn(name = "DIAGRAMID", referencedColumnName = "ID")
+    @ManyToOne
+    private Diagrama diagramid;
+    @JoinColumn(name = "RELACIONID", referencedColumnName = "ID")
+    @ManyToOne(optional = false)
+    private Relacion relacionid;
+    @JoinColumn(name = "CASODEUSO2ID", referencedColumnName = "ID")
+    @ManyToOne(optional = false)
+    private CasoDeUso casodeuso2id;
+    @JoinColumn(name = "CASODEUSO1ID", referencedColumnName = "ID")
+    @ManyToOne(optional = false)
+    private CasoDeUso casodeuso1id;
 
     public CasosDeUsoRelaciones() {
     }
@@ -56,12 +63,36 @@ public class CasosDeUsoRelaciones implements Serializable {
         this.id = id;
     }
 
-    public CasoDeUso getCasoDeUso() {
-        return casoDeUso;
+    public Diagrama getDiagramid() {
+        return diagramid;
     }
 
-    public void setCasoDeUso(CasoDeUso casoDeUso) {
-        this.casoDeUso = casoDeUso;
+    public void setDiagramid(Diagrama diagramid) {
+        this.diagramid = diagramid;
+    }
+
+    public Relacion getRelacionid() {
+        return relacionid;
+    }
+
+    public void setRelacionid(Relacion relacionid) {
+        this.relacionid = relacionid;
+    }
+
+    public CasoDeUso getCasodeuso2id() {
+        return casodeuso2id;
+    }
+
+    public void setCasodeuso2id(CasoDeUso casodeuso2id) {
+        this.casodeuso2id = casodeuso2id;
+    }
+
+    public CasoDeUso getCasodeuso1id() {
+        return casodeuso1id;
+    }
+
+    public void setCasodeuso1id(CasoDeUso casodeuso1id) {
+        this.casodeuso1id = casodeuso1id;
     }
 
     @Override
@@ -86,7 +117,7 @@ public class CasosDeUsoRelaciones implements Serializable {
 
     @Override
     public String toString() {
-        return "com.example.entities.CasosDeUsoRelaciones[ id=" + id + " ]";
+        return "com.example.controllers.CasosDeUsoRelaciones[ id=" + id + " ]";
     }
     
 }

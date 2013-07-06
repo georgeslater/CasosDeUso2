@@ -6,15 +6,15 @@ package com.example.entities;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -31,27 +31,27 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Actor.findAll", query = "SELECT a FROM Actor a"),
     @NamedQuery(name = "Actor.findById", query = "SELECT a FROM Actor a WHERE a.id = :id"),
     @NamedQuery(name = "Actor.findByNombre", query = "SELECT a FROM Actor a WHERE a.nombre = :nombre"),
-    @NamedQuery(name = "Actor.findByPositionX", query = "SELECT a FROM Actor a WHERE a.positionX = :positionX"),
-    @NamedQuery(name = "Actor.findByPositionY", query = "SELECT a FROM Actor a WHERE a.positionY = :positionY")})
+    @NamedQuery(name = "Actor.findByPositionx", query = "SELECT a FROM Actor a WHERE a.positionx = :positionx"),
+    @NamedQuery(name = "Actor.findByPositiony", query = "SELECT a FROM Actor a WHERE a.positiony = :positiony")})
 public class Actor implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @NotNull
     @Column(name = "ID")
     private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = "Nombre")
+    @Column(name = "NOMBRE")
     private String nombre;
-    @Column(name = "PositionX")
-    private Integer positionX;
-    @Column(name = "PositionY")
-    private Integer positionY;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "actor")
-    private ActorCasoDeUso actorCasoDeUso;
+    @Column(name = "POSITIONX")
+    private Integer positionx;
+    @Column(name = "POSITIONY")
+    private Integer positiony;
+    @JoinColumn(name = "DIAGRAMID", referencedColumnName = "ID")
+    @ManyToOne
+    private Diagrama diagramid;
 
     public Actor() {
     }
@@ -81,28 +81,28 @@ public class Actor implements Serializable {
         this.nombre = nombre;
     }
 
-    public Integer getPositionX() {
-        return positionX;
+    public Integer getPositionx() {
+        return positionx;
     }
 
-    public void setPositionX(Integer positionX) {
-        this.positionX = positionX;
+    public void setPositionx(Integer positionx) {
+        this.positionx = positionx;
     }
 
-    public Integer getPositionY() {
-        return positionY;
+    public Integer getPositiony() {
+        return positiony;
     }
 
-    public void setPositionY(Integer positionY) {
-        this.positionY = positionY;
+    public void setPositiony(Integer positiony) {
+        this.positiony = positiony;
     }
 
-    public ActorCasoDeUso getActorCasoDeUso() {
-        return actorCasoDeUso;
+    public Diagrama getDiagramid() {
+        return diagramid;
     }
 
-    public void setActorCasoDeUso(ActorCasoDeUso actorCasoDeUso) {
-        this.actorCasoDeUso = actorCasoDeUso;
+    public void setDiagramid(Diagrama diagramid) {
+        this.diagramid = diagramid;
     }
 
     @Override
@@ -124,10 +124,4 @@ public class Actor implements Serializable {
         }
         return true;
     }
-
-    @Override
-    public String toString() {
-        return "com.example.entities.Actor[ id=" + id + " ]";
-    }
-    
 }

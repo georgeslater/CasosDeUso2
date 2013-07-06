@@ -5,18 +5,20 @@
 package com.example.entities;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -32,7 +34,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Relacion implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
     @Basic(optional = false)
     @NotNull
     @Column(name = "ID")
@@ -42,6 +43,8 @@ public class Relacion implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "Nombre")
     private String nombre;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "relacionid")
+    private Collection<CasosDeUsoRelaciones> casosDeUsoRelacionesCollection;
 
     public Relacion() {
     }
@@ -71,6 +74,15 @@ public class Relacion implements Serializable {
         this.nombre = nombre;
     }
 
+    @XmlTransient
+    public Collection<CasosDeUsoRelaciones> getCasosDeUsoRelacionesCollection() {
+        return casosDeUsoRelacionesCollection;
+    }
+
+    public void setCasosDeUsoRelacionesCollection(Collection<CasosDeUsoRelaciones> casosDeUsoRelacionesCollection) {
+        this.casosDeUsoRelacionesCollection = casosDeUsoRelacionesCollection;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -93,7 +105,7 @@ public class Relacion implements Serializable {
 
     @Override
     public String toString() {
-        return "com.example.entities.Relacion[ id=" + id + " ]";
+        return "com.example.controllers.Relacion[ id=" + id + " ]";
     }
     
 }

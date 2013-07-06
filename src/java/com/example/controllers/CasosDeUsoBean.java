@@ -1,16 +1,18 @@
 package com.example.controllers;
 
+import com.example.entities.CasoDeUso;
+import com.example.dao.CasoDeUsoFacade;
 import com.example.entities.*;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import javax.inject.Named;
 
-@ManagedBean(name = "casosDeUsoBean")
+@Named(value = "casosDeUsoBean")
 @SessionScoped
 public class CasosDeUsoBean implements Serializable {
 
@@ -40,12 +42,9 @@ public class CasosDeUsoBean implements Serializable {
     public void init(){
         
         myCasosDeUso = getFacade().findAll();
-        
-        for(CasoDeUso c: myCasosDeUso){
             
-            GsonBuilder = new GsonBuilder();
-            gsonString = myGSON.toJson(c);
-        }
+        Gson gson = new GsonBuilder().create();
+        gsonString = gson.toJson(myCasosDeUso);
     }
     
     private CasoDeUsoFacade getFacade() {

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <ui:composition>
+        <div>
+            <div id="imagen">
+                <img src="../resources/imagenes/logo.png" width="180" height="125" alt="logo"/>
+            </div>
+            <div id="titulo">
+                <h1>Modelacion de Casos de Uso</h1>
+            </div>
+            <div>
+                <h3>Logueado como #{request.remoteUser}</h3>
+                <h:form>
+                    <h:commandButton action="#{loginBean.logout}" value="Logout"></h:commandButton>
+                </h:form>
+            </div>
+            
+        </div>
+    </ui:composition>
+</html>

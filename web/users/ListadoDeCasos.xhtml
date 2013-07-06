@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">  
+    <h:head>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
+        <script>
+            $(document).ready(function(){
+                //alert(JSON.stringify(#{casosDeUsoBean.gsonString}));
+                var gson = JSON.stringify(#{casosDeUsoBean.gsonString});
+                var v = $.parseJSON(gson);
+                //alert(v[0].positionX);
+                //alert(v[1].positionY);
+                drawCasos(v);
+                
+            });
+        </script>
+        <script type="text/javascript">
+            /* <![CDATA[ */
+            
+            function drawCasos(casosDeUso){
+                 
+                 var canvas = document.getElementById("casosDeUsoCanvas");
+                 var casosDeUsoJSON = casosDeUso;
+                 var offset = 100;
+                 
+                 var ctx=canvas.getContext("2d");
+                 ctx.beginPath();
+                
+                 //alert(casosDeUsoJSON.length);
+                 
+                 for(var i = 0; i < casosDeUsoJSON.length; i++){
+                     
+                    var cdu = casosDeUsoJSON[i];
+                    //alert(cdu.text);
+                    ctx.beginPath();
+                    ctx.arc(cdu.positionX*offset,cdu.positionY*offset,40,0,2*Math.PI);
+                    ctx.closePath();
+                    ctx.stroke();
+                 }
+            }
+            
+             /* ]]> */
+         </script>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:include src="header.xhtml"/>
+        <canvas id="casosDeUsoCanvas" width="2000" height="2000"/>
+        <h:dataTable value="#{casosDeUsoBean.myCasosDeUso}" var="cdu" border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px">
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Name"/>
+                </f:facet>
+                <h:outputText value="#{cdu.text}"/>
+            </h:column>                        
+        </h:dataTable>
+    </h:body>
+</html>
+

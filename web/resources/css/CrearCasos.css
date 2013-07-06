@@ -1,0 +1,28 @@
+
+.casoRowTable input[type='checkbox']{
+
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.casoRowTable{
+
+    font-size: 0.8em !important;
+}
+
+.casoRowTable td{
+
+    position:relative;
+    min-width:65px;
+    text-align: center;
+}
+
+.ui-button{
+
+    font-size:70% !important;
+    margin-top:15px;
+}
+
+
+

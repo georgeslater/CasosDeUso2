@@ -1,0 +1,174 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <ui:composition template="./plantilla/template.xhtml">
+        <ui:define name="scripts">
+            <h:outputScript name="js/CrearCasos.js"></h:outputScript>
+        </ui:define>
+        <ui:define name="styles">
+            <h:outputStylesheet name="css/CrearCasos.css"/>
+        </ui:define>
+        <ui:define name="titulo">
+            Crear Casos de Uso
+        </ui:define>
+        <ui:define name="encabezado">
+            <ui:include src="./plantilla/encabezado.xhtml"/>
+        </ui:define>
+        <ui:define name="body">
+            <p:messages/>
+            <h:form id="casosForm">
+                <div id="casoRowTableDiv">
+                    <p:panel id="myPanel">
+                        <p:commandButton value="Editar" onclick="evaluarDialogs();"></p:commandButton>
+                        <p:commandButton value="Eliminar"></p:commandButton>
+                        <p:commandButton value="Guardar" action="#{crearCasosBean.guardar}"></p:commandButton><br/><br/>
+                        <p:dataTable id="casoRowTable" rowIndexVar="row" styleClass="casoRowTable" var="cduRow" value="#{crearCasosBean.casoRow}">
+                            <p:column>
+                                <h:outputText value="#{row + 1}"/>
+                            </p:column>
+                            <p:column headerText="Actor">
+                                <p:outputPanel>
+                                    <h:outputText value="#{not empty cduRow.act? cduRow.act.nombre: '(vacio)'}"></h:outputText>
+                                    <div data-row="#{row}" data-column="1">
+                                        <h:selectBooleanCheckbox styleClass="actorCheckbox"></h:selectBooleanCheckbox>
+                                    </div>
+                                </p:outputPanel>
+                            </p:column>
+                            <p:column>
+                                --->
+                            </p:column>
+                            <p:column headerText="Caso De Uso 1">
+                                <p:outputPanel>
+                                    <h:outputText value="#{not empty cduRow.cdu1? cduRow.cdu1.text: '(vacio)'}"></h:outputText>
+                                    <div data-row="#{row}" data-column="2">
+                                        <h:selectBooleanCheckbox styleClass="cduCheckbox"></h:selectBooleanCheckbox>
+                                    </div>
+                                </p:outputPanel>
+                            </p:column>
+                            <p:column headerText="Relacion">
+                                <p:outputPanel>
+                                    <h:outputText value="#{not empty cduRow.rel1? cduRow.rel1.nombre == 'Includes'? '&lt;---': '---&gt;': '(vacio)'}"></h:outputText>
+                                    <div data-row="#{row}" data-column="3">
+                                        <h:selectBooleanCheckbox styleClass="relCheckbox"></h:selectBooleanCheckbox>
+                                    </div>
+                                </p:outputPanel>
+                            </p:column>
+                            <p:column headerText="Caso De Uso 2">
+                                <p:outputPanel>
+                                    <h:outputText value="#{not empty cduRow.cdu2? cduRow.cdu2.text: '(vacio)'}"></h:outputText>
+                                    <div data-row="#{row}" data-column="4">
+                                        <h:selectBooleanCheckbox styleClass="cduCheckbox"></h:selectBooleanCheckbox>
+                                    </div>
+                                </p:outputPanel>
+                            </p:column>
+                            <p:column headerText="Relacion">
+                                <p:outputPanel>
+                                    <h:outputText value="#{not empty cduRow.rel2? cduRow.rel2.nombre == 'Includes'? '&lt;---': '---&gt;': '(vacio)'}"></h:outputText>
+                                    <div data-row="#{row}" data-column="5">
+                                        <h:selectBooleanCheckbox styleClass="relCheckbox"></h:selectBooleanCheckbox>
+                                    </div>
+                                </p:outputPanel>
+                            </p:column>
+                            <p:column headerText="Caso De Uso 3">
+                                <p:outputPanel>
+                                    <h:outputText value="#{not empty cduRow.cdu3? cduRow.cdu3.text: '(vacio)'}"></h:outputText>
+                                    <div data-row="#{row}" data-column="6">
+                                        <h:selectBooleanCheckbox styleClass="cduCheckbox"></h:selectBooleanCheckbox>
+                                    </div>
+                                </p:outputPanel>
+                            </p:column>
+                            <p:column headerText="Relacion">
+                                <p:outputPanel>
+                                    <h:outputText value="#{not empty cduRow.rel3? cduRow.rel3.nombre == 'Includes'? '&lt;---': '---&gt;': '(vacio)'}"></h:outputText>
+                                    <div data-row="#{row}" data-column="7">
+                                        <h:selectBooleanCheckbox styleClass="relCheckbox"></h:selectBooleanCheckbox>
+                                    </div>
+                                </p:outputPanel>
+                            </p:column>
+                            <p:column headerText="Caso De Uso 4">
+                                <p:outputPanel>
+                                    <h:outputText value="#{not empty cduRow.cdu4? cduRow.cdu4.text: '(vacio)'}"></h:outputText>
+                                    <div data-row="#{row}" data-column="8">
+                                        <h:selectBooleanCheckbox styleClass="cduCheckbox"></h:selectBooleanCheckbox>
+                                    </div>
+                                </p:outputPanel>
+                            </p:column>
+                            <p:column headerText="Relacion">
+                                <p:outputPanel>
+                                    <h:outputText value="#{not empty cduRow.rel4? cduRow.rel4.nombre == 'Includes'? '&lt;---': '---&gt;': '(vacio)'}"></h:outputText>
+                                    <div data-row="#{row}" data-column="9">
+                                        <h:selectBooleanCheckbox styleClass="relCheckbox"></h:selectBooleanCheckbox>
+                                    </div>
+                                </p:outputPanel>
+                            </p:column>
+                            <p:column headerText="Caso De Uso 5">
+                                <p:outputPanel>
+                                    <h:outputText value="#{not empty cduRow.cdu5? cduRow.cdu5.text: '(vacio)'}"></h:outputText>
+                                    <div data-row="#{row}" data-column="10">
+                                        <h:selectBooleanCheckbox styleClass="cduCheckbox"></h:selectBooleanCheckbox>
+                                    </div>
+                                </p:outputPanel>
+                            </p:column>
+                        </p:dataTable>
+                        <p:commandButton value="Add Row" update="myPanel" action="#{crearCasosBean.addRow}"/>
+                    </p:panel>
+                    <h:inputHidden id="xPosition" value="#{crearCasosBean.thexPositionSelected}"/>
+                    <h:inputHidden id="yPosition" value="#{crearCasosBean.theyPositionSelected}"/>
+                    <p:remoteCommand name="remoteChangeCommand" process="xPosition yPosition"/>
+                </div>
+
+                <div id="popups">
+                    <p:dialog id="actorDialog" header="Editar Actor" widgetVar="dlgActores">
+                        <div>
+                            <h:outputText value="Actores" style="margin-right: 5px;"/>
+                            <h:selectOneMenu id="actores" value="#{crearCasosBean.actorActual}">
+                                <f:selectItem noSelectionOption="true"/>
+                                <f:selectItems value="#{crearCasosBean.actores}" var="actor" itemLabel="#{actor.nombre}" itemValue="#{actor}"/>   
+                            </h:selectOneMenu>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <h:outputText value="Ingresar nombre de un nuevo actor"/><br/>
+                            <h:inputText value="#{crearCasosBean.nombreNuevoActor}"/>
+                        </div>
+                        <div>
+                            <p:commandButton value="Editar" update="myPanel" action="#{crearCasosBean.agregarActor}" oncomplete="dlgActores.hide();"/>
+                        </div>
+                    </p:dialog> 
+                    <p:dialog id="cduDialog" header="Editar Caso De Uso" widgetVar="dlgCdus">
+                        <div>
+                            <h:outputText value="Casos De Uso" style="margin-right: 5px;"/>
+                            <h:selectOneMenu id="cdus" value="#{crearCasosBean.cduActual}">
+                                <f:selectItem noSelectionOption="true"/>
+                                <f:selectItems value="#{crearCasosBean.cdus}" var="cdu" itemLabel="#{cdu.text}" itemValue="#{cdu}"/>   
+                            </h:selectOneMenu>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <h:outputText value="Ingresar nombre de un nuevo caso de uso"/><br/>
+                            <h:inputText value="#{crearCasosBean.nombreNuevoCdu}"/>
+                        </div>
+                        <div>
+                            <p:commandButton value="Editar" update="myPanel" action="#{crearCasosBean.agregarCdu}" oncomplete="dlgCdus.hide();"/>
+                        </div>
+                    </p:dialog>
+                    <p:dialog id="relacionDialog" header="Editar Relacion" widgetVar="dlgRels">
+                        <div>
+                            <p:selectOneRadio id="options" value="#{crearCasosBean.relacion}">
+                                <f:selectItem itemLabel="Includes" itemValue="Includes"/>
+                                <f:selectItem itemLabel="Excludes" itemValue="Excludes"/>
+                            </p:selectOneRadio>
+                        </div>
+                        <div style="margin-top:10px;">
+                            <p:commandButton value="Editar" update="myPanel" action="#{crearCasosBean.agregarRelacion}" oncomplete="dlgRels.hide();"/>
+                        </div>
+                    </p:dialog> 
+                </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>
+
