@@ -117,7 +117,7 @@ public class Image implements Serializable {
 
     @Override
     public String toString() {
-        return "com.example.controllers.Image[ id=" + id + " ]";
+        return "com.example.entities.Image[ id=" + id + " ]";
     }
     
 }

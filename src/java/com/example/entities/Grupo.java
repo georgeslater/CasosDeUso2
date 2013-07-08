@@ -84,7 +84,7 @@ public class Grupo implements Serializable {
 
     @Override
     public String toString() {
-        return "com.example.controllers.Grupo[ idgroup=" + idgroup + " ]";
+        return "com.example.entities.Grupo[ idgroup=" + idgroup + " ]";
     }
     
 }

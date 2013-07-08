@@ -4,7 +4,9 @@
  */
 package com.example.entities;
 
+import com.google.gson.annotations.Expose;
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,10 +17,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -32,7 +36,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Actor.findById", query = "SELECT a FROM Actor a WHERE a.id = :id"),
     @NamedQuery(name = "Actor.findByNombre", query = "SELECT a FROM Actor a WHERE a.nombre = :nombre"),
     @NamedQuery(name = "Actor.findByPositionx", query = "SELECT a FROM Actor a WHERE a.positionx = :positionx"),
-    @NamedQuery(name = "Actor.findByPositiony", query = "SELECT a FROM Actor a WHERE a.positiony = :positiony")})
+    @NamedQuery(name = "Actor.findByPositiony", query = "SELECT a FROM Actor a WHERE a.positiony = :positiony"),
+    @NamedQuery(name = "Actor.findByDiagramaId", query = "SELECT a FROM Actor a WHERE a.diagramid.id = :diagramaid")})
 public class Actor implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -43,12 +48,17 @@ public class Actor implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
+    @Expose
     @Column(name = "NOMBRE")
     private String nombre;
     @Column(name = "POSITIONX")
     private Integer positionx;
     @Column(name = "POSITIONY")
     private Integer positiony;
+    @OneToMany(mappedBy = "actorID")
+    private Collection<Fila> filaCollection;
+    @OneToMany(mappedBy = "actorid")
+    private Collection<ActorCasoDeUso> actorCasoDeUsoCollection;
     @JoinColumn(name = "DIAGRAMID", referencedColumnName = "ID")
     @ManyToOne
     private Diagrama diagramid;
@@ -97,6 +107,24 @@ public class Actor implements Serializable {
         this.positiony = positiony;
     }
 
+    @XmlTransient
+    public Collection<Fila> getFilaCollection() {
+        return filaCollection;
+    }
+
+    public void setFilaCollection(Collection<Fila> filaCollection) {
+        this.filaCollection = filaCollection;
+    }
+
+    @XmlTransient
+    public Collection<ActorCasoDeUso> getActorCasoDeUsoCollection() {
+        return actorCasoDeUsoCollection;
+    }
+
+    public void setActorCasoDeUsoCollection(Collection<ActorCasoDeUso> actorCasoDeUsoCollection) {
+        this.actorCasoDeUsoCollection = actorCasoDeUsoCollection;
+    }
+
     public Diagrama getDiagramid() {
         return diagramid;
     }
@@ -124,4 +152,10 @@ public class Actor implements Serializable {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "com.example.entities.Actor[ id=" + id + " ]";
+    }
+    
 }

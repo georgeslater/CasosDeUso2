@@ -24,5 +24,10 @@
     margin-top:15px;
 }
 
+.canvasPanel{
+    
+    visibility: hidden;
+}
+
 
 

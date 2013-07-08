@@ -43,6 +43,14 @@ public class Relacion implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "Nombre")
     private String nombre;
+    @OneToMany(mappedBy = "relacion4ID")
+    private Collection<Fila> filaCollection;
+    @OneToMany(mappedBy = "relacion3ID")
+    private Collection<Fila> filaCollection1;
+    @OneToMany(mappedBy = "relacion2ID")
+    private Collection<Fila> filaCollection2;
+    @OneToMany(mappedBy = "relacion1ID")
+    private Collection<Fila> filaCollection3;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "relacionid")
     private Collection<CasosDeUsoRelaciones> casosDeUsoRelacionesCollection;
 
@@ -72,6 +80,42 @@ public class Relacion implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    @XmlTransient
+    public Collection<Fila> getFilaCollection() {
+        return filaCollection;
+    }
+
+    public void setFilaCollection(Collection<Fila> filaCollection) {
+        this.filaCollection = filaCollection;
+    }
+
+    @XmlTransient
+    public Collection<Fila> getFilaCollection1() {
+        return filaCollection1;
+    }
+
+    public void setFilaCollection1(Collection<Fila> filaCollection1) {
+        this.filaCollection1 = filaCollection1;
+    }
+
+    @XmlTransient
+    public Collection<Fila> getFilaCollection2() {
+        return filaCollection2;
+    }
+
+    public void setFilaCollection2(Collection<Fila> filaCollection2) {
+        this.filaCollection2 = filaCollection2;
+    }
+
+    @XmlTransient
+    public Collection<Fila> getFilaCollection3() {
+        return filaCollection3;
+    }
+
+    public void setFilaCollection3(Collection<Fila> filaCollection3) {
+        this.filaCollection3 = filaCollection3;
     }
 
     @XmlTransient
@@ -105,7 +149,7 @@ public class Relacion implements Serializable {
 
     @Override
     public String toString() {
-        return "com.example.controllers.Relacion[ id=" + id + " ]";
+        return "com.example.entities.Relacion[ id=" + id + " ]";
     }
     
 }

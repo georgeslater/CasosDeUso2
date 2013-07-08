@@ -117,7 +117,7 @@ public class CasosDeUsoRelaciones implements Serializable {
 
     @Override
     public String toString() {
-        return "com.example.controllers.CasosDeUsoRelaciones[ id=" + id + " ]";
+        return "com.example.entities.CasosDeUsoRelaciones[ id=" + id + " ]";
     }
     
 }

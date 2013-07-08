@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "ActorCasoDeUso.findAll", query = "SELECT a FROM ActorCasoDeUso a"),
     @NamedQuery(name = "ActorCasoDeUso.findById", query = "SELECT a FROM ActorCasoDeUso a WHERE a.id = :id"),
-    @NamedQuery(name = "ActorCasoDeUso.findByActorid", query = "SELECT a FROM ActorCasoDeUso a WHERE a.actorid = :actorid")})
+    @NamedQuery(name = "ActorCasoDeUso.findByDiagramaId", query = "SELECT a FROM ActorCasoDeUso a WHERE a.diagramid.id = :diagramaid")})
 public class ActorCasoDeUso implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -36,14 +36,15 @@ public class ActorCasoDeUso implements Serializable {
     @Basic(optional = false)
     @Column(name = "ID")
     private Integer id;
-    @Column(name = "ACTORID")
-    private Integer actorid;
     @JoinColumn(name = "DIAGRAMID", referencedColumnName = "ID")
     @ManyToOne
     private Diagrama diagramid;
     @JoinColumn(name = "CASODEUSOID", referencedColumnName = "ID")
     @ManyToOne
     private CasoDeUso casodeusoid;
+    @JoinColumn(name = "ACTORID", referencedColumnName = "ID")
+    @ManyToOne
+    private Actor actorid;
 
     public ActorCasoDeUso() {
     }
@@ -60,14 +61,6 @@ public class ActorCasoDeUso implements Serializable {
         this.id = id;
     }
 
-    public Integer getActorid() {
-        return actorid;
-    }
-
-    public void setActorid(Integer actorid) {
-        this.actorid = actorid;
-    }
-
     public Diagrama getDiagramid() {
         return diagramid;
     }
@@ -82,6 +75,14 @@ public class ActorCasoDeUso implements Serializable {
 
     public void setCasodeusoid(CasoDeUso casodeusoid) {
         this.casodeusoid = casodeusoid;
+    }
+
+    public Actor getActorid() {
+        return actorid;
+    }
+
+    public void setActorid(Actor actorid) {
+        this.actorid = actorid;
     }
 
     @Override
@@ -106,7 +107,7 @@ public class ActorCasoDeUso implements Serializable {
 
     @Override
     public String toString() {
-        return "com.example.controllers.ActorCasoDeUso[ id=" + id + " ]";
+        return "com.example.entities.ActorCasoDeUso[ id=" + id + " ]";
     }
     
 }

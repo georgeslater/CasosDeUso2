@@ -35,6 +35,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Diagrama.findByNombre", query = "SELECT d FROM Diagrama d WHERE d.nombre = :nombre"),
     @NamedQuery(name = "Diagrama.findByUserid", query = "SELECT d FROM Diagrama d WHERE d.userid = :userid")})
 public class Diagrama implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "diagramaID")
+    private Collection<Fila> filaCollection;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -162,7 +164,16 @@ public class Diagrama implements Serializable {
 
     @Override
     public String toString() {
-        return "com.example.controllers.Diagrama[ id=" + id + " ]";
+        return "com.example.entities.Diagrama[ id=" + id + " ]";
+    }
+
+    @XmlTransient
+    public Collection<Fila> getFilaCollection() {
+        return filaCollection;
+    }
+
+    public void setFilaCollection(Collection<Fila> filaCollection) {
+        this.filaCollection = filaCollection;
     }
     
 }

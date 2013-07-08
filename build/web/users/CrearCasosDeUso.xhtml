@@ -6,8 +6,14 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets">
     <ui:composition template="./plantilla/template.xhtml">
+        <ui:define name="metadata">
+            <f:metadata>
+                <f:event type="preRenderView" listener="#{crearCasosBean.cargarValores()}" />
+                <f:viewParam name="id" value="#{crearCasosBean.diagramaID}"/>
+            </f:metadata>
+        </ui:define>
         <ui:define name="scripts">
-            <h:outputScript name="js/CrearCasos.js"></h:outputScript>
+            <h:outputScript name="js/CrearCasos.js"></h:outputScript>            
         </ui:define>
         <ui:define name="styles">
             <h:outputStylesheet name="css/CrearCasos.css"/>
@@ -21,10 +27,23 @@
         <ui:define name="body">
             <p:messages/>
             <h:form id="casosForm">
+                <p:outputPanel id="preparacionDiv">
+                    <script>
+                        /* <![CDATA[ */
+                        function dibujarPreparacion(){
+                            var gson = JSON.stringify(#{crearCasosBean.json});
+                            var v = $.parseJSON(gson);
+                            alert(gson);
+                            alert(v);
+                            dibujar(v);                      
+                        }         
+                        /* ]]> */
+                    </script>
+                </p:outputPanel>
                 <div id="casoRowTableDiv">
                     <p:panel id="myPanel">
-                        <p:commandButton value="Editar" onclick="evaluarDialogs();"></p:commandButton>
-                        <p:commandButton value="Eliminar"></p:commandButton>
+                        <p:commandButton value="Editar" onclick="evaluarDialogsAgregar();"></p:commandButton>
+                        <p:commandButton value="Eliminar" update="casoRowTable" action="#{crearCasosBean.evaluarDialogsEliminar}"/>
                         <p:commandButton value="Guardar" action="#{crearCasosBean.guardar}"></p:commandButton><br/><br/>
                         <p:dataTable id="casoRowTable" rowIndexVar="row" styleClass="casoRowTable" var="cduRow" value="#{crearCasosBean.casoRow}">
                             <p:column>
@@ -115,12 +134,15 @@
                             </p:column>
                         </p:dataTable>
                         <p:commandButton value="Add Row" update="myPanel" action="#{crearCasosBean.addRow}"/>
+                        <p:commandButton value="Generar Diagrama" update="canvasDiv preparacionDiv" action="#{crearCasosBean.generarDiagrama}" oncomplete="dibujarPreparacion();"/>
                     </p:panel>
                     <h:inputHidden id="xPosition" value="#{crearCasosBean.thexPositionSelected}"/>
                     <h:inputHidden id="yPosition" value="#{crearCasosBean.theyPositionSelected}"/>
                     <p:remoteCommand name="remoteChangeCommand" process="xPosition yPosition"/>
                 </div>
-
+                <p:panel id="canvasDiv" styleClass="canvasPanel">
+                    <canvas id="casosDeUsoCanvas"/>
+                </p:panel>
                 <div id="popups">
                     <p:dialog id="actorDialog" header="Editar Actor" widgetVar="dlgActores">
                         <div>

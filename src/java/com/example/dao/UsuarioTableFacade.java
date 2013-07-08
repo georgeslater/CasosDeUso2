@@ -5,9 +5,11 @@
 package com.example.dao;
 
 import com.example.entities.UsuarioTable;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -22,9 +24,26 @@ public class UsuarioTableFacade extends AbstractFacade<UsuarioTable> {
     protected EntityManager getEntityManager() {
         return em;
     }
-
+    
+    
     public UsuarioTableFacade() {
         super(UsuarioTable.class);
     }
     
+    public UsuarioTable obtenerIDPorNombre(String nombre){
+        
+        List<UsuarioTable> resultados = em.createNamedQuery("UsuarioTable.findByUsernameusuario")
+                .setParameter("usernameusuario", nombre)
+                    .getResultList();
+
+        if (resultados == null) {
+            return null;
+        }
+        else if (resultados.size() != 1){
+            return null;
+        }
+        else {
+            return resultados.get(0);
+        }
+    }
 }

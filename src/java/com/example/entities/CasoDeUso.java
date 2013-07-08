@@ -4,6 +4,7 @@
  */
 package com.example.entities;
 
+import com.google.gson.annotations.Expose;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
@@ -34,8 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "CasoDeUso.findAll", query = "SELECT c FROM CasoDeUso c"),
     @NamedQuery(name = "CasoDeUso.findById", query = "SELECT c FROM CasoDeUso c WHERE c.id = :id"),
     @NamedQuery(name = "CasoDeUso.findByText", query = "SELECT c FROM CasoDeUso c WHERE c.text = :text"),
-    @NamedQuery(name = "CasoDeUso.findByPositionx", query = "SELECT c FROM CasoDeUso c WHERE c.positionx = :positionx"),
-    @NamedQuery(name = "CasoDeUso.findByPositiony", query = "SELECT c FROM CasoDeUso c WHERE c.positiony = :positiony")})
+    @NamedQuery(name = "CasoDeUso.findByDiagramaId", query = "SELECT c FROM CasoDeUso c WHERE c.diagramid.id = :diagramaid")})
 public class CasoDeUso implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -43,16 +43,23 @@ public class CasoDeUso implements Serializable {
     @Basic(optional = false)
     @Column(name = "ID")
     private Integer id;
+    @Expose
     @Size(max = 255)
     @Column(name = "TEXT")
     private String text;
-    @Column(name = "POSITIONX")
-    private Integer positionx;
-    @Column(name = "POSITIONY")
-    private Integer positiony;
     @JoinColumn(name = "DIAGRAMID", referencedColumnName = "ID")
     @ManyToOne
     private Diagrama diagramid;
+    @OneToMany(mappedBy = "casoDeUso5ID")
+    private Collection<Fila> filaCollection;
+    @OneToMany(mappedBy = "casoDeUso4ID")
+    private Collection<Fila> filaCollection1;
+    @OneToMany(mappedBy = "casoDeUso3ID")
+    private Collection<Fila> filaCollection2;
+    @OneToMany(mappedBy = "casoDeUso2ID")
+    private Collection<Fila> filaCollection3;
+    @OneToMany(mappedBy = "casoDeUso1ID")
+    private Collection<Fila> filaCollection4;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "casodeuso2id")
     private Collection<CasosDeUsoRelaciones> casosDeUsoRelacionesCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "casodeuso1id")
@@ -83,28 +90,57 @@ public class CasoDeUso implements Serializable {
         this.text = text;
     }
 
-    public Integer getPositionx() {
-        return positionx;
-    }
-
-    public void setPositionx(Integer positionx) {
-        this.positionx = positionx;
-    }
-
-    public Integer getPositiony() {
-        return positiony;
-    }
-
-    public void setPositiony(Integer positiony) {
-        this.positiony = positiony;
-    }
-
     public Diagrama getDiagramid() {
         return diagramid;
     }
 
     public void setDiagramid(Diagrama diagramid) {
         this.diagramid = diagramid;
+    }
+
+    @XmlTransient
+    public Collection<Fila> getFilaCollection() {
+        return filaCollection;
+    }
+
+    public void setFilaCollection(Collection<Fila> filaCollection) {
+        this.filaCollection = filaCollection;
+    }
+
+    @XmlTransient
+    public Collection<Fila> getFilaCollection1() {
+        return filaCollection1;
+    }
+
+    public void setFilaCollection1(Collection<Fila> filaCollection1) {
+        this.filaCollection1 = filaCollection1;
+    }
+
+    @XmlTransient
+    public Collection<Fila> getFilaCollection2() {
+        return filaCollection2;
+    }
+
+    public void setFilaCollection2(Collection<Fila> filaCollection2) {
+        this.filaCollection2 = filaCollection2;
+    }
+
+    @XmlTransient
+    public Collection<Fila> getFilaCollection3() {
+        return filaCollection3;
+    }
+
+    public void setFilaCollection3(Collection<Fila> filaCollection3) {
+        this.filaCollection3 = filaCollection3;
+    }
+
+    @XmlTransient
+    public Collection<Fila> getFilaCollection4() {
+        return filaCollection4;
+    }
+
+    public void setFilaCollection4(Collection<Fila> filaCollection4) {
+        this.filaCollection4 = filaCollection4;
     }
 
     @XmlTransient
@@ -156,7 +192,7 @@ public class CasoDeUso implements Serializable {
 
     @Override
     public String toString() {
-        return "com.example.controllers.CasoDeUso[ id=" + id + " ]";
+        return "com.example.entities.CasoDeUso[ id=" + id + " ]";
     }
     
 }

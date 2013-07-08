@@ -131,7 +131,7 @@ public class UsuarioTable implements Serializable {
 
     @Override
     public String toString() {
-        return "com.example.controllers.UsuarioTable[ iduser=" + iduser + " ]";
+        return "com.example.entities.UsuarioTable[ iduser=" + iduser + " ]";
     }
     
 }

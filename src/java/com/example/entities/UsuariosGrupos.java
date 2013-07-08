@@ -102,7 +102,7 @@ public class UsuariosGrupos implements Serializable {
 
     @Override
     public String toString() {
-        return "com.example.controllers.UsuariosGrupos[ id=" + id + " ]";
+        return "com.example.entities.UsuariosGrupos[ id=" + id + " ]";
     }
     
 }
