@@ -8,6 +8,7 @@ import com.google.gson.annotations.Expose;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -35,8 +36,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Actor.findAll", query = "SELECT a FROM Actor a"),
     @NamedQuery(name = "Actor.findById", query = "SELECT a FROM Actor a WHERE a.id = :id"),
     @NamedQuery(name = "Actor.findByNombre", query = "SELECT a FROM Actor a WHERE a.nombre = :nombre"),
-    @NamedQuery(name = "Actor.findByPositionx", query = "SELECT a FROM Actor a WHERE a.positionx = :positionx"),
-    @NamedQuery(name = "Actor.findByPositiony", query = "SELECT a FROM Actor a WHERE a.positiony = :positiony"),
     @NamedQuery(name = "Actor.findByDiagramaId", query = "SELECT a FROM Actor a WHERE a.diagramid.id = :diagramaid")})
 public class Actor implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -51,11 +50,7 @@ public class Actor implements Serializable {
     @Expose
     @Column(name = "NOMBRE")
     private String nombre;
-    @Column(name = "POSITIONX")
-    private Integer positionx;
-    @Column(name = "POSITIONY")
-    private Integer positiony;
-    @OneToMany(mappedBy = "actorID")
+    @OneToMany(mappedBy = "actorID", cascade= CascadeType.ALL)
     private Collection<Fila> filaCollection;
     @OneToMany(mappedBy = "actorid")
     private Collection<ActorCasoDeUso> actorCasoDeUsoCollection;
@@ -89,22 +84,6 @@ public class Actor implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public Integer getPositionx() {
-        return positionx;
-    }
-
-    public void setPositionx(Integer positionx) {
-        this.positionx = positionx;
-    }
-
-    public Integer getPositiony() {
-        return positiony;
-    }
-
-    public void setPositiony(Integer positiony) {
-        this.positiony = positiony;
     }
 
     @XmlTransient

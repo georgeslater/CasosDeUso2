@@ -28,6 +28,20 @@ public class ActorFacade extends AbstractFacade<Actor> {
         super(Actor.class);
     }
     
+    public Actor findByName(String nombre){
+        
+        List<Actor> resultados = em.createNamedQuery("Actor.findByNombre")
+                .setParameter("nombre", nombre)
+                    .getResultList();
+        
+        if (resultados == null) {
+            return null;
+        }
+        else {
+            return resultados.get(0);
+        }
+    }
+    
     public List<Actor> obtenerActoresPorDiagramaID(Integer diagramaID){
         
         List<Actor> resultados = em.createNamedQuery("Actor.findByDiagramaId")

@@ -58,7 +58,7 @@ public class CasoDeUso implements Serializable {
     private Collection<Fila> filaCollection2;
     @OneToMany(mappedBy = "casoDeUso2ID")
     private Collection<Fila> filaCollection3;
-    @OneToMany(mappedBy = "casoDeUso1ID")
+    @OneToMany(mappedBy = "casoDeUso1ID", cascade= CascadeType.ALL)
     private Collection<Fila> filaCollection4;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "casodeuso2id")
     private Collection<CasosDeUsoRelaciones> casosDeUsoRelacionesCollection;

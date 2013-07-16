@@ -5,25 +5,40 @@
 package com.example.controllers;
 
 import com.example.controllers.exceptions.UserNotRecognizedException;
+import com.example.controllers.util.JsfUtil;
 import com.example.entities.Actor;
 import com.example.entities.ActorCasoDeUso;
 import com.example.entities.CasoDeUso;
+import com.example.entities.Diagrama;
 import com.example.entities.Fila;
+import com.example.entities.Image;
 import com.example.entities.Relacion;
 import com.example.entities.UsuarioTable;
 import com.example.negocio.CrearCasosService;
 import com.example.negocio.DibujarService;
+import com.example.negocio.EncryptionService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.lang.String;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.ServletContext;
+import sun.misc.BASE64Decoder;
 
 /**
  *
@@ -36,39 +51,60 @@ public class CrearCasosBean implements Serializable {
     private static final long serialVersionUID = 4771270804699990999L;
     @Inject
     private Conversation conversation;
-    private List<CasoDeUsoRow> casoRow;
     private List<Actor> actores;
     private List<Relacion> relaciones;
     private List<CasoDeUso> cdus;
     private List<ActorCasoDeUso> actCdu;
     private List<Fila> filas;
     private String diagramaID;
+    private Diagrama diagramaActual;
     private UsuarioTable usuarioLogueado;
     private Actor actorActual;
     private String nombreNuevoActor;
     private CasoDeUso cduActual;
     private String nombreNuevoCdu;
     private String relacion;
+    private int filaABorrar;
     private int thexPositionSelected;
     private int theyPositionSelected;
+    private Set<Actor> filasActores;
     private String json;
+    private String dataURL;
+    private Boolean mostrarImagenEstatico;
+    private Image diagramaImagen;
+    private List<CasoDeUso> filasCdus;
+    private org.primefaces.component.datatable.DataTable casoTabla;
     @EJB
     private CrearCasosService crearCasosService;
     @EJB
     private DibujarService dibujarService;
+    @EJB
+    private EncryptionService encryptService;
 
     /**
      * Creates a new instance of CrearCasosBean
      */
     public CrearCasosBean() {
-
-        casoRow = new ArrayList<CasoDeUsoRow>();
+        
+        actores = new ArrayList<Actor>();
+        actCdu = new ArrayList<ActorCasoDeUso>();
+        cdus = new ArrayList<CasoDeUso>();
+        filas = new ArrayList<Fila>();
+        filasActores = new HashSet<Actor>();
     }
-
+    
+    public String borrarFila(){
+        
+        String rowStr = JsfUtil.getRequestParameter("filaABorrar");
+        int rowInt = Integer.valueOf(rowStr);
+        filas.remove(rowInt);
+        return null;
+    }
+    
     public String addRow() {
 
-        CasoDeUsoRow newCduRow = new CasoDeUsoRow();
-        getCasoRow().add(newCduRow);
+        Fila newCduRow = new Fila();
+        filas.add(newCduRow);
         return null;
     }
 
@@ -88,27 +124,36 @@ public class CrearCasosBean implements Serializable {
                     try {
 
                         int diagInt = Integer.parseInt(diagramaID);
-
+                        diagramaActual = crearCasosService.obtenerDiagramaPorId(diagInt);
+                                                
+                        diagramaImagen = dibujarService.obtenerImagenPorDiagramaId(diagramaActual);
+                        
+                        if(diagramaImagen != null && diagramaImagen.getPath() != null){
+                            
+                            mostrarImagenEstatico = true;
+                        }
+                        
                         filas = crearCasosService.getFilasPrecargadas(diagInt);
 
                     } catch (NumberFormatException e) {
+                        JsfUtil.addErrorMessage(e, "Parametro invalido");
                     }
 
                     if (filas.size() > 0) {
-
-                        generarFilas(filas);
+                       
+                        filasActores = precargarFilas();
 
                     } else {
 
                         //si no hay filas
-                        CasoDeUsoRow cduRow = new CasoDeUsoRow();
-                        casoRow.add(cduRow);
+                        Fila cduRow = new Fila();
+                        filas.add(cduRow);
                     }
 
                 } else {
-                    //if casoRow is nullsfefwedgdsgdsfs
-                    CasoDeUsoRow cduRow = new CasoDeUsoRow();
-                    casoRow.add(cduRow);
+                    //if casoRow is null
+                   Fila cduRow = new Fila();
+                   filas.add(cduRow);
                 }
 
             } else {
@@ -118,67 +163,94 @@ public class CrearCasosBean implements Serializable {
             }
         }
     }
+    
+    public void guardarImagen(){
+        
+        if(dataURL != null && !dataURL.equals("")){
+            
+            try{
+               
+                ExternalContext external = FacesContext.getCurrentInstance().getExternalContext();
+                ServletContext servletContext = (ServletContext) external.getContext();
+                String md5path = encryptService.encryptar(usuarioLogueado.getUsernameusuario()+"_"+diagramaID);
+                String relativeFilename = "/resources/imagenes/"+md5path;
+                String filename = servletContext.getRealPath(relativeFilename+".png");
+                BASE64Decoder decoder = new BASE64Decoder();
+                byte[] decodedBytes = decoder.decodeBuffer(dataURL.split("^data:image/(png|jpg);base64,")[1]);
+                BufferedImage imag=ImageIO.read(new ByteArrayInputStream(decodedBytes));
+                ImageIO.write(imag, "png", new File(filename));
+                
+                Image i = crearCasosService.guardarNuevoImagen(diagramaImagen, usuarioLogueado, diagramaActual, "test", relativeFilename);
+                JsfUtil.addSuccessMessage("Su imagen ha sido guardado.");
+                diagramaImagen = i;
+                mostrarImagenEstatico = true;
+                
+            }catch(IOException e){
+                
+                JsfUtil.addErrorMessage(e, "Error al guardar el imagen.");
 
-    public void generarFilas(List<Fila> filas) {
-
-        for (Fila f : filas) {
-
-            CasoDeUsoRow cduRow = new CasoDeUsoRow(f.getActorID(), f.getCasoDeUso1ID(), f.getRelacion1ID(), f.getCasoDeUso2ID(), f.getRelacion2ID(), f.getCasoDeUso3ID(), f.getRelacion3ID(), f.getCasoDeUso4ID(), f.getRelacion4ID(), f.getCasoDeUso5ID());
-            casoRow.add(cduRow);
+            }
         }
+        
+            
+        
     }
 
     public void evaluarDialogsEliminar() {
 
-        CasoDeUsoRow selectedCduRow = casoRow.get(thexPositionSelected);
+        Fila selectedCduRow = filas.get(thexPositionSelected);
         
         switch(theyPositionSelected){
         
-        case 1:           
-            selectedCduRow.setAct(null);
+        case 1: 
+            
+            if(selectedCduRow.getActorID() != null && filasActores.contains(selectedCduRow.getActorID())){
+                filasActores.remove(selectedCduRow.getActorID());
+            }
+            selectedCduRow.setActorID(null);
             break;
         
         case 2: 
-            selectedCduRow.setCdu1(null);
+            selectedCduRow.setCasoDeUso1ID(null);
             break;
             
         case 3:
-            selectedCduRow.setRel1(null);
+            selectedCduRow.setRelacion1ID(null);
             break;
         
         case 4:
-            selectedCduRow.setCdu2(null);
+            selectedCduRow.setCasoDeUso2ID(null);
             break;
         
         case 5:
-            selectedCduRow.setRel2(null);
+            selectedCduRow.setRelacion2ID(null);
             break;
             
         case 6:
-            selectedCduRow.setCdu3(null);
+            selectedCduRow.setCasoDeUso3ID(null);
             break;
         
         case 7:
-            selectedCduRow.setRel3(null);
+            selectedCduRow.setRelacion3ID(null);
             break;
             
         case 8: 
-            selectedCduRow.setCdu4(null);
+            selectedCduRow.setCasoDeUso4ID(null);
             break;
             
         case 9:
-            selectedCduRow.setRel4(null);
+            selectedCduRow.setRelacion4ID(null);
             break;
         
         case 10:
-            selectedCduRow.setCdu5(null);
+            selectedCduRow.setCasoDeUso5ID(null);
             break;
         }
     }
 
     public void agregarActor() {
 
-        CasoDeUsoRow selectedCduRow = casoRow.get(thexPositionSelected);
+        Fila selectedCduRow = filas.get(thexPositionSelected);
 
         Actor act = null;
 
@@ -196,8 +268,17 @@ public class CrearCasosBean implements Serializable {
         }
 
         if (act != null) {
+            
+            if(selectedCduRow.getActorID() != null){
+                
+                if(filasActores.contains(selectedCduRow.getActorID())){
+                    filasActores.remove(selectedCduRow.getActorID());
+                }
+            }
+            selectedCduRow.setActorID(act);
+            filasActores.add(act);
 
-            selectedCduRow.setAct(act);
+            
         }
 
         nombreNuevoActor = null;
@@ -205,7 +286,7 @@ public class CrearCasosBean implements Serializable {
 
     public void agregarCdu() {
 
-        CasoDeUsoRow selectedCduRow = casoRow.get(thexPositionSelected);
+        Fila selectedCduRow = filas.get(thexPositionSelected);
 
         CasoDeUso cdu = null;
 
@@ -226,23 +307,23 @@ public class CrearCasosBean implements Serializable {
 
             if (theyPositionSelected == 2) {
 
-                selectedCduRow.setCdu1(cdu);
+                selectedCduRow.setCasoDeUso1ID(cdu);
 
             } else if (theyPositionSelected == 4) {
 
-                selectedCduRow.setCdu2(cdu);
+                selectedCduRow.setCasoDeUso2ID(cdu);
 
             } else if (theyPositionSelected == 6) {
 
-                selectedCduRow.setCdu3(cdu);
+                selectedCduRow.setCasoDeUso3ID(cdu);
 
             } else if (theyPositionSelected == 8) {
 
-                selectedCduRow.setCdu4(cdu);
+                selectedCduRow.setCasoDeUso4ID(cdu);
 
             } else if (theyPositionSelected == 10) {
 
-                selectedCduRow.setCdu5(cdu);
+                selectedCduRow.setCasoDeUso5ID(cdu);
             }
         }
 
@@ -263,97 +344,68 @@ public class CrearCasosBean implements Serializable {
 
         Object[][] diagrama = dibujarService.generarDiagrama(actores, actCdu, cdus, null);
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        json = gson.toJson(diagrama);
+        json = gson.toJson(diagrama); 
+        mostrarImagenEstatico = false;
     }
 
-    public void guardar() {
-        //TODO validar!
-        /*
-         ArrayList<Actor> actoresAInsertar = new ArrayList<Actor>();
-         ArrayList<CasoDeUso> cdusAInsertar = new ArrayList<CasoDeUso>();
-         ArrayList<ActorCasoDeUso> actcduAInsertar = new ArrayList<ActorCasoDeUso>();
-
-         for (CasoDeUsoRow cdur : casoRow) {
-
-         Actor a = null;
-         CasoDeUso cdu1 = null;
-         Relacion rel1;
-         CasoDeUso cdu2;
-         Relacion rel2;
-         CasoDeUso cdu3;
-         Relacion rel3;
-         CasoDeUso cdu4;
-         Relacion rel4;
-         CasoDeUso cdu5;
-
-         if (cdur.act != null) {
-
-         a = new Actor();
-         a.setNombre(cdur.act.getNombre());
-         actoresAInsertar.add(a);
-         }
-
-         if (cdur.getCdu1() != null) {
-
-         cdu1 = new CasoDeUso();
-         cdu1.setText(cdur.getCdu1().getText());
-         cdusAInsertar.add(cdu1);
-
-         }
-
-         if (actoresAInsertar.size() > 0) {
-
-         for (Actor actor : actoresAInsertar) {
-         getActorFacade().create(actor);
-         }
-         }
-
-         if (cdusAInsertar.size() > 0) {
-
-         for (CasoDeUso cas : cdusAInsertar) {
-         getCduFacade().create(cas);
-         }
-         }
-
-         if (a != null && cdu1 != null) {
-
-         ActorCasoDeUso actCdu = new ActorCasoDeUso();
-         actCdu.setActorid(a);
-         actCdu.setCasodeusoid(cdu1);
-         getActorCasoDeUsoFacade().create(actCdu);
-         }
-         }
-         * */
+    public void guardarInformacionFilas() {
+        
+        List<String> errorMsgs = getCrearCasosService().validar(filas);
+        
+        if(errorMsgs.isEmpty()){
+            
+            getCrearCasosService().guardarFilas(filas, diagramaActual, usuarioLogueado);
+        
+        }else{
+            
+            JsfUtil.addErrorMessages(errorMsgs);
+        }       
     }
 
     public void agregarRelacion() {
 
         if (relacion != null) {
 
-            CasoDeUsoRow selectedCduRow = casoRow.get(thexPositionSelected);
+            Fila selectedCduRow = filas.get(thexPositionSelected);
 
             Relacion rel = new Relacion();
             rel.setNombre(relacion);
 
             if (theyPositionSelected == 3) {
 
-                selectedCduRow.setRel1(rel);
+                selectedCduRow.setRelacion1ID(rel);
 
             } else if (theyPositionSelected == 5) {
 
-                selectedCduRow.setRel2(rel);
+                selectedCduRow.setRelacion2ID(rel);
 
             } else if (theyPositionSelected == 7) {
 
-                selectedCduRow.setRel3(rel);
+                selectedCduRow.setRelacion3ID(rel);
 
             } else if (theyPositionSelected == 9) {
 
-                selectedCduRow.setRel4(rel);
+                selectedCduRow.setRelacion4ID(rel);
             }
         }
 
         relacion = null;
+    }
+    
+    public Set<Actor> precargarFilas(){
+               
+            Set<Actor> actoresTemp = new HashSet<Actor>();
+
+            for(Fila fila: filas){
+
+                if(fila.getActorID() != null){
+
+                    actoresTemp.add(fila.getActorID());
+                }
+            }
+
+            return actoresTemp;
+        
     }
 
     /**
@@ -502,21 +554,6 @@ public class CrearCasosBean implements Serializable {
     public void setDibujarService(DibujarService dibujarService) {
         this.dibujarService = dibujarService;
     }
-    
-    
-    /**
-     * @return the casoRow
-     */
-    public List<CasoDeUsoRow> getCasoRow() {
-        return casoRow;
-    }
-
-    /**
-     * @param casoRow the casoRow to set
-     */
-    public void setCasoRow(List<CasoDeUsoRow> casoRow) {
-        this.setCasoRow(casoRow);
-    }
 
     /**
      * @return the actores
@@ -609,185 +646,130 @@ public class CrearCasosBean implements Serializable {
         return theyPositionSelected;
     }
 
-    public class CasoDeUsoRow {
+    /**
+     * @return the filaABorrar
+     */
+    public int getFilaABorrar() {
+        return filaABorrar;
+    }
 
-        private Actor act;
-        private CasoDeUso cdu1;
-        private Relacion rel1;
-        private CasoDeUso cdu2;
-        private Relacion rel2;
-        private CasoDeUso cdu3;
-        private Relacion rel3;
-        private CasoDeUso cdu4;
-        private Relacion rel4;
-        private CasoDeUso cdu5;
+    /**
+     * @param filaABorrar the filaABorrar to set
+     */
+    public void setFilaABorrar(int filaABorrar) {
+        this.filaABorrar = filaABorrar;
+    }
 
-        public CasoDeUsoRow() {
+    /**
+     * @return the casoTabla
+     */
+    public org.primefaces.component.datatable.DataTable getCasoTabla() {
+        return casoTabla;
+    }
 
-            act = null;
-            cdu1 = null;
-            rel1 = null;
-            cdu2 = null;
-            rel2 = null;
-            cdu3 = null;
-            rel3 = null;
-            cdu4 = null;
-            rel4 = null;
-            cdu5 = null;
-        }
+    /**
+     * @param casoTabla the casoTabla to set
+     */
+    public void setCasoTabla(org.primefaces.component.datatable.DataTable casoTabla) {
+        this.casoTabla = casoTabla;
+    }
 
-        public CasoDeUsoRow(Actor act, CasoDeUso cdu1, Relacion rel1, CasoDeUso cdu2, Relacion rel2, CasoDeUso cdu3, Relacion rel3, CasoDeUso cdu4, Relacion rel4, CasoDeUso cdu5) {
+    /**
+     * @return the filasActores
+     */
+    public Set <Actor> getFilasActores() {
+        
+        return filasActores;
+    }
 
-            this.act = act;
-            this.cdu1 = cdu1;
-            this.rel1 = rel1;
-            this.cdu2 = cdu2;
-            this.rel2 = rel2;
-            this.cdu3 = cdu3;
-            this.rel3 = rel3;
-            this.cdu4 = cdu4;
-            this.rel4 = rel4;
-            this.cdu5 = cdu5;
-        }
+    /**
+     * @return the filasCdus
+     */
+    public List<CasoDeUso> getFilasCdus() {
+        return filasCdus;
+    }
 
-        /**
-         * @return the act
-         */
-        public Actor getAct() {
-            return act;
-        }
+    /**
+     * @param filasCdus the filasCdus to set
+     */
+    public void setFilasCdus(List<CasoDeUso> filasCdus) {
+        this.filasCdus = filasCdus;
+    }
 
-        /**
-         * @param act the act to set
-         */
-        public void setAct(Actor act) {
-            this.act = act;
-        }
+    /**
+     * @param filasActores the filasActores to set
+     */
+    public void setFilasActores(Set<Actor> filasActores) {
+        this.filasActores = filasActores;
+    }
 
-        /**
-         * @return the cdu1
-         */
-        public CasoDeUso getCdu1() {
-            return cdu1;
-        }
+    /**
+     * @return the dataURL
+     */
+    public String getDataURL() {
+        return dataURL;
+    }
 
-        /**
-         * @param cdu1 the cdu1 to set
-         */
-        public void setCdu1(CasoDeUso cdu1) {
-            this.cdu1 = cdu1;
-        }
+    /**
+     * @param dataURL the dataURL to set
+     */
+    public void setDataURL(String dataURL) {
+        this.dataURL = dataURL;
+    }
 
-        /**
-         * @return the rel1
-         */
-        public Relacion getRel1() {
-            return rel1;
-        }
+    /**
+     * @return the diagramaActual
+     */
+    public Diagrama getDiagramaActual() {
+        return diagramaActual;
+    }
 
-        /**
-         * @param rel1 the rel1 to set
-         */
-        public void setRel1(Relacion rel1) {
-            this.rel1 = rel1;
-        }
+    /**
+     * @param diagramaActual the diagramaActual to set
+     */
+    public void setDiagramaActual(Diagrama diagramaActual) {
+        this.diagramaActual = diagramaActual;
+    }
 
-        /**
-         * @return the cdu2
-         */
-        public CasoDeUso getCdu2() {
-            return cdu2;
-        }
+    /**
+     * @return the encryptService
+     */
+    public EncryptionService getEncryptService() {
+        return encryptService;
+    }
 
-        /**
-         * @param cdu2 the cdu2 to set
-         */
-        public void setCdu2(CasoDeUso cdu2) {
-            this.cdu2 = cdu2;
-        }
+    /**
+     * @param encryptService the encryptService to set
+     */
+    public void setEncryptService(EncryptionService encryptService) {
+        this.encryptService = encryptService;
+    }
 
-        /**
-         * @return the rel2
-         */
-        public Relacion getRel2() {
-            return rel2;
-        }
+    /**
+     * @return the mostrarImagenEstatico
+     */
+    public Boolean getMostrarImagenEstatico() {
+        return mostrarImagenEstatico;
+    }
 
-        /**
-         * @param rel2 the rel2 to set
-         */
-        public void setRel2(Relacion rel2) {
-            this.rel2 = rel2;
-        }
+    /**
+     * @param mostrarImagenEstatico the mostrarImagenEstatico to set
+     */
+    public void setMostrarImagenEstatico(Boolean mostrarImagenEstatico) {
+        this.mostrarImagenEstatico = mostrarImagenEstatico;
+    }
 
-        /**
-         * @return the cdu3
-         */
-        public CasoDeUso getCdu3() {
-            return cdu3;
-        }
+    /**
+     * @return the imagenPath
+     */
+    public Image getDiagramaImagen() {
+        return diagramaImagen;
+    }
 
-        /**
-         * @param cdu3 the cdu3 to set
-         */
-        public void setCdu3(CasoDeUso cdu3) {
-            this.cdu3 = cdu3;
-        }
-
-        /**
-         * @return the rel3
-         */
-        public Relacion getRel3() {
-            return rel3;
-        }
-
-        /**
-         * @param rel3 the rel3 to set
-         */
-        public void setRel3(Relacion rel3) {
-            this.rel3 = rel3;
-        }
-
-        /**
-         * @return the cdu4
-         */
-        public CasoDeUso getCdu4() {
-            return cdu4;
-        }
-
-        /**
-         * @param cdu4 the cdu4 to set
-         */
-        public void setCdu4(CasoDeUso cdu4) {
-            this.cdu4 = cdu4;
-        }
-
-        /**
-         * @return the rel4
-         */
-        public Relacion getRel4() {
-            return rel4;
-        }
-
-        /**
-         * @param rel4 the rel4 to set
-         */
-        public void setRel4(Relacion rel4) {
-            this.rel4 = rel4;
-        }
-
-        /**
-         * @return the cdu5
-         */
-        public CasoDeUso getCdu5() {
-            return cdu5;
-        }
-
-        /**
-         * @param cdu5 the cdu5 to set
-         */
-        public void setCdu5(CasoDeUso cdu5) {
-            this.cdu5 = cdu5;
-        }
+    /**
+     * @param imagenPath the imagenPath to set
+     */
+    public void setDiagramaImagen(Image diagramaImagen) {
+        this.diagramaImagen = diagramaImagen;
     }
 }

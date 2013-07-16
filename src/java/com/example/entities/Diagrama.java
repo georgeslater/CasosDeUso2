@@ -5,22 +5,20 @@
 package com.example.entities;
 
 import java.io.Serializable;
-import java.util.Collection;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -32,11 +30,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Diagrama.findAll", query = "SELECT d FROM Diagrama d"),
     @NamedQuery(name = "Diagrama.findById", query = "SELECT d FROM Diagrama d WHERE d.id = :id"),
-    @NamedQuery(name = "Diagrama.findByNombre", query = "SELECT d FROM Diagrama d WHERE d.nombre = :nombre"),
-    @NamedQuery(name = "Diagrama.findByUserid", query = "SELECT d FROM Diagrama d WHERE d.userid = :userid")})
+    @NamedQuery(name = "Diagrama.findByNombre", query = "SELECT d FROM Diagrama d WHERE d.nombre = :nombre")})
 public class Diagrama implements Serializable {
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "diagramaID")
-    private Collection<Fila> filaCollection;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,18 +43,9 @@ public class Diagrama implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "NOMBRE")
     private String nombre;
-    @Column(name = "USERID")
-    private Integer userid;
-    @OneToMany(mappedBy = "diagramid")
-    private Collection<CasoDeUso> casoDeUsoCollection;
-    @OneToMany(mappedBy = "diagramid")
-    private Collection<CasosDeUsoRelaciones> casosDeUsoRelacionesCollection;
-    @OneToMany(mappedBy = "diagramid")
-    private Collection<ActorCasoDeUso> actorCasoDeUsoCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "diagramID")
-    private Collection<Image> imageCollection;
-    @OneToMany(mappedBy = "diagramid")
-    private Collection<Actor> actorCollection;
+    @JoinColumn(name = "USERID", referencedColumnName = "IDUSER")
+    @ManyToOne(optional = false)
+    private UsuarioTable usuario;
 
     public Diagrama() {
     }
@@ -89,59 +75,6 @@ public class Diagrama implements Serializable {
         this.nombre = nombre;
     }
 
-    public Integer getUserid() {
-        return userid;
-    }
-
-    public void setUserid(Integer userid) {
-        this.userid = userid;
-    }
-
-    @XmlTransient
-    public Collection<CasoDeUso> getCasoDeUsoCollection() {
-        return casoDeUsoCollection;
-    }
-
-    public void setCasoDeUsoCollection(Collection<CasoDeUso> casoDeUsoCollection) {
-        this.casoDeUsoCollection = casoDeUsoCollection;
-    }
-
-    @XmlTransient
-    public Collection<CasosDeUsoRelaciones> getCasosDeUsoRelacionesCollection() {
-        return casosDeUsoRelacionesCollection;
-    }
-
-    public void setCasosDeUsoRelacionesCollection(Collection<CasosDeUsoRelaciones> casosDeUsoRelacionesCollection) {
-        this.casosDeUsoRelacionesCollection = casosDeUsoRelacionesCollection;
-    }
-
-    @XmlTransient
-    public Collection<ActorCasoDeUso> getActorCasoDeUsoCollection() {
-        return actorCasoDeUsoCollection;
-    }
-
-    public void setActorCasoDeUsoCollection(Collection<ActorCasoDeUso> actorCasoDeUsoCollection) {
-        this.actorCasoDeUsoCollection = actorCasoDeUsoCollection;
-    }
-
-    @XmlTransient
-    public Collection<Image> getImageCollection() {
-        return imageCollection;
-    }
-
-    public void setImageCollection(Collection<Image> imageCollection) {
-        this.imageCollection = imageCollection;
-    }
-
-    @XmlTransient
-    public Collection<Actor> getActorCollection() {
-        return actorCollection;
-    }
-
-    public void setActorCollection(Collection<Actor> actorCollection) {
-        this.actorCollection = actorCollection;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -167,13 +100,18 @@ public class Diagrama implements Serializable {
         return "com.example.entities.Diagrama[ id=" + id + " ]";
     }
 
-    @XmlTransient
-    public Collection<Fila> getFilaCollection() {
-        return filaCollection;
+    /**
+     * @return the usuario
+     */
+    public UsuarioTable getUsuario() {
+        return usuario;
     }
 
-    public void setFilaCollection(Collection<Fila> filaCollection) {
-        this.filaCollection = filaCollection;
+    /**
+     * @param usuario the usuario to set
+     */
+    public void setUsuario(UsuarioTable usuario) {
+        this.usuario = usuario;
     }
     
 }

@@ -52,6 +52,12 @@ function dibujar(objetos){
                     ctx.arc((j*offset)+100,(i*offset)+80,40,0,2*Math.PI);
                     ctx.closePath();
                     ctx.stroke();
+                    ctx.fillStyle = "black"; // font color to write the text with
+                    var font = "12px serif";
+                    ctx.font = font;
+                    var width = ctx.measureText(objeto.text).width;
+                    var height = ctx.measureText("w").width;
+                    ctx.fillText(objeto.text, ((j*offset)+100) - (width/2) ,((i*offset)+80) + (height/2));
                 }
             }
         }
@@ -113,6 +119,19 @@ function evaluarDialogsAgregar(){
         }
     }
 }
+    
+function guardarImagen(){
+
+    var canvas = document.getElementById("casosDeUsoCanvas");
+    var dataURL = canvas.toDataURL();
+    alert(dataURL);
+    if(dataURL != null && dataURL != undefined && dataURL != ''){
+
+        document.getElementById('casosForm:dataURL').value = dataURL;
+        guardarImagenCommand();
+    }        
+}
+
 
 
 

@@ -38,11 +38,24 @@ public class DiagramaFacade extends AbstractFacade<Diagrama> {
         if (resultados == null) {
             return null;
         }
-        else if (resultados.size() != 1){
-            return null;
-        }
         else {
             return resultados;
+        }
+    }
+    
+    public Diagrama obtenerDiagramaPorId(int diagId){
+        
+        Diagrama resultado = (Diagrama)em.createNamedQuery("Diagrama.findById")
+               .setParameter("id", diagId)
+                    .getSingleResult();
+        
+        if(resultado == null){
+            
+            return null;
+        
+        }else{
+            
+            return resultado;
         }
     }
 }

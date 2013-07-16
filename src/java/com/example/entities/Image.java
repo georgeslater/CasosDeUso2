@@ -31,26 +31,31 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Image.findAll", query = "SELECT i FROM Image i"),
     @NamedQuery(name = "Image.findById", query = "SELECT i FROM Image i WHERE i.id = :id"),
-    @NamedQuery(name = "Image.findByTitle", query = "SELECT i FROM Image i WHERE i.title = :title")})
+    @NamedQuery(name = "Image.findByTitle", query = "SELECT i FROM Image i WHERE i.title = :title"),
+    @NamedQuery(name = "Image.findByDiagram", query = "SELECT i FROM Image i WHERE i.diagramID = :diagramID"),
+    @NamedQuery(name = "Image.countByUser", query = "SELECT COUNT(i) FROM Image i WHERE i.usuario = :userid")})
 public class Image implements Serializable {
+    @Basic(optional = false)
+    @NotNull
+    @Size(max = 255)
+    @Column(name = "Path")
+    private String path;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "ID")
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Column(name = "Body")
-    private byte[] body;
     @Size(max = 255)
     @Column(name = "Title")
     private String title;
     @JoinColumn(name = "DiagramID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
     private Diagrama diagramID;
-
+    @JoinColumn(name = "UserID", referencedColumnName = "IDUSER")
+    @ManyToOne(optional = false)
+    private UsuarioTable usuario;
+    
     public Image() {
     }
 
@@ -58,9 +63,11 @@ public class Image implements Serializable {
         this.id = id;
     }
 
-    public Image(Integer id, byte[] body) {
-        this.id = id;
-        this.body = body;
+    public Image(UsuarioTable usuario, Diagrama diag, String titulo, String path) {
+        this.usuario = usuario;
+        this.diagramID = diag;
+        this.title = titulo;
+        this.path = path;
     }
 
     public Integer getId() {
@@ -69,14 +76,6 @@ public class Image implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public byte[] getBody() {
-        return body;
-    }
-
-    public void setBody(byte[] body) {
-        this.body = body;
     }
 
     public String getTitle() {
@@ -118,6 +117,28 @@ public class Image implements Serializable {
     @Override
     public String toString() {
         return "com.example.entities.Image[ id=" + id + " ]";
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    /**
+     * @return the usuario
+     */
+    public UsuarioTable getUsuario() {
+        return usuario;
+    }
+
+    /**
+     * @param usuario the usuario to set
+     */
+    public void setUsuario(UsuarioTable usuario) {
+        this.usuario = usuario;
     }
     
 }

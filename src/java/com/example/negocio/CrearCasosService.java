@@ -4,15 +4,22 @@ package com.example.negocio;
 import com.example.dao.ActorCasoDeUsoFacade;
 import com.example.dao.ActorFacade;
 import com.example.dao.CasoDeUsoFacade;
+import com.example.dao.DiagramaFacade;
 import com.example.dao.FilaFacade;
+import com.example.dao.ImageFacade;
 import com.example.dao.RelacionFacade;
 import com.example.dao.UsuarioTableFacade;
 import com.example.entities.Actor;
 import com.example.entities.ActorCasoDeUso;
 import com.example.entities.CasoDeUso;
+import com.example.entities.Diagrama;
 import com.example.entities.Fila;
+import com.example.entities.Image;
 import com.example.entities.UsuarioTable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.faces.context.FacesContext;
@@ -32,6 +39,10 @@ public class CrearCasosService {
     private FilaFacade filaFacade;
     @EJB
     private UsuarioTableFacade usuarioFacade;
+    @EJB
+    private ImageFacade imageFacade;
+    @EJB
+    private DiagramaFacade diagFacade;
     
     public UsuarioTable getUsuarioLogueado(){
                            
@@ -45,9 +56,149 @@ public class CrearCasosService {
         return getFilaFacade().obtenerFilasPorDiagramaID(diagramaID);
     }
     
+    public Diagrama obtenerDiagramaPorId(int diagId){
+        
+        return getDiagFacade().obtenerDiagramaPorId(diagId);
+    }
+    
     public List<Actor> obtenerActoresPorDiagramaID(int diagramaID){
         
         return getActorFacade().obtenerActoresPorDiagramaID(diagramaID);
+    }
+    
+    public Actor obtenerActorPorNombre(String nombre){
+        
+        return getActorFacade().findByName(nombre);
+    }
+    
+    public int getobtenerImagenesCountPorUsuarioID(UsuarioTable usuario){
+        
+        return getImageFacade().obtenerImagenesCountPorUsuarioID(usuario);
+    }
+    
+    public Image guardarNuevoImagen(Image viejoImagen, UsuarioTable usuario, Diagrama diagrama, String title, String relativeFilename){
+        
+        Image imagen;
+        
+        if(viejoImagen != null){
+            
+            imagen = viejoImagen;
+            imagen.setDiagramID(diagrama);
+            imagen.setPath(relativeFilename);
+            imagen.setTitle(title);
+            imagen.setUsuario(usuario);
+            getImageFacade().edit(imagen);
+        
+        }else{
+            
+            imagen = new Image(usuario, diagrama, title, relativeFilename);
+            getImageFacade().create(imagen);
+        }
+        
+        return imagen;
+    }
+    
+    public List<String> validar(List<Fila> filas){
+        
+        List<String> errores = new ArrayList<String>();
+
+
+        for(Fila f: filas){
+            
+            if(isFilaContieneMismoCasoDeUso(f)){
+                
+                errores.add("Una fila no puede tener un caso de uso repetido.");
+            }
+            
+            if(isCeldaVacioIncorrectamente(f)){
+                
+                errores.add("Cada fila tendria que ser una cadena continua, sin celdas vacias en el medio.");
+            }
+        }
+        
+        return errores;
+    }
+    
+    public void guardarFilas(List<Fila> filas, Diagrama diagrama, UsuarioTable usuario){
+        
+        Map<Integer, Boolean> viejasFilasIds = new HashMap<Integer, Boolean>();
+        Map<Integer, Fila> viejasFilaMap = new HashMap<Integer, Fila>();
+                
+        if(diagrama != null && diagrama.getId() != null){
+                        
+            List<Fila> viejasFilas = getFilaFacade().obtenerFilasPorDiagramaID(diagrama.getId());            
+            
+            for(Fila f: viejasFilas){
+                
+                viejasFilasIds.put(f.getId(), false);
+                viejasFilaMap.put(f.getId(), f);
+            }            
+        
+        }else{
+            
+            diagrama = new Diagrama();
+            diagrama.setUsuario(usuario);
+            getDiagFacade().create(diagrama);
+        }
+        
+        for(Fila f: filas){
+            
+            if(f.getActorID() != null && f.getActorID().getNombre() != null && f.getActorID().getId() == null){
+                
+                Actor a = new Actor();
+                a.setDiagramid(diagrama);
+                a.setNombre(f.getActorID().getNombre());
+                getActorFacade().create(a);
+            }
+            
+            //if(f.getCasoDeUso1ID())
+            
+            if(viejasFilasIds.keySet().contains(f.getId())){
+                
+                getFilaFacade().edit(f);
+                viejasFilasIds.put(f.getId(), true);
+            
+            }else{
+                
+                f.setDiagramaID(diagrama);
+                getFilaFacade().create(f);
+            }
+        }
+        
+        for(Integer i: viejasFilaMap.keySet()){
+            
+            if(!viejasFilasIds.get(i)){
+                
+                getFilaFacade().remove(viejasFilaMap.get(i));
+            }
+        }
+    }
+    
+    public Boolean isCeldaVacioIncorrectamente(Fila f){
+        
+        return((f.getActorID() == null && (f.getCasoDeUso1ID() != null || f.getCasoDeUso2ID() != null || f.getCasoDeUso3ID() != null || f.getCasoDeUso4ID() != null || f.getCasoDeUso5ID() != null || f.getRelacion1ID() != null || f.getRelacion2ID() != null || f.getRelacion3ID() != null || f.getRelacion4ID() != null))
+                || (f.getCasoDeUso1ID() == null && (f.getCasoDeUso2ID() != null || f.getCasoDeUso3ID() != null || f.getCasoDeUso3ID() != null || f.getCasoDeUso4ID() != null || f.getCasoDeUso5ID() != null || f.getRelacion1ID() != null || f.getRelacion2ID() != null || f.getRelacion3ID() != null || f.getRelacion4ID() != null))
+                || (f.getCasoDeUso2ID() == null && (f.getCasoDeUso3ID() != null || f.getCasoDeUso4ID() != null || f.getCasoDeUso5ID() != null || f.getRelacion2ID() != null || f.getRelacion3ID() != null || f.getRelacion4ID() != null))
+                || (f.getCasoDeUso3ID() == null && (f.getCasoDeUso4ID() != null || f.getCasoDeUso5ID() != null || f.getRelacion3ID() != null || f.getRelacion4ID() != null))
+                || (f.getCasoDeUso4ID() == null && (f.getCasoDeUso5ID() != null || f.getRelacion4ID() != null))
+                || (f.getRelacion1ID() == null && (f.getCasoDeUso2ID() != null || f.getCasoDeUso3ID() != null || f.getCasoDeUso4ID() != null || f.getCasoDeUso5ID() != null || f.getRelacion2ID() != null || f.getRelacion3ID() != null || f.getRelacion4ID() != null))
+                || (f.getRelacion2ID() == null && (f.getCasoDeUso3ID() != null || f.getCasoDeUso4ID() != null || f.getCasoDeUso5ID() != null || f.getRelacion3ID() != null || f.getRelacion4ID() != null))
+                || (f.getRelacion3ID() == null && (f.getCasoDeUso4ID() != null || f.getCasoDeUso5ID() != null || f.getRelacion4ID() != null))
+                || (f.getRelacion4ID() == null && (f.getCasoDeUso5ID() != null)));           
+    }
+    
+    public Boolean isFilaContieneMismoCasoDeUso(Fila f){
+        
+        return ((f.getCasoDeUso1ID() != null && f.getCasoDeUso2ID() != null) && f.getCasoDeUso1ID().getText().equals(f.getCasoDeUso2ID().getText())) ||
+               ((f.getCasoDeUso1ID() != null && f.getCasoDeUso3ID() != null) && f.getCasoDeUso1ID().getText().equals(f.getCasoDeUso3ID().getText())) ||
+               ((f.getCasoDeUso1ID() != null && f.getCasoDeUso4ID() != null) && f.getCasoDeUso1ID().getText().equals(f.getCasoDeUso4ID().getText())) ||
+               ((f.getCasoDeUso1ID() != null && f.getCasoDeUso5ID() != null) && f.getCasoDeUso1ID().getText().equals(f.getCasoDeUso5ID().getText())) ||
+               ((f.getCasoDeUso2ID() != null && f.getCasoDeUso3ID() != null) && f.getCasoDeUso2ID().getText().equals(f.getCasoDeUso3ID().getText())) ||
+               ((f.getCasoDeUso2ID() != null && f.getCasoDeUso4ID() != null) && f.getCasoDeUso2ID().getText().equals(f.getCasoDeUso4ID().getText())) ||
+               ((f.getCasoDeUso2ID() != null && f.getCasoDeUso5ID() != null) && f.getCasoDeUso2ID().getText().equals(f.getCasoDeUso5ID().getText())) ||
+               ((f.getCasoDeUso3ID() != null && f.getCasoDeUso4ID() != null) && f.getCasoDeUso3ID().getText().equals(f.getCasoDeUso4ID().getText())) ||
+               ((f.getCasoDeUso3ID() != null && f.getCasoDeUso5ID() != null) && f.getCasoDeUso3ID().getText().equals(f.getCasoDeUso5ID().getText())) ||
+               ((f.getCasoDeUso4ID() != null && f.getCasoDeUso5ID() != null) && f.getCasoDeUso4ID().getText().equals(f.getCasoDeUso5ID().getText())); 
     }
     
     public List<CasoDeUso> obtenerCasosDeUsoPorDiagramaID(int diagramaID){
@@ -140,5 +291,33 @@ public class CrearCasosService {
      */
     public void setFilaFacade(FilaFacade filaFacade) {
         this.filaFacade = filaFacade;
+    }
+
+    /**
+     * @return the imageFacade
+     */
+    public ImageFacade getImageFacade() {
+        return imageFacade;
+    }
+
+    /**
+     * @param imageFacade the imageFacade to set
+     */
+    public void setImageFacade(ImageFacade imageFacade) {
+        this.imageFacade = imageFacade;
+    }
+
+    /**
+     * @return the diagFacade
+     */
+    public DiagramaFacade getDiagFacade() {
+        return diagFacade;
+    }
+
+    /**
+     * @param diagFacade the diagFacade to set
+     */
+    public void setDiagFacade(DiagramaFacade diagFacade) {
+        this.diagFacade = diagFacade;
     }
 }

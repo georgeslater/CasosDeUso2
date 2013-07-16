@@ -1,0 +1,18 @@
+/* 
+    Document   : login
+    Created on : 09-jul-2013, 20:07:56
+    Author     : George
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+root { 
+    display: block;
+}
+
+.ui-button{
+
+    font-size:70% !important;
+    margin-top:15px;
+}
+

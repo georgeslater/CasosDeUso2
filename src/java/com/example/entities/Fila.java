@@ -6,6 +6,7 @@ package com.example.entities;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -64,7 +65,7 @@ public class Fila implements Serializable {
     @ManyToOne
     private Relacion relacion1ID;
     @JoinColumn(name = "ActorID", referencedColumnName = "ID")
-    @ManyToOne
+    @ManyToOne(cascade= CascadeType.ALL)
     private Actor actorID;
     @JoinColumn(name = "CasoDeUso1ID", referencedColumnName = "ID")
     @ManyToOne

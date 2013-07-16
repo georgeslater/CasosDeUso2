@@ -1,14 +1,20 @@
 package com.example.negocio;
 
+import com.example.dao.FilaFacade;
+import com.example.dao.ImageFacade;
 import com.example.entities.Actor;
 import com.example.entities.ActorCasoDeUso;
 import com.example.entities.CasoDeUso;
 import com.example.entities.CasosDeUsoRelaciones;
+import com.example.entities.Diagrama;
+import com.example.entities.Fila;
+import com.example.entities.Image;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 @Stateless
@@ -17,16 +23,26 @@ public class DibujarService {
     private Object[][] diagramTabla;
     private HashMap<Integer, Posiciones> posicionesActores;
     private HashMap<Integer, Posiciones> posicionesCasosDeUso;
-
+    
+    @EJB
+    private ImageFacade imageFacade;
+    @EJB
+    private FilaFacade filaFacade;
+    
     public DibujarService() {
-
-        diagramTabla = new Object[50][8];
+       
         posicionesActores = new HashMap<Integer, Posiciones>();
         posicionesCasosDeUso = new HashMap<Integer, Posiciones>();
     }
-
+    
+    public Image obtenerImagenPorDiagramaId(Diagrama diagrama){
+        
+        return getImageFacade().obtenerImagenPorDiagramaId(diagrama);
+    }
+    
     public Object[][] generarDiagrama(List<Actor> actores, List<ActorCasoDeUso> actCdus, List<CasoDeUso> cdus, List<CasosDeUsoRelaciones> cduRel) {
-
+        
+        diagramTabla = new Object[50][8];
         HashMap<Integer, ArrayList<CasoDeUso>> actoresCasosDeUso = new HashMap<Integer, ArrayList<CasoDeUso>>();
         HashMap<Integer, ArrayList<CasoDeUso>> casoDeUsoRelaciones = new HashMap<Integer, ArrayList<CasoDeUso>>();
         Set<Integer> cduIdsEnDiagrama = new HashSet<Integer>();
@@ -67,7 +83,7 @@ public class DibujarService {
 
             ArrayList<CasoDeUso> cduEnlazadosAActor = actoresCasosDeUso.get(a.getId());
 
-            if (cduEnlazadosAActor.size() > 0) {
+            if (cduEnlazadosAActor != null && cduEnlazadosAActor.size() > 0) {
 
                 for (CasoDeUso cdu : cduEnlazadosAActor) {
 
@@ -134,6 +150,20 @@ public class DibujarService {
      */
     public void setPosicionesCasosDeUso(HashMap<Integer, Posiciones> posicionesCasosDeUso) {
         this.posicionesCasosDeUso = posicionesCasosDeUso;
+    }
+
+    /**
+     * @return the imageFacade
+     */
+    public ImageFacade getImageFacade() {
+        return imageFacade;
+    }
+
+    /**
+     * @param imageFacade the imageFacade to set
+     */
+    public void setImageFacade(ImageFacade imageFacade) {
+        this.imageFacade = imageFacade;
     }
 
     public class Posiciones {
