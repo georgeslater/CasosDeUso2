@@ -27,11 +27,15 @@ function dibujar(objetos){
                  
     var ctx=canvas.getContext("2d");
     ctx.beginPath();
-                
+    
+    var counter = 0;
+    
     //alert(casosDeUsoJSON.length);
-                 
+    
+    var actores = new Array();
+    
     for(var i = 0; i < casosDeUsoJSON.length; i++){
-                     
+        
         var cdu = casosDeUsoJSON[i];
         
         for(var j = 0; j < cdu.length; j++){
@@ -39,14 +43,31 @@ function dibujar(objetos){
             if(cdu[j] != null){
                 
                 var objeto = cdu[j];
-                
                 if(j == 0){
+                    if($.inArray(objeto.nombre, actores) === -1){
+                        counter = 0;
+                        dibujarActor(j, i, objeto.nombre);
+                        actores.push(objeto.nombre);
+                        //alert("pushed "+objeto.nombre);
+                    }else{
+                        counter++;
+                    }                    
+                }else if(j == 1){
                     
-                    //es un actor
-                    dibujarActor(j, i, objeto.nombre);
+                    //es una flecha actor -> caso de uso
+                    var h = ((i-counter) * 200)+100;
+                    var w = (j * 200);
+                    var moveToX = w/2;
+                    var moveToY = (h/2)+30;
+                    ctx.moveTo(moveToX, moveToY);
+                    //alert("moved to "+moveToX+", "+moveToY);
+                    var lineToX = objeto[0].y*offset+30;
+                    var lineToY = objeto[0].x*offset+80
+                    ctx.lineTo(lineToX, lineToY);
+                    //alert("Did a line to "+lineToX+", "+lineToY);
+                    ctx.stroke();
                     
                 }else{
-                    
                     //es un caso de uso
                     ctx.beginPath();
                     ctx.arc((j*offset)+100,(i*offset)+80,40,0,2*Math.PI);
@@ -124,7 +145,7 @@ function guardarImagen(){
 
     var canvas = document.getElementById("casosDeUsoCanvas");
     var dataURL = canvas.toDataURL();
-    alert(dataURL);
+    //alert(dataURL);
     if(dataURL != null && dataURL != undefined && dataURL != ''){
 
         document.getElementById('casosForm:dataURL').value = dataURL;

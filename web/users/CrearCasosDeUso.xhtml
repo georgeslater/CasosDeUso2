@@ -42,10 +42,18 @@
                     </script>
                 </p:outputPanel>
                 <div id="casoRowTableDiv">
-                    <p:panel id="myPanel">
-                        <p:commandButton value="Editar" onclick="evaluarDialogsAgregar();"></p:commandButton>
-                        <p:commandButton value="Eliminar" update="casoRowTable" action="#{crearCasosBean.evaluarDialogsEliminar}"/>
-                        <p:commandButton value="Validar Filas" update="msgs" action="#{crearCasosBean.guardarInformacionFilas}"></p:commandButton><br/><br/>
+                    <p:panel id="myPanel">                        
+                        <div>
+                        <p:inplace id="ajaxInplace" editor="true">  
+                            <p:inputText value="#{nombreDiagrama}"  
+                                         label="text" styleClass="diagramaNombreTexto"/>  
+                        </p:inplace>
+                        </div>
+                        <div>
+                            <p:commandButton value="Editar" onclick="evaluarDialogsAgregar();"></p:commandButton>
+                            <p:commandButton value="Eliminar" update="casoRowTable" action="#{crearCasosBean.evaluarDialogsEliminar}"/>
+                            <p:commandButton value="Validar Filas" ajax="false" update="msgs" action="#{crearCasosBean.guardarInformacionFilas}"></p:commandButton><br/><br/>
+                        </div>
                         <p:dataTable id="casoRowTable" rowIndexVar="row" styleClass="casoRowTable" var="cduRow" value="#{crearCasosBean.filas}">
                             <p:column>
                                 <p:commandLink value="Borrar" ajax="false" update="casoRowTable" action="#{crearCasosBean.borrarFila}">
@@ -146,11 +154,13 @@
                     <p:remoteCommand name="remoteChangeCommand" process="xPosition yPosition"/>
                     <p:remoteCommand name="guardarImagenCommand" process="dataURL"/>
                 </div>                
-                 <p:panel id="canvasDiv" styleClass="canvasPanel">                    
+                 <p:panel id="canvasDiv">                    
                     <p:outputPanel rendered="#{crearCasosBean.mostrarImagenEstatico}">
                         <p:graphicImage value="http://localhost:8080/CasosDeUso5#{crearCasosBean.diagramaImagen.path}.png"/>
                     </p:outputPanel>
-                    <canvas id="casosDeUsoCanvas"/>
+                     <p:outputPanel styleClass="canvasPanel">
+                        <canvas id="casosDeUsoCanvas"/>
+                     </p:outputPanel>
                 </p:panel>
                 <div id="popups">
                     <p:dialog id="actorDialog" header="Editar Actor" widgetVar="dlgActores">
@@ -167,7 +177,7 @@
                             <h:inputText value="#{crearCasosBean.nombreNuevoActor}"/>
                         </div>
                         <div>
-                            <p:commandButton value="Editar" update="myPanel actorDialog casoRowTable msgs" action="#{crearCasosBean.agregarActor}" oncomplete="dlgActores.hide();"/>
+                            <p:commandButton ajax="false" value="Editar" update="myPanel actorDialog casoRowTable msgs" action="#{crearCasosBean.agregarActor}" oncomplete="dlgActores.hide();"/>
                         </div>
                     </p:dialog> 
                     <p:dialog id="cduDialog" header="Editar Caso De Uso" widgetVar="dlgCdus">
@@ -183,7 +193,7 @@
                             <h:inputText value="#{crearCasosBean.nombreNuevoCdu}"/>
                         </div>
                         <div>
-                            <p:commandButton value="Editar" update="myPanel" action="#{crearCasosBean.agregarCdu}" oncomplete="dlgCdus.hide();"/>
+                            <p:commandButton ajax="false" value="Editar" update="myPanel" action="#{crearCasosBean.agregarCdu}" oncomplete="dlgCdus.hide();"/>
                         </div>
                     </p:dialog>
                     <p:dialog id="relacionDialog" header="Editar Relacion" widgetVar="dlgRels">

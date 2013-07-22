@@ -30,7 +30,8 @@ public class ActorConverter implements Converter {
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
         
-        return getEjbCasos().obtenerActorPorNombre(value);
+        Actor a = getEjbCasos().obtenerActorPorNombre(value);        
+        return a;
     }
 
     @Override

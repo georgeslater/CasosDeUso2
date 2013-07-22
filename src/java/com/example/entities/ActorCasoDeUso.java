@@ -6,6 +6,7 @@ package com.example.entities;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -40,10 +41,10 @@ public class ActorCasoDeUso implements Serializable {
     @ManyToOne
     private Diagrama diagramid;
     @JoinColumn(name = "CASODEUSOID", referencedColumnName = "ID")
-    @ManyToOne
+    @ManyToOne(cascade= CascadeType.ALL)
     private CasoDeUso casodeusoid;
     @JoinColumn(name = "ACTORID", referencedColumnName = "ID")
-    @ManyToOne
+    @ManyToOne(cascade= CascadeType.ALL)
     private Actor actorid;
 
     public ActorCasoDeUso() {

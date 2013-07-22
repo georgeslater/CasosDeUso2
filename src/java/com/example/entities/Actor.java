@@ -50,7 +50,7 @@ public class Actor implements Serializable {
     @Expose
     @Column(name = "NOMBRE")
     private String nombre;
-    @OneToMany(mappedBy = "actorID", cascade= CascadeType.ALL)
+    @OneToMany(mappedBy = "actorID")
     private Collection<Fila> filaCollection;
     @OneToMany(mappedBy = "actorid")
     private Collection<ActorCasoDeUso> actorCasoDeUsoCollection;

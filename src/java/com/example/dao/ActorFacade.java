@@ -34,10 +34,10 @@ public class ActorFacade extends AbstractFacade<Actor> {
                 .setParameter("nombre", nombre)
                     .getResultList();
         
-        if (resultados == null) {
+        if (resultados == null || resultados.isEmpty()) {
             return null;
         }
-        else {
+        else{
             return resultados.get(0);
         }
     }

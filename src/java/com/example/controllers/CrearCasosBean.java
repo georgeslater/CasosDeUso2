@@ -26,8 +26,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.String;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.Conversation;
@@ -58,6 +61,7 @@ public class CrearCasosBean implements Serializable {
     private List<Fila> filas;
     private String diagramaID;
     private Diagrama diagramaActual;
+    private String nombreDiagrama;
     private UsuarioTable usuarioLogueado;
     private Actor actorActual;
     private String nombreNuevoActor;
@@ -255,9 +259,9 @@ public class CrearCasosBean implements Serializable {
         Actor act = null;
 
         if (actorActual != null) {
-
-            act = actorActual;
-
+            
+                act = actorActual;
+          
         } else if (nombreNuevoActor != null) {
 
             //TODO: Fijamos si no existe en la base
@@ -353,6 +357,12 @@ public class CrearCasosBean implements Serializable {
         List<String> errorMsgs = getCrearCasosService().validar(filas);
         
         if(errorMsgs.isEmpty()){
+           
+            if(diagramaActual == null){
+                
+                diagramaActual = getCrearCasosService().guardarDiagrama(usuarioLogueado);
+                
+            }
             
             getCrearCasosService().guardarFilas(filas, diagramaActual, usuarioLogueado);
         
@@ -771,5 +781,27 @@ public class CrearCasosBean implements Serializable {
      */
     public void setDiagramaImagen(Image diagramaImagen) {
         this.diagramaImagen = diagramaImagen;
+    }
+
+    /**
+     * @return the nombreDiagrama
+     */
+    public String getNombreDiagrama() {
+        
+        if(diagramaActual != null && diagramaActual.getNombre() != null){
+            
+            return diagramaActual.getNombre();
+        
+        }else{
+            
+            return "Nuevo Diagrama";
+        }
+    }
+
+    /**
+     * @param nombreDiagrama the nombreDiagrama to set
+     */
+    public void setNombreDiagrama(String nombreDiagrama) {
+        this.nombreDiagrama = nombreDiagrama;
     }
 }

@@ -41,4 +41,19 @@ public class CasoDeUsoFacade extends AbstractFacade<CasoDeUso> {
             return resultados;
         }
     }
+    
+    public CasoDeUso findByNameAndDiagrama(int diagramaId, String nombre){
+        
+        List<CasoDeUso> resultados = em.createNamedQuery("CasoDeUso.findByNameAndDiagramaId")
+                .setParameter("diagramaid", diagramaId)
+                    .setParameter("text", nombre)
+                    .getResultList();
+        
+        if (resultados == null || resultados.isEmpty()) {
+            return null;
+        }
+        else{
+            return resultados.get(0);
+        }
+    }
 }

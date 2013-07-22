@@ -7,8 +7,8 @@ import com.example.entities.ActorCasoDeUso;
 import com.example.entities.CasoDeUso;
 import com.example.entities.CasosDeUsoRelaciones;
 import com.example.entities.Diagrama;
-import com.example.entities.Fila;
 import com.example.entities.Image;
+import com.google.gson.annotations.Expose;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,25 +23,24 @@ public class DibujarService {
     private Object[][] diagramTabla;
     private HashMap<Integer, Posiciones> posicionesActores;
     private HashMap<Integer, Posiciones> posicionesCasosDeUso;
-    
     @EJB
     private ImageFacade imageFacade;
     @EJB
     private FilaFacade filaFacade;
-    
+
     public DibujarService() {
-       
+
         posicionesActores = new HashMap<Integer, Posiciones>();
         posicionesCasosDeUso = new HashMap<Integer, Posiciones>();
     }
-    
-    public Image obtenerImagenPorDiagramaId(Diagrama diagrama){
-        
+
+    public Image obtenerImagenPorDiagramaId(Diagrama diagrama) {
+
         return getImageFacade().obtenerImagenPorDiagramaId(diagrama);
     }
-    
+
     public Object[][] generarDiagrama(List<Actor> actores, List<ActorCasoDeUso> actCdus, List<CasoDeUso> cdus, List<CasosDeUsoRelaciones> cduRel) {
-        
+
         diagramTabla = new Object[50][8];
         HashMap<Integer, ArrayList<CasoDeUso>> actoresCasosDeUso = new HashMap<Integer, ArrayList<CasoDeUso>>();
         HashMap<Integer, ArrayList<CasoDeUso>> casoDeUsoRelaciones = new HashMap<Integer, ArrayList<CasoDeUso>>();
@@ -56,9 +55,9 @@ public class DibujarService {
 
             actoresCasosDeUso.get(actCdu.getActorid().getId()).add(actCdu.getCasodeusoid());
         }
-        
-        if(cduRel != null && cduRel.size() > 0){
-            
+
+        if (cduRel != null && cduRel.size() > 0) {
+
             for (CasosDeUsoRelaciones cduR : cduRel) {
 
                 if (!casoDeUsoRelaciones.containsKey(cduR.getCasodeuso1id().getId())) {
@@ -91,20 +90,37 @@ public class DibujarService {
                     if (!cduIdsEnDiagrama.contains(cdu.getId())) {
 
                         for (int i = posicionesActores.get(a.getId()).x; i < 100; i++) {
-                            
-                            if(getDiagramTabla()[i][1] == null){
-                                
-                                getDiagramTabla()[i][1] = cdu;
+
+                            if (getDiagramTabla()[i][2] == null) {
+
+                                getDiagramTabla()[i][2] = cdu;
                                 cduIdsEnDiagrama.add(cdu.getId());
-                                posicionesCasosDeUso.put(cdu.getId(), new Posiciones(i, 1));
+                                posicionesCasosDeUso.put(cdu.getId(), new Posiciones(i, 2));
                                 break;
                             }
                         }
                     }
-                }                
+                }
             }
         }
 
+        //posicionar actor/caso de uso flechas
+        for (Integer actorId : actoresCasosDeUso.keySet()) {
+
+            if (actoresCasosDeUso.get(actorId) != null && actoresCasosDeUso.get(actorId).size() > 0) {
+
+                List<Posiciones> posiciones = new ArrayList<Posiciones>();
+
+                for (CasoDeUso cdu : actoresCasosDeUso.get(actorId)) {
+
+                    posiciones.add(posicionesCasosDeUso.get(cdu.getId()));
+                }
+
+                if (posicionesActores != null && posicionesActores.get(actorId) != null) {
+                    getDiagramTabla()[posicionesActores.get(actorId).getX()][1] = posiciones;
+                }
+            }
+        }
 
 
         return diagramTabla;
@@ -165,10 +181,14 @@ public class DibujarService {
     public void setImageFacade(ImageFacade imageFacade) {
         this.imageFacade = imageFacade;
     }
-
-    public class Posiciones {
-
+    
+    //Esta clase tiene que ser estatica para que GSON lo pueda deserializar
+    //https://sites.google.com/site/gson/gson-user-guide#TOC-Nested-Classes-including-Inner-Classes-
+    public static class Posiciones {
+        
+        @Expose
         private int x;
+        @Expose
         private int y;
 
         public Posiciones(int x, int y) {

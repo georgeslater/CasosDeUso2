@@ -35,7 +35,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "CasoDeUso.findAll", query = "SELECT c FROM CasoDeUso c"),
     @NamedQuery(name = "CasoDeUso.findById", query = "SELECT c FROM CasoDeUso c WHERE c.id = :id"),
     @NamedQuery(name = "CasoDeUso.findByText", query = "SELECT c FROM CasoDeUso c WHERE c.text = :text"),
-    @NamedQuery(name = "CasoDeUso.findByDiagramaId", query = "SELECT c FROM CasoDeUso c WHERE c.diagramid.id = :diagramaid")})
+    @NamedQuery(name = "CasoDeUso.findByDiagramaId", query = "SELECT c FROM CasoDeUso c WHERE c.diagramid.id = :diagramaid"),
+    @NamedQuery(name = "CasoDeUso.findByNameAndDiagramaId", query = "SELECT c FROM CasoDeUso c WHERE c.diagramid.id = :diagramaid AND c.text = :text")})
 public class CasoDeUso implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -58,13 +59,13 @@ public class CasoDeUso implements Serializable {
     private Collection<Fila> filaCollection2;
     @OneToMany(mappedBy = "casoDeUso2ID")
     private Collection<Fila> filaCollection3;
-    @OneToMany(mappedBy = "casoDeUso1ID", cascade= CascadeType.ALL)
+    @OneToMany(mappedBy = "casoDeUso1ID")
     private Collection<Fila> filaCollection4;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "casodeuso2id")
     private Collection<CasosDeUsoRelaciones> casosDeUsoRelacionesCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "casodeuso1id")
     private Collection<CasosDeUsoRelaciones> casosDeUsoRelacionesCollection1;
-    @OneToMany(mappedBy = "casodeusoid")
+    @OneToMany(mappedBy = "casodeusoid", cascade= CascadeType.ALL)
     private Collection<ActorCasoDeUso> actorCasoDeUsoCollection;
 
     public CasoDeUso() {
