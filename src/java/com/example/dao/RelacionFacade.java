@@ -7,6 +7,7 @@ package com.example.dao;
 import com.example.entities.Relacion;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
 /**
@@ -27,4 +28,19 @@ public class RelacionFacade extends AbstractFacade<Relacion> {
         super(Relacion.class);
     }
     
+    public Relacion obtenerRelacionPorNombre(String nombre){
+        
+        try{
+        
+            Relacion resultado = (Relacion)em.createNamedQuery("Relacion.findByNombre")
+                   .setParameter("nombre", nombre)
+                        .getSingleResult();
+
+            return resultado;
+        
+        }catch(NoResultException e){
+            
+            return null;       
+        }
+    }
 }

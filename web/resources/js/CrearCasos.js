@@ -19,20 +19,28 @@ $(document).on('click', '.casoRowTable input[type=checkbox]', function(){
 
 function dibujar(objetos){
     
+    diagramaDialog.show();
+
     var canvas = document.getElementById("casosDeUsoCanvas");
     canvas.width = 2000;
-    canvas.height = 2000;
+    canvas.height = 5000;
     var casosDeUsoJSON = objetos;
     var offset = 100;
-                 
+        
+    if (typeof(G_vmlCanvasManager) != 'undefined'){
+        canvas = G_vmlCanvasManager.initElement(canvas);
+    }
+       
     var ctx=canvas.getContext("2d");
     ctx.beginPath();
     
-    var counter = 0;
+    var counterAct = 0;
+    var counterCdu = 0;
     
     //alert(casosDeUsoJSON.length);
     
     var actores = new Array();
+    var cdus = new Array();
     
     for(var i = 0; i < casosDeUsoJSON.length; i++){
         
@@ -45,46 +53,80 @@ function dibujar(objetos){
                 var objeto = cdu[j];
                 if(j == 0){
                     if($.inArray(objeto.nombre, actores) === -1){
-                        counter = 0;
+                        counterAct = 0;
                         dibujarActor(j, i, objeto.nombre);
                         actores.push(objeto.nombre);
                         //alert("pushed "+objeto.nombre);
                     }else{
-                        counter++;
+                        counterAct++;
                     }                    
                 }else if(j == 1){
                     
                     //es una flecha actor -> caso de uso
-                    var h = ((i-counter) * 200)+100;
+                    var h = ((i-counterAct) * 200)+100;
                     var w = (j * 200);
                     var moveToX = w/2;
                     var moveToY = (h/2)+30;
                     ctx.moveTo(moveToX, moveToY);
                     //alert("moved to "+moveToX+", "+moveToY);
-                    var lineToX = objeto[0].y*offset+30;
-                    var lineToY = objeto[0].x*offset+80
+                    var lineToX = objeto.y*offset+30;
+                    var lineToY = objeto.x*offset+80
                     ctx.lineTo(lineToX, lineToY);
                     //alert("Did a line to "+lineToX+", "+lineToY);
                     ctx.stroke();
                     
-                }else{
+                }else if(j%2==0){
                     //es un caso de uso
-                    ctx.beginPath();
-                    ctx.arc((j*offset)+100,(i*offset)+80,40,0,2*Math.PI);
-                    ctx.closePath();
+                    if($.inArray(objeto.text, cdus) === -1){
+                        counterCdu = 0;
+                        dibujarCdu(j, i, objeto.text);
+                        cdus.push(objeto.text);
+                        alert("pushed "+objeto.text);
+                    }else{
+                        counterCdu++;
+                        alert('increased counter');
+                    }
+                    
+                
+                }else if(j%2==1){
+                    
+                    //es una flecha caso de uso - caso de uso
+                    var h = ((i-counterCdu) * 200)+100;
+                    var w = ((j * 200) + 100);
+                    var moveToX = w/2;
+                    var moveToY = (h/2)+30;
+ 
+                    var lineToX = objeto.y*offset+50;
+                    var lineToY = objeto.x*offset+80;
+ 
+                    if(objeto.relacion != undefined && objeto.relacion != null && objeto.relacion.toUpperCase() == 'INCLUDES'){
+                        
+                        var moveToXTemp = moveToX;
+                        var moveToYTemp = moveToY;
+                        var lineToXTemp = lineToX;
+                        var lineToYTemp = lineToY;
+                        moveToY = lineToYTemp;
+                        moveToX = lineToXTemp;
+                        lineToX = moveToXTemp;
+                        lineToY = moveToYTemp;
+                    }
+                    
+                    ctx.moveTo(moveToX, moveToY);
+                    //alert("moved to "+moveToX+", "+moveToY);
+                    
+                    ctx.lineTo(lineToX, lineToY);
+                    var angle = Math.atan2(lineToY-moveToY,lineToX-moveToX);
+                    //flecha begin
+                    ctx.lineTo(lineToX-10*Math.cos(angle-Math.PI/6),lineToY-10*Math.sin(angle-Math.PI/6));
+                    ctx.moveTo(lineToX, lineToY);
+                    ctx.lineTo(lineToX-10*Math.cos(angle+Math.PI/6),lineToY-10*Math.sin(angle+Math.PI/6));
+                    //flecha end
                     ctx.stroke();
-                    ctx.fillStyle = "black"; // font color to write the text with
-                    var font = "12px serif";
-                    ctx.font = font;
-                    var width = ctx.measureText(objeto.text).width;
-                    var height = ctx.measureText("w").width;
-                    ctx.fillText(objeto.text, ((j*offset)+100) - (width/2) ,((i*offset)+80) + (height/2));
+                    
                 }
             }
         }
     } 
-    
-    $('.canvasPanel').css('visibility', 'visible');
 }
 
 function dibujarActor(x, y, texto){
@@ -118,6 +160,22 @@ function dibujarActor(x, y, texto){
     ctx.closePath();
     ctx.textBaseline = "bottom";
     ctx.fillText(texto, (w/2)-(tamanioTexto * 1.6), (h/2)+70);
+}
+
+function dibujarCdu(x, y, texto){
+    
+    var canvas = document.getElementById("casosDeUsoCanvas");
+    var ctx=canvas.getContext("2d");
+    ctx.beginPath();
+    ctx.arc((x*100)+100,(y*100)+80,40,0,2*Math.PI);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.fillStyle = "black"; // font color to write the text with
+    var font = "12px serif";
+    ctx.font = font;
+    var width = ctx.measureText(texto).width;
+    var height = ctx.measureText("w").width;
+    ctx.fillText(texto, ((x*100)+100) - (width/2) ,((y*100)+80) + (height/2));
 }
 
 function evaluarDialogsAgregar(){

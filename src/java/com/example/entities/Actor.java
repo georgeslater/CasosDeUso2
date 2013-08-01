@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Actor.findAll", query = "SELECT a FROM Actor a"),
     @NamedQuery(name = "Actor.findById", query = "SELECT a FROM Actor a WHERE a.id = :id"),
+    @NamedQuery(name = "Actor.findByNombreYDiagrama", query = "SELECT a FROM Actor a WHERE a.nombre = :nombre AND a.diagramid.id = :diagramaid"),
     @NamedQuery(name = "Actor.findByNombre", query = "SELECT a FROM Actor a WHERE a.nombre = :nombre"),
     @NamedQuery(name = "Actor.findByDiagramaId", query = "SELECT a FROM Actor a WHERE a.diagramid.id = :diagramaid")})
 public class Actor implements Serializable {

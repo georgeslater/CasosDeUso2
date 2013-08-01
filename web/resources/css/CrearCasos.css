@@ -27,12 +27,42 @@
 }
 
 .canvasPanel{
-    
+
     visibility: hidden;
 }
 
 .diagramaNombreTexto{
-    
+
     font-size: large;
+}
+
+.canvasPopup{
+    background-color: white;
+    border-width: 2px;
+    border-style: solid;
+    z-index: 9999;
+    left: 50%;
+    padding:10px;
+    position: absolute;
+    /* These are the 3 css properties you will need to change so the popup
+    displays in the center of the screen. First set the width. Then set
+    margin-left to negative half of what the width is. You can add
+    the height property for a fixed size pop up if you want.*/
+    width: 500px;
+    margin-left: -250px;
+}
+
+.popupBackground{
+    background-color:black;
+    opacity: 0.90;
+    filter: alpha(opacity = 90);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 9998;
+}
+
+.ui-helper-clearfix{
+    display:block !important;
 }
 

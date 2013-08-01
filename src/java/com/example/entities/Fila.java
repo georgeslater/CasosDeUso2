@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Fila.findByDiagram", query = "SELECT f FROM Fila f WHERE f.diagramaID.id = :diagramaID")})
 public class Fila implements Serializable {
     @JoinColumn(name = "DiagramaID", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Diagrama diagramaID;
     private static final long serialVersionUID = 1L;
     @Id

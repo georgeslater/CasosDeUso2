@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>           
+        <link href='http://fonts.googleapis.com/css?family=EB+Garamond' rel='stylesheet' type='text/css'></link>
+        <ui:insert name="styles"></ui:insert>
+        <h:outputStylesheet name="css/login.css"/>
+        <ui:insert name="scripts"></ui:insert>
+        <h:outputScript name="js/template.js"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title><ui:insert name="titulo">titulo</ui:insert></title>       
+    </h:head>
+    <h:body>
+        <p:layout fullPage="true" >
+            <p:layoutUnit position="north" size="220" >
+                <ui:insert name="encabezado">titulo</ui:insert>
+                <h:form>
+                    <p:menubar id="elMenuBar">  
+                        <p:menuitem value="Home" url="http://localhost:8080/CasosDeUso5/welcome.xhtml" icon="ui-icon-home" />  
+                        <p:menuitem value="Mis Diagramas" url="http://localhost:8080/CasosDeUso5/users/MisDiagramas.xhtml" icon="ui-icon-star" />  
+                        <p:menuitem value="Ayuda" url="http://es.wikipedia.org/wiki/Diagrama_de_casos_de_uso" icon="ui-icon-info" />  
+                        <p:menuitem value="Contacto" url="http://es.wikipedia.org/wiki/Diagrama_de_casos_de_uso" icon="ui-icon-person" />      
+                        <p:menuitem styleClass="logoutBtn" action="#{loginBean.logout}" value="Logout" icon="ui-icon-extlink"/>  
+                        <p:menuitem styleClass="logoutBtn" value="Bienvenido, #{request.remoteUser}!" />
+                    </p:menubar>
+                </h:form>
+            </p:layoutUnit>
+            <p:layoutUnit position="center" >
+                <ui:insert name="body">contenido</ui:insert>
+            </p:layoutUnit>
+        </p:layout>
+    </h:body>
+
+</html>

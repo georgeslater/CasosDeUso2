@@ -28,10 +28,25 @@ public class ActorFacade extends AbstractFacade<Actor> {
         super(Actor.class);
     }
     
+    public Actor findByNameYDiagramaId(Integer diagramaid, String nombre){
+        
+        List<Actor> resultados = em.createNamedQuery("Actor.findByNombreYDiagrama")
+                .setParameter("nombre", nombre)
+                .setParameter("diagramaid", diagramaid)
+                    .getResultList();
+        
+        if (resultados == null || resultados.isEmpty()) {
+            return null;
+        }
+        else{
+            return resultados.get(0);
+        }
+    }
+    
     public Actor findByName(String nombre){
         
         List<Actor> resultados = em.createNamedQuery("Actor.findByNombre")
-                .setParameter("nombre", nombre)
+                .setParameter("nombre", nombre)              
                     .getResultList();
         
         if (resultados == null || resultados.isEmpty()) {

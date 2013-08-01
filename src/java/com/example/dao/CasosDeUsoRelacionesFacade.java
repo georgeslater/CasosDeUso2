@@ -5,6 +5,7 @@
 package com.example.dao;
 
 import com.example.entities.CasosDeUsoRelaciones;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -25,6 +26,22 @@ public class CasosDeUsoRelacionesFacade extends AbstractFacade<CasosDeUsoRelacio
 
     public CasosDeUsoRelacionesFacade() {
         super(CasosDeUsoRelaciones.class);
+    }
+    
+    public List<CasosDeUsoRelaciones> obtenerCduRelsPorDiagramaID(int diagramaID){
+        
+        List<CasosDeUsoRelaciones> resultados = em.createNamedQuery("CasosDeUsoRelaciones.findByDiagramaId")
+                .setParameter("diagramaid", diagramaID)
+                    .getResultList();
+        
+        assert(resultados != null);
+
+        if (resultados == null) {
+            return null;
+        }        
+        else {
+            return resultados;
+        }
     }
     
 }

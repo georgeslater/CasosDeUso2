@@ -4,8 +4,10 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets">
-    <ui:composition template="./plantilla/template.xhtml">
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:o="http://omnifaces.org/ui"
+      xmlns:of="http://omnifaces.org/functions">
+    <ui:composition template="/plantilla/template.xhtml">
         <ui:define name="metadata">
             <f:metadata>
                 <f:event type="preRenderView" listener="#{crearCasosBean.cargarValores()}" />
@@ -13,7 +15,10 @@
             </f:metadata>
         </ui:define>
         <ui:define name="scripts">
-            <h:outputScript name="js/CrearCasos.js"></h:outputScript>            
+            <o:conditionalComment if="IE">
+                <h:outputScript name="js/excanvas.js"></h:outputScript>
+            </o:conditionalComment>
+            <h:outputScript name="js/CrearCasos.js"></h:outputScript> 
         </ui:define>
         <ui:define name="styles">
             <h:outputStylesheet name="css/CrearCasos.css"/>
@@ -22,7 +27,7 @@
             Crear Casos de Uso
         </ui:define>
         <ui:define name="encabezado">
-            <ui:include src="./plantilla/encabezado.xhtml"/>
+            <ui:include src="/plantilla/encabezado.xhtml"/>
         </ui:define>
         <ui:define name="body">
             <h:form id="casosForm">
@@ -33,30 +38,38 @@
                         /* <![CDATA[ */
                         function dibujarPreparacion(){
                             var gson = JSON.stringify(#{crearCasosBean.json});
-                            var v = $.parseJSON(gson);
-                            alert(gson);
-                            alert(v);
-                            dibujar(v);                      
+                            if(gson != null && gson != undefined){
+                                var v = $.parseJSON(gson);
+                                alert(gson);
+                                if(v != null && v != undefined){                          
+                                    dibujar(v);                 
+                                }else{
+                                    return false;
+                                }
+                            }else{
+                                return false;
+                            }
                         }         
                         /* ]]> */
                     </script>
                 </p:outputPanel>
                 <div id="casoRowTableDiv">
-                    <p:panel id="myPanel">                        
+                    <p:outputPanel id="myPanel">                        
                         <div>
-                        <p:inplace id="ajaxInplace" editor="true">  
-                            <p:inputText value="#{nombreDiagrama}"  
-                                         label="text" styleClass="diagramaNombreTexto"/>  
-                        </p:inplace>
+                            <p:inplace id="ajaxInplace" editor="true">  
+                                <p:inputText value="#{nombreDiagrama}"  
+                                             label="text" styleClass="diagramaNombreTexto"/>  
+                            </p:inplace>
                         </div>
                         <div>
+                            <p:commandButton value="Agregar Fila" update="myPanel" action="#{crearCasosBean.addRow}"/>
                             <p:commandButton value="Editar" onclick="evaluarDialogsAgregar();"></p:commandButton>
                             <p:commandButton value="Eliminar" update="casoRowTable" action="#{crearCasosBean.evaluarDialogsEliminar}"/>
-                            <p:commandButton value="Validar Filas" ajax="false" update="msgs" action="#{crearCasosBean.guardarInformacionFilas}"></p:commandButton><br/><br/>
+                            <p:commandButton value="Validar &amp; Generar Diagrama" update="canvasPanel preparacionDiv myPanel msgs" action="#{crearCasosBean.guardarInformacionFilas}" oncomplete="if(#{!crearCasosBean.isError}){dibujarPreparacion();}"></p:commandButton><br/><br/>
                         </div>
                         <p:dataTable id="casoRowTable" rowIndexVar="row" styleClass="casoRowTable" var="cduRow" value="#{crearCasosBean.filas}">
                             <p:column>
-                                <p:commandLink value="Borrar" ajax="false" update="casoRowTable" action="#{crearCasosBean.borrarFila}">
+                                <p:commandLink value="Borrar" ajax="false" action="#{crearCasosBean.borrarFila}">
                                     <f:param value="#{row}" name="filaABorrar"/>
                                 </p:commandLink>
                             </p:column>
@@ -144,52 +157,24 @@
                                 </p:outputPanel>
                             </p:column>
                         </p:dataTable>
-                        <p:commandButton value="Agregar Fila" update="myPanel" action="#{crearCasosBean.addRow}"/>
-                        <p:commandButton value="Generar Diagrama" update="canvasDiv preparacionDiv myPanel msgs" action="#{crearCasosBean.generarDiagrama}" oncomplete="dibujarPreparacion();"/>
-                        <p:commandButton value="Guardar imagen" id="guardarImgBtn" update="msgs successInfo" rendered="#{!crearCasosBean.mostrarImagenEstatico}" onclick="guardarImagen();" action="#{crearCasosBean.guardarImagen}"/>
-                    </p:panel>
+                    </p:outputPanel>
                     <h:inputHidden id="xPosition" value="#{crearCasosBean.thexPositionSelected}"/>
                     <h:inputHidden id="yPosition" value="#{crearCasosBean.theyPositionSelected}"/>
-                    <h:inputHidden id="dataURL" value="#{crearCasosBean.dataURL}" />
                     <p:remoteCommand name="remoteChangeCommand" process="xPosition yPosition"/>
-                    <p:remoteCommand name="guardarImagenCommand" process="dataURL"/>
-                </div>                
-                 <p:panel id="canvasDiv">                    
-                    <p:outputPanel rendered="#{crearCasosBean.mostrarImagenEstatico}">
-                        <p:graphicImage value="http://localhost:8080/CasosDeUso5#{crearCasosBean.diagramaImagen.path}.png"/>
-                    </p:outputPanel>
-                     <p:outputPanel styleClass="canvasPanel">
-                        <canvas id="casosDeUsoCanvas"/>
-                     </p:outputPanel>
-                </p:panel>
+                </div>               
                 <div id="popups">
-                    <p:dialog id="actorDialog" header="Editar Actor" widgetVar="dlgActores">
-                        <div>
-                            <h:outputText value="Actores" style="margin-right: 5px;"/>
-                            <h:selectOneMenu id="actores" value="#{crearCasosBean.actorActual}">
-                                <f:selectItem noSelectionOption="true"/>
-                                <f:selectItems value="#{crearCasosBean.filasActores}" var="actor" itemLabel="#{actor.nombre}" itemValue="#{actor}"/>   
-                                <f:converter binding="#{actorConverter}"/>
-                            </h:selectOneMenu>
-                        </div>
+                    <p:dialog id="actorDialog" header="Editar Actor" widgetVar="dlgActores">                       
                         <div style="margin-top: 10px;">
-                            <h:outputText value="Ingresar nombre de un nuevo actor"/><br/>
+                            <h:outputText value="Ingresar nombre de un actor"/><br/>
                             <h:inputText value="#{crearCasosBean.nombreNuevoActor}"/>
                         </div>
                         <div>
-                            <p:commandButton ajax="false" value="Editar" update="myPanel actorDialog casoRowTable msgs" action="#{crearCasosBean.agregarActor}" oncomplete="dlgActores.hide();"/>
+                            <p:commandButton value="Editar" update="myPanel actorDialog casoRowTable msgs" action="#{crearCasosBean.agregarActor}" oncomplete="dlgActores.hide();"/>
                         </div>
                     </p:dialog> 
-                    <p:dialog id="cduDialog" header="Editar Caso De Uso" widgetVar="dlgCdus">
-                        <div>
-                            <h:outputText value="Casos De Uso" style="margin-right: 5px;"/>
-                            <h:selectOneMenu id="cdus" value="#{crearCasosBean.cduActual}">
-                                <f:selectItem noSelectionOption="true"/>
-                                <f:selectItems value="#{crearCasosBean.cdus}" var="cdu" itemLabel="#{cdu.text}" itemValue="#{cdu}"/>   
-                            </h:selectOneMenu>
-                        </div>
+                    <p:dialog id="cduDialog" header="Editar Caso De Uso" widgetVar="dlgCdus">                        
                         <div style="margin-top: 10px;">
-                            <h:outputText value="Ingresar nombre de un nuevo caso de uso"/><br/>
+                            <h:outputText value="Ingresar nombre de un caso de uso"/><br/>
                             <h:inputText value="#{crearCasosBean.nombreNuevoCdu}"/>
                         </div>
                         <div>
@@ -200,13 +185,22 @@
                         <div>
                             <p:selectOneRadio id="options" value="#{crearCasosBean.relacion}">
                                 <f:selectItem itemLabel="Includes" itemValue="Includes"/>
-                                <f:selectItem itemLabel="Excludes" itemValue="Excludes"/>
+                                <f:selectItem itemLabel="Extends" itemValue="Extends"/>
                             </p:selectOneRadio>
                         </div>
                         <div style="margin-top:10px;">
                             <p:commandButton value="Editar" update="myPanel" action="#{crearCasosBean.agregarRelacion}" oncomplete="dlgRels.hide();"/>
                         </div>
-                    </p:dialog> 
+                    </p:dialog>
+                    <p:dialog style="top:0 !important; width:100% !important;" width="2000" height="600" resizable="false" draggable="false" id="canvasPanel" header="Diagrama" widgetVar="diagramaDialog">           
+                        <p:commandButton global="true" value="Guardar" id="guardarImgBtn" update="msgs successInfo" onclick="guardarImagen();" action="#{crearCasosBean.guardarImagen}" oncomplete="diagramaDialog.hide();"/>
+                        <p:commandButton value="Volver" onclick="diagramaDialog.hide();"/><br/>
+                        <div style="height: 600px; overflow-y: scroll;">
+                            <canvas id="casosDeUsoCanvas"/>
+                        </div>
+                        <h:inputHidden id="dataURL" value="#{crearCasosBean.dataURL}" />
+                        <p:remoteCommand name="guardarImagenCommand" process="dataURL"/>
+                    </p:dialog>
                 </div>
             </h:form>
         </ui:define>
