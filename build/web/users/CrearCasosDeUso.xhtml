@@ -37,12 +37,14 @@
                     <script>
                         /* <![CDATA[ */
                         function dibujarPreparacion(){
+                            
+                            var nombreDiagrama = '#{crearCasosBean.diagramaActual.getNombre()}';
                             var gson = JSON.stringify(#{crearCasosBean.json});
                             if(gson != null && gson != undefined){
                                 var v = $.parseJSON(gson);
                                 alert(gson);
                                 if(v != null && v != undefined){                          
-                                    dibujar(v);                 
+                                    dibujar(v, nombreDiagrama);                 
                                 }else{
                                     return false;
                                 }
@@ -94,7 +96,7 @@
                             </p:column>
                             <p:column headerText="Relacion">
                                 <p:outputPanel>
-                                    <h:outputText value="#{not empty cduRow.relacion1ID? cduRow.relacion1ID.nombre == 'Includes'? '&lt;---': '---&gt;': '(vacio)'}"></h:outputText>
+                                    <h:outputText value="#{not empty cduRow.relacion1ID? cduRow.relacion1ID.nombre == 'INCLUDES'? '&lt;---': '---&gt;': '(vacio)'}"></h:outputText>
                                     <div data-row="#{row}" data-column="3">
                                         <h:selectBooleanCheckbox styleClass="relCheckbox"></h:selectBooleanCheckbox>
                                     </div>
@@ -126,7 +128,7 @@
                             </p:column>
                             <p:column headerText="Relacion">
                                 <p:outputPanel>
-                                    <h:outputText value="#{not empty cduRow.relacion3ID? cduRow.relacion3ID.nombre == 'Includes'? '&lt;---': '---&gt;': '(vacio)'}"></h:outputText>
+                                    <h:outputText value="#{not empty cduRow.relacion3ID? cduRow.relacion3ID.nombre == 'INCLUDES'? '&lt;---': '---&gt;': '(vacio)'}"></h:outputText>
                                     <div data-row="#{row}" data-column="7">
                                         <h:selectBooleanCheckbox styleClass="relCheckbox"></h:selectBooleanCheckbox>
                                     </div>
@@ -142,7 +144,7 @@
                             </p:column>
                             <p:column headerText="Relacion">
                                 <p:outputPanel>
-                                    <h:outputText value="#{not empty cduRow.relacion4ID? cduRow.relacion4ID.nombre == 'Includes'? '&lt;---': '---&gt;': '(vacio)'}"></h:outputText>
+                                    <h:outputText value="#{not empty cduRow.relacion4ID? cduRow.relacion4ID.nombre == 'INCLUDES'? '&lt;---': '---&gt;': '(vacio)'}"></h:outputText>
                                     <div data-row="#{row}" data-column="9">
                                         <h:selectBooleanCheckbox styleClass="relCheckbox"></h:selectBooleanCheckbox>
                                     </div>
@@ -178,7 +180,7 @@
                             <h:inputText value="#{crearCasosBean.nombreNuevoCdu}"/>
                         </div>
                         <div>
-                            <p:commandButton ajax="false" value="Editar" update="myPanel" action="#{crearCasosBean.agregarCdu}" oncomplete="dlgCdus.hide();"/>
+                            <p:commandButton  value="Editar" update="myPanel actorDialog casoRowTable msgs" action="#{crearCasosBean.agregarCdu}" oncomplete="dlgCdus.hide();"/>
                         </div>
                     </p:dialog>
                     <p:dialog id="relacionDialog" header="Editar Relacion" widgetVar="dlgRels">

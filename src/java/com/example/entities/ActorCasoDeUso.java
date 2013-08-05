@@ -41,10 +41,10 @@ public class ActorCasoDeUso implements Serializable {
     @ManyToOne
     private Diagrama diagramid;
     @JoinColumn(name = "CASODEUSOID", referencedColumnName = "ID")
-    @ManyToOne(cascade= CascadeType.ALL)
+    @ManyToOne
     private CasoDeUso casodeusoid;
     @JoinColumn(name = "ACTORID", referencedColumnName = "ID")
-    @ManyToOne(cascade= CascadeType.ALL)
+    @ManyToOne
     private Actor actorid;
 
     public ActorCasoDeUso() {

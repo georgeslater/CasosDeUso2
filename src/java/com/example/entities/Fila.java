@@ -68,7 +68,7 @@ public class Fila implements Serializable {
     @ManyToOne
     private Actor actorID;
     @JoinColumn(name = "CasoDeUso1ID", referencedColumnName = "ID")
-    @ManyToOne
+    @ManyToOne()
     private CasoDeUso casoDeUso1ID;
 
     public Fila() {

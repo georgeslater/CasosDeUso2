@@ -19,16 +19,14 @@ import com.example.entities.Image;
 import com.example.entities.Relacion;
 import com.example.entities.UsuarioTable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.faces.context.FacesContext;
-import javax.validation.ConstraintViolationException;
 
 @Stateless
 public class CrearCasosService {
@@ -130,11 +128,12 @@ public class CrearCasosService {
             imagen.setPath(relativeFilename);
             imagen.setTitle(title);
             imagen.setUsuario(usuario);
+            imagen.setFechaGuardado(new Date());
             getImageFacade().edit(imagen);
 
         } else {
 
-            imagen = new Image(usuario, diagrama, title, relativeFilename);
+            imagen = new Image(usuario, diagrama, title, relativeFilename, new Date());
             getImageFacade().create(imagen);
         }
 
@@ -310,7 +309,7 @@ public class CrearCasosService {
                         getCduFacade().create(f.getCasoDeUso2ID());
 
                     } else if (cduFoundMap.get(cdu2.getId()) != null) {
-
+                        f.setCasoDeUso2ID(cdu2);
                         cduFoundMap.put(cdu2.getId(), true);
                     }
                 }
@@ -329,6 +328,7 @@ public class CrearCasosService {
 
                     } else if (cduFoundMap.get(cdu3.getId()) != null) {
 
+                        f.setCasoDeUso3ID(cdu3);
                         cduFoundMap.put(cdu3.getId(), true);
                     }
                 }
@@ -347,6 +347,7 @@ public class CrearCasosService {
 
                     } else if (cduFoundMap.get(cdu4.getId()) != null) {
 
+                        f.setCasoDeUso4ID(cdu4);
                         cduFoundMap.put(cdu4.getId(), true);
                     }
                 }
@@ -365,6 +366,7 @@ public class CrearCasosService {
 
                     } else if (cduFoundMap.get(cdu5.getId()) != null) {
 
+                        f.setCasoDeUso5ID(cdu5);
                         cduFoundMap.put(cdu5.getId(), true);
                     }
                 }
@@ -556,19 +558,22 @@ public class CrearCasosService {
             }
         }
 
-        for (Integer i : actCduFoundMap.keySet()) {
+        for (String i : actCduPreviosMap.keySet()) {
+            
+            Integer j = actCduPreviosMap.get(i).getId();
+            
+            if (!actCduFoundMap.containsKey(j) || !actCduFoundMap.get(j)) {
 
-            if (!actCduFoundMap.get(i)) {
-
-                getActorCasoDeUsoFacade().remove(viejasActCdu.get(i));
+                getActorCasoDeUsoFacade().remove(viejasActCdu.get(j));
             }
         }
         
-        for(Integer i: cduRelFoundMap.keySet()){
+        for(String i: cduRelPreviosMap.keySet()){
             
-            if(!cduRelFoundMap.get(i)){
-                
-                getCduRelFacade().remove(viejasCduRel.get(i));
+            Integer j = cduRelPreviosMap.get(i).getId();
+            
+            if(!cduRelFoundMap.containsKey(j) || !cduRelFoundMap.get(j)){
+                getCduRelFacade().remove(viejasCduRel.get(j));
             }
         }
 

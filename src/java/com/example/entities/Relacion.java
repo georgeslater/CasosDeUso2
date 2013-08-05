@@ -54,7 +54,7 @@ public class Relacion implements Serializable {
     private Collection<Fila> filaCollection2;
     @OneToMany(mappedBy = "relacion1ID")
     private Collection<Fila> filaCollection3;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "relacionid")
+    @OneToMany(mappedBy = "relacionid")
     private Collection<CasosDeUsoRelaciones> casosDeUsoRelacionesCollection;
 
     public Relacion() {

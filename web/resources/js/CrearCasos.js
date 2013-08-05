@@ -17,7 +17,7 @@ $(document).on('click', '.casoRowTable input[type=checkbox]', function(){
     }
 });
 
-function dibujar(objetos){
+function dibujar(objetos, nombreDiagrama){
     
     diagramaDialog.show();
 
@@ -37,6 +37,9 @@ function dibujar(objetos){
     var counterAct = 0;
     var counterCdu = 0;
     
+    var nroCdu = 0;
+    var tamanio = 0;
+    
     //alert(casosDeUsoJSON.length);
     
     var actores = new Array();
@@ -47,6 +50,8 @@ function dibujar(objetos){
         var cdu = casosDeUsoJSON[i];
         
         for(var j = 0; j < cdu.length; j++){
+            
+            var nroCduTemp = 0;
             
             if(cdu[j] != null){
                 
@@ -59,7 +64,10 @@ function dibujar(objetos){
                         //alert("pushed "+objeto.nombre);
                     }else{
                         counterAct++;
-                    }                    
+                    }
+                    
+                    tamanio++;
+                    
                 }else if(j == 1){
                     
                     //es una flecha actor -> caso de uso
@@ -72,6 +80,11 @@ function dibujar(objetos){
                     var lineToX = objeto.y*offset+30;
                     var lineToY = objeto.x*offset+80
                     ctx.lineTo(lineToX, lineToY);
+                    var angle = Math.atan2(lineToY-moveToY,lineToX-moveToX);
+                    //flecha begin
+                    ctx.lineTo(lineToX-10*Math.cos(angle-Math.PI/6),lineToY-10*Math.sin(angle-Math.PI/6));
+                    ctx.moveTo(lineToX, lineToY);
+                    ctx.lineTo(lineToX-10*Math.cos(angle+Math.PI/6),lineToY-10*Math.sin(angle+Math.PI/6));
                     //alert("Did a line to "+lineToX+", "+lineToY);
                     ctx.stroke();
                     
@@ -81,10 +94,11 @@ function dibujar(objetos){
                         counterCdu = 0;
                         dibujarCdu(j, i, objeto.text);
                         cdus.push(objeto.text);
-                        alert("pushed "+objeto.text);
+                        nroCduTemp = j;
+                        //alert("pushed "+objeto.text);
                     }else{
                         counterCdu++;
-                        alert('increased counter');
+                        //alert('increased counter');
                     }
                     
                 
@@ -122,11 +136,37 @@ function dibujar(objetos){
                     ctx.lineTo(lineToX-10*Math.cos(angle+Math.PI/6),lineToY-10*Math.sin(angle+Math.PI/6));
                     //flecha end
                     ctx.stroke();
-                    
+                   
                 }
             }
+            
+            if(nroCduTemp > nroCdu){
+                
+                nroCdu = nroCduTemp;
+            }
         }
-    } 
+    }
+    
+    dibujarSistema(tamanio, nroCdu, nombreDiagrama);
+}
+
+function dibujarSistema(tamanio, numeroCdu, nombreDiagrama){
+    
+    if(tamanio != undefined && tamanio > 0 && numeroCdu != undefined && numeroCdu > 0){
+        
+       var canvas = document.getElementById("casosDeUsoCanvas");       
+       var ctx=canvas.getContext("2d");
+       ctx.rect(200, 0, numeroCdu*100, tamanio*120);
+       
+       if(nombreDiagrama != undefined && nombreDiagrama != ''){
+           
+           ctx.font = "bold 12px arial";
+           ctx.fillText(nombreDiagrama, 210, 30)
+       }
+       
+       ctx.stroke();
+       
+    }
 }
 
 function dibujarActor(x, y, texto){

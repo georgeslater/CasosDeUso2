@@ -5,6 +5,7 @@
 package com.example.entities;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,11 +13,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -55,6 +57,8 @@ public class Image implements Serializable {
     @JoinColumn(name = "UserID", referencedColumnName = "IDUSER")
     @ManyToOne(optional = false)
     private UsuarioTable usuario;
+    @Temporal(value= TemporalType.TIMESTAMP)
+    private Date fechaGuardado; 
     
     public Image() {
     }
@@ -63,11 +67,12 @@ public class Image implements Serializable {
         this.id = id;
     }
 
-    public Image(UsuarioTable usuario, Diagrama diag, String titulo, String path) {
+    public Image(UsuarioTable usuario, Diagrama diag, String titulo, String path, Date fechaGuardado) {
         this.usuario = usuario;
         this.diagramID = diag;
         this.title = titulo;
         this.path = path;
+        this.fechaGuardado = fechaGuardado;
     }
 
     public Integer getId() {
@@ -139,6 +144,20 @@ public class Image implements Serializable {
      */
     public void setUsuario(UsuarioTable usuario) {
         this.usuario = usuario;
+    }
+
+    /**
+     * @return the fechaGuardado
+     */
+    public Date getFechaGuardado() {
+        return fechaGuardado;
+    }
+
+    /**
+     * @param fechaGuardado the fechaGuardado to set
+     */
+    public void setFechaGuardado(Date fechaGuardado) {
+        this.fechaGuardado = fechaGuardado;
     }
     
 }

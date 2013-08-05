@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
 /**
@@ -17,6 +18,7 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class DiagramaFacade extends AbstractFacade<Diagrama> {
+
     @PersistenceContext(unitName = "CasosDeUso5PU")
     private EntityManager em;
 
@@ -28,34 +30,39 @@ public class DiagramaFacade extends AbstractFacade<Diagrama> {
     public DiagramaFacade() {
         super(Diagrama.class);
     }
-    
-    public List<Diagrama> obtenerDiagramaPorUserID(Integer userID){
-        
+
+    public List<Diagrama> obtenerDiagramaPorUserID(Integer userID) {
+
         List<Diagrama> resultados = em.createNamedQuery("Diagrama.findByUserid")
                 .setParameter("userid", userID)
-                    .getResultList();
+                .getResultList();
 
         if (resultados == null) {
             return null;
-        }
-        else {
+        } else {
             return resultados;
         }
+
     }
-    
-    public Diagrama obtenerDiagramaPorId(int diagId){
+
+    public Diagrama obtenerDiagramaPorId(int diagId) {
         
-        Diagrama resultado = (Diagrama)em.createNamedQuery("Diagrama.findById")
-               .setParameter("id", diagId)
+        try{
+            Diagrama resultado = (Diagrama) em.createNamedQuery("Diagrama.findById")
+                    .setParameter("id", diagId)
                     .getSingleResult();
-        
-        if(resultado == null){
+
+            if (resultado == null) {
+
+                return null;
+
+            } else {
+
+                return resultado;
+            }
+        }catch(NoResultException e){
             
             return null;
-        
-        }else{
-            
-            return resultado;
         }
     }
 }
