@@ -35,7 +35,10 @@ function dibujar(objetos, nombreDiagrama){
     ctx.beginPath();
     
     var counterAct = 0;
-    var counterCdu = 0;
+    var counterCdu1 = 0;
+    var counterCdu2 = 0;
+    var counterCdu3 = 0;
+    var counterCdu4 = 0;
     
     var nroCdu = 0;
     var tamanio = 0;
@@ -91,25 +94,54 @@ function dibujar(objetos, nombreDiagrama){
                 }else if(j%2==0){
                     //es un caso de uso
                     if($.inArray(objeto.text, cdus) === -1){
-                        counterCdu = 0;
+                        
+                        if(j == 2){
+                            counterCdu1 = 0;
+                        }else if(j == 4){
+                            counterCdu2 = 0;
+                        }else if(j == 6){
+                            counterCdu3 = 0;
+                        }else if(j == 8){
+                            counterCdu4 = 0;
+                        }
+                        
+                        //alert('refreshed counter');
                         dibujarCdu(j, i, objeto.text);
                         cdus.push(objeto.text);
                         nroCduTemp = j;
                         //alert("pushed "+objeto.text);
                     }else{
-                        counterCdu++;
+                        if(j == 2){
+                            counterCdu1++;
+                        }else if(j == 4){
+                            counterCdu2++;
+                        }else if(j == 6){
+                            counterCdu3++;
+                        }else if(j == 8){
+                            counterCdu4++;
+                        }
                         //alert('increased counter');
                     }
                     
+                    alert(objeto.text);
                 
                 }else if(j%2==1){
                     
                     //es una flecha caso de uso - caso de uso
+                    //verificar cuantos hijos tiene el caso anterior
+                    var counterCdu = j == 3? counterCdu1: j == 5? counterCdu2: j == 7? counterCdu3: j == 9? counterCdu4: 0;
                     var h = ((i-counterCdu) * 200)+100;
+                    //alert("counterCdu "+counterCdu);
+                    //alert("h "+h);
                     var w = ((j * 200) + 100);
                     var moveToX = w/2;
-                    var moveToY = (h/2)+30;
- 
+                    var moveToY = (h/2)+30;                    
+                    //alert('i is -> '+i);
+                    //alert('j is -> '+j);
+                    
+                    //alert('X -> '+moveToX);
+                    //alert('Y -> '+moveToY);
+
                     var lineToX = objeto.y*offset+50;
                     var lineToY = objeto.x*offset+80;
  
@@ -125,9 +157,7 @@ function dibujar(objetos, nombreDiagrama){
                         lineToY = moveToYTemp;
                     }
                     
-                    ctx.moveTo(moveToX, moveToY);
-                    //alert("moved to "+moveToX+", "+moveToY);
-                    
+                    ctx.moveTo(moveToX, moveToY);                    
                     ctx.lineTo(lineToX, lineToY);
                     var angle = Math.atan2(lineToY-moveToY,lineToX-moveToX);
                     //flecha begin
@@ -136,7 +166,8 @@ function dibujar(objetos, nombreDiagrama){
                     ctx.lineTo(lineToX-10*Math.cos(angle+Math.PI/6),lineToY-10*Math.sin(angle+Math.PI/6));
                     //flecha end
                     ctx.stroke();
-                   
+                    alert("stroke from "+moveToX+", "+moveToY+" to "+lineToX+", "+lineToY);
+
                 }
             }
             
@@ -156,7 +187,7 @@ function dibujarSistema(tamanio, numeroCdu, nombreDiagrama){
         
        var canvas = document.getElementById("casosDeUsoCanvas");       
        var ctx=canvas.getContext("2d");
-       ctx.rect(200, 0, numeroCdu*100, tamanio*120);
+       ctx.rect(200, 0, numeroCdu*100, tamanio*130);
        
        if(nombreDiagrama != undefined && nombreDiagrama != ''){
            

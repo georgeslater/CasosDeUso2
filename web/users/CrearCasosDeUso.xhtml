@@ -32,31 +32,32 @@
         <ui:define name="body">
             <h:form id="casosForm">
                 <p:messages globalOnly="true" id="msgs"/>
-                <p:messages id="successInfo"/>
                 <p:outputPanel id="preparacionDiv">
                     <script>
                         /* <![CDATA[ */
                         function dibujarPreparacion(){
-                            
-                            var nombreDiagrama = '#{crearCasosBean.diagramaActual.getNombre()}';
-                            var gson = JSON.stringify(#{crearCasosBean.json});
-                            if(gson != null && gson != undefined){
-                                var v = $.parseJSON(gson);
-                                alert(gson);
-                                if(v != null && v != undefined){                          
-                                    dibujar(v, nombreDiagrama);                 
+                            alert('#{crearCasosBean.isError}');
+                            if('#{crearCasosBean.isError}' != 'true'){
+                                var nombreDiagrama = '#{crearCasosBean.diagramaActual.getNombre()}';
+                                var gson = JSON.stringify(#{crearCasosBean.json});
+                                if(gson != null && gson != undefined){
+                                    var v = $.parseJSON(gson);
+                                    alert(gson);
+                                    if(v != null && v != undefined){                          
+                                        dibujar(v, nombreDiagrama);                 
+                                    }else{
+                                        return false;
+                                    }
                                 }else{
                                     return false;
                                 }
-                            }else{
-                                return false;
                             }
                         }         
                         /* ]]> */
                     </script>
                 </p:outputPanel>
                 <div id="casoRowTableDiv">
-                    <p:outputPanel id="myPanel">                        
+                    <p:outputPanel id="myPanel" rendered="#{!crearCasosBean.esInvalido}">                        
                         <div>
                             <p:inplace id="ajaxInplace" editor="true">  
                                 <p:inputText value="#{nombreDiagrama}"  
@@ -180,22 +181,22 @@
                             <h:inputText value="#{crearCasosBean.nombreNuevoCdu}"/>
                         </div>
                         <div>
-                            <p:commandButton  value="Editar" update="myPanel actorDialog casoRowTable msgs" action="#{crearCasosBean.agregarCdu}" oncomplete="dlgCdus.hide();"/>
+                            <p:commandButton  value="Editar" update="myPanel cduDialog casoRowTable msgs" action="#{crearCasosBean.agregarCdu}" oncomplete="dlgCdus.hide();"/>
                         </div>
                     </p:dialog>
                     <p:dialog id="relacionDialog" header="Editar Relacion" widgetVar="dlgRels">
                         <div>
                             <p:selectOneRadio id="options" value="#{crearCasosBean.relacion}">
-                                <f:selectItem itemLabel="Includes" itemValue="Includes"/>
-                                <f:selectItem itemLabel="Extends" itemValue="Extends"/>
+                                <f:selectItem itemLabel="Includes" itemValue="INCLUDES"/>
+                                <f:selectItem itemLabel="Extends" itemValue="EXTENDS"/>
                             </p:selectOneRadio>
                         </div>
                         <div style="margin-top:10px;">
-                            <p:commandButton value="Editar" update="myPanel" action="#{crearCasosBean.agregarRelacion}" oncomplete="dlgRels.hide();"/>
+                            <p:commandButton value="Editar" update="myPanel casoRowTable msgs" action="#{crearCasosBean.agregarRelacion}" oncomplete="dlgRels.hide();"/>
                         </div>
                     </p:dialog>
                     <p:dialog style="top:0 !important; width:100% !important;" width="2000" height="600" resizable="false" draggable="false" id="canvasPanel" header="Diagrama" widgetVar="diagramaDialog">           
-                        <p:commandButton global="true" value="Guardar" id="guardarImgBtn" update="msgs successInfo" onclick="guardarImagen();" action="#{crearCasosBean.guardarImagen}" oncomplete="diagramaDialog.hide();"/>
+                        <p:commandButton global="true" value="Guardar" id="guardarImgBtn" update="msgs" onclick="guardarImagen();" action="#{crearCasosBean.guardarImagen}" oncomplete="diagramaDialog.hide();"/>
                         <p:commandButton value="Volver" onclick="diagramaDialog.hide();"/><br/>
                         <div style="height: 600px; overflow-y: scroll;">
                             <canvas id="casosDeUsoCanvas"/>

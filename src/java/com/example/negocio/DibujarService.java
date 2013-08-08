@@ -9,13 +9,10 @@ import com.example.entities.CasosDeUsoRelaciones;
 import com.example.entities.Diagrama;
 import com.example.entities.Image;
 import com.example.entities.Relacion;
-import com.google.gson.annotations.Expose;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -23,8 +20,8 @@ import javax.ejb.Stateless;
 public class DibujarService {
 
     private Object[][] diagramTabla;
-    private HashMap<Integer, Posiciones> posicionesActores;
-    private HashMap<Integer, Posiciones> posicionesCasosDeUso;
+    private HashMap<Integer, Posicion> posicionesActores;
+    private HashMap<Integer, Posicion> posicionesCasosDeUso;
     @EJB
     private ImageFacade imageFacade;
     @EJB
@@ -34,9 +31,9 @@ public class DibujarService {
         
         //seteamos a null porque sino las posiciones estaticas conservarian su valor entre llamadas
         posicionesActores = null;
-        posicionesCasosDeUso = null;
-        posicionesActores = new HashMap<Integer, Posiciones>();
-        posicionesCasosDeUso = new HashMap<Integer, Posiciones>();
+        posicionesCasosDeUso = null;       
+        posicionesActores = new HashMap<Integer, Posicion>();
+        posicionesCasosDeUso = new HashMap<Integer, Posicion>();
     }
 
     public Image obtenerImagenPorDiagramaId(Diagrama diagrama) {
@@ -51,7 +48,8 @@ public class DibujarService {
 
         Map<Integer, ArrayList<CasoDeUso>> actoresCasosDeUso = new HashMap<Integer, ArrayList<CasoDeUso>>();
         Map<Integer, ArrayList<CasoDeUso>> casoDeUsoRelaciones = new HashMap<Integer, ArrayList<CasoDeUso>>();
-        Map<String, Relacion> casoDeUsoRelacionesRelation = new HashMap<String, Relacion>();
+        Map<String, Relacion> casoDeUsoRelacionesRelation;
+        casoDeUsoRelacionesRelation = new HashMap<String, Relacion>();
 
         for (ActorCasoDeUso actCdu : actCdus) {
 
@@ -110,7 +108,7 @@ public class DibujarService {
 
                         // solo la posicion del primero importa, porque todos apuntan a aquel
                         if (!posicionesActores.containsKey(a.getId())) {
-                            posicionesActores.put(a.getId(), new Posiciones(j, 0));
+                            posicionesActores.put(a.getId(), new Posicion(j, 0));
                         }
                         break;
                     }
@@ -131,13 +129,13 @@ public class DibujarService {
 
                     for (int i = 0; i < counter; i++) {
 
-                        for (int j = posicionesActores.get(a.getId()).x; j < 100; j++) {
+                        for (int j = posicionesActores.get(a.getId()).getX(); j < 100; j++) {
 
                             if (getDiagramTabla()[j][2] == null) {
 
                                 getDiagramTabla()[j][2] = cdu;
                                 if (!posicionesCasosDeUso.containsKey(cdu.getId())) {
-                                    posicionesCasosDeUso.put(cdu.getId(), new Posiciones(j, 2));
+                                    posicionesCasosDeUso.put(cdu.getId(), new Posicion(j, 2));
                                 }
                                 break;
                             }
@@ -157,14 +155,14 @@ public class DibujarService {
 
                             for (int i = 0; i < counterTemp; i++) {
 
-                                for (int j = posicionesCasosDeUso.get(cdu.getId()).x; j < 100; j++) {
+                                for (int j = posicionesCasosDeUso.get(cdu.getId()).getX(); j < 100; j++) {
 
                                     if (getDiagramTabla()[j][4] == null) {
 
                                         getDiagramTabla()[j][4] = cduEnlazadoACdu1;
                                         Relacion r = casoDeUsoRelacionesRelation.get(cdu.getId() + "-" + cduEnlazadoACdu1.getId());
                                         if (!posicionesCasosDeUso.containsKey(cduEnlazadoACdu1.getId())) {
-                                            posicionesCasosDeUso.put(cduEnlazadoACdu1.getId(), new Posiciones(j, 4, r.getNombre()));
+                                            posicionesCasosDeUso.put(cduEnlazadoACdu1.getId(), new Posicion(j, 4, r.getNombre()));
                                         }
                                         break;
                                     }
@@ -184,14 +182,14 @@ public class DibujarService {
 
                                     for (int i = 0; i < counterCdu3; i++) {
 
-                                        for (int j = posicionesCasosDeUso.get(cduEnlazadoACdu1.getId()).x; j < 100; j++) {
+                                        for (int j = posicionesCasosDeUso.get(cduEnlazadoACdu1.getId()).getX(); j < 100; j++) {
 
                                             if (getDiagramTabla()[j][6] == null) {
 
                                                 getDiagramTabla()[j][6] = cduEnlazadoACdu2;
                                                 Relacion r = casoDeUsoRelacionesRelation.get(cduEnlazadoACdu1.getId() + "-" + cduEnlazadoACdu2.getId());
                                                 if (!posicionesCasosDeUso.containsKey(cduEnlazadoACdu2.getId())) {
-                                                    posicionesCasosDeUso.put(cduEnlazadoACdu2.getId(), new Posiciones(j, 6, r.getNombre()));
+                                                    posicionesCasosDeUso.put(cduEnlazadoACdu2.getId(), new Posicion(j, 6, r.getNombre()));
                                                 }
                                                 break;
                                             }
@@ -212,14 +210,14 @@ public class DibujarService {
 
                                             for (int i = 0; i < counterCdu4; i++) {
 
-                                                for (int j = posicionesCasosDeUso.get(cduEnlazadoACdu2.getId()).x; j < 100; j++) {
+                                                for (int j = posicionesCasosDeUso.get(cduEnlazadoACdu2.getId()).getX(); j < 100; j++) {
 
                                                     if (getDiagramTabla()[j][8] == null) {
 
                                                         getDiagramTabla()[j][8] = cduEnlazadoACdu3;
                                                         Relacion r = casoDeUsoRelacionesRelation.get(cduEnlazadoACdu2.getId() + "-" + cduEnlazadoACdu3.getId());
                                                         if (!posicionesCasosDeUso.containsKey(cduEnlazadoACdu3.getId())) {
-                                                            posicionesCasosDeUso.put(cduEnlazadoACdu3.getId(), new Posiciones(j, 8, r.getNombre()));
+                                                            posicionesCasosDeUso.put(cduEnlazadoACdu3.getId(), new Posicion(j, 8, r.getNombre()));
                                                         }
                                                         break;
                                                     }
@@ -238,14 +236,14 @@ public class DibujarService {
                                                     }
 
                                                     for (int i = 0; i < counterCdu5; i++) {
-                                                        for (int j = posicionesCasosDeUso.get(cduEnlazadoACdu3.getId()).x; j < 100; j++) {
+                                                        for (int j = posicionesCasosDeUso.get(cduEnlazadoACdu3.getId()).getX(); j < 100; j++) {
 
                                                             if (getDiagramTabla()[j][10] == null) {
 
                                                                 getDiagramTabla()[j][10] = cduEnlazadoACdu4;
                                                                 Relacion r = casoDeUsoRelacionesRelation.get(cduEnlazadoACdu3.getId() + "-" + cduEnlazadoACdu4.getId());
                                                                 if (!posicionesCasosDeUso.containsKey(cduEnlazadoACdu4.getId())) {
-                                                                    posicionesCasosDeUso.put(cduEnlazadoACdu4.getId(), new Posiciones(j, 10, r.getNombre()));
+                                                                    posicionesCasosDeUso.put(cduEnlazadoACdu4.getId(), new Posicion(j, 10, r.getNombre()));
                                                                 }
                                                                 break;
                                                             }
@@ -292,7 +290,11 @@ public class DibujarService {
                 }
             }
         }
-
+        
+        casoDeUsoRelacionesRelation = null;
+        posicionesActores = null;
+        posicionesCasosDeUso = null;
+        
         return diagramTabla;
     }
 
@@ -313,28 +315,28 @@ public class DibujarService {
     /**
      * @return the posicionesActores
      */
-    public HashMap<Integer, Posiciones> getPosicionesActores() {
+    public HashMap<Integer, Posicion> getPosicionesActores() {
         return posicionesActores;
     }
 
     /**
      * @param posicionesActores the posicionesActores to set
      */
-    public void setPosicionesActores(HashMap<Integer, Posiciones> posicionesActores) {
+    public void setPosicionesActores(HashMap<Integer, Posicion> posicionesActores) {
         this.posicionesActores = posicionesActores;
     }
 
     /**
      * @return the posicionesCasosDeUso
      */
-    public HashMap<Integer, Posiciones> getPosicionesCasosDeUso() {
+    public HashMap<Integer, Posicion> getPosicionesCasosDeUso() {
         return posicionesCasosDeUso;
     }
 
     /**
      * @param posicionesCasosDeUso the posicionesCasosDeUso to set
      */
-    public void setPosicionesCasosDeUso(HashMap<Integer, Posiciones> posicionesCasosDeUso) {
+    public void setPosicionesCasosDeUso(HashMap<Integer, Posicion> posicionesCasosDeUso) {
         this.posicionesCasosDeUso = posicionesCasosDeUso;
     }
 
@@ -350,72 +352,5 @@ public class DibujarService {
      */
     public void setImageFacade(ImageFacade imageFacade) {
         this.imageFacade = imageFacade;
-    }
-
-    //Esta clase tiene que ser estatica para que GSON lo pueda deserializar
-    //https://sites.google.com/site/gson/gson-user-guide#TOC-Nested-Classes-including-Inner-Classes-
-    public static class Posiciones {
-
-        @Expose
-        private int x;
-        @Expose
-        private int y;
-        @Expose
-        private String relacion;
-
-        public Posiciones(int x, int y) {
-
-            this.x = x;
-            this.y = y;
-        }
-
-        public Posiciones(int x, int y, String relacion) {
-
-            this.x = x;
-            this.y = y;
-            this.relacion = relacion;
-        }
-
-        /**
-         * @return the x
-         */
-        public int getX() {
-            return x;
-        }
-
-        /**
-         * @param x the x to set
-         */
-        public void setX(int x) {
-            this.x = x;
-        }
-
-        /**
-         * @return the y
-         */
-        public int getY() {
-            return y;
-        }
-
-        /**
-         * @param y the y to set
-         */
-        public void setY(int y) {
-            this.y = y;
-        }
-
-        /**
-         * @return the relacion
-         */
-        public String getRelacion() {
-            return relacion;
-        }
-
-        /**
-         * @param relacion the relacion to set
-         */
-        public void setRelacion(String relacion) {
-            this.relacion = relacion;
-        }
     }
 }

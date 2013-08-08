@@ -1,5 +1,6 @@
 package com.example.negocio;
 
+import com.example.controllers.util.Constantes;
 import com.example.dao.ActorCasoDeUsoFacade;
 import com.example.dao.ActorFacade;
 import com.example.dao.CasoDeUsoFacade;
@@ -31,20 +32,6 @@ import javax.faces.context.FacesContext;
 @Stateless
 public class CrearCasosService {
 
-    /**
-     * @return the log
-     */
-    public static Logger getLog() {
-        return log;
-    }
-
-    /**
-     * @param aLog the log to set
-     */
-    public static void setLog(Logger aLog) {
-        log = aLog;
-    }
-
     @EJB
     private ActorFacade actorFacade;
     @EJB
@@ -63,7 +50,6 @@ public class CrearCasosService {
     private DiagramaFacade diagFacade;
     @EJB
     private CasosDeUsoRelacionesFacade cduRelFacade;
-        private static Logger log = Logger.getLogger(CrearCasosService.class.getName());
 
     public UsuarioTable getUsuarioLogueado() {
 
@@ -153,22 +139,35 @@ public class CrearCasosService {
         List<String> errores = new ArrayList<String>();
 
 
-        for (Fila f : filas) {
-
+        for (int i = 0; i < filas.size(); i++) {
+            
+            Fila f = filas.get(i);
+            int index = i+1;
+                        
             if (isFilaContieneMismoCasoDeUso(f)) {
 
-                errores.add("Una fila no puede tener un caso de uso repetido.");
+                errores.add(getErrorIndiceTexto(index)+Constantes.CASO_DE_USO_REPETIDO_MSJ);
             }
 
             if (isCeldaVacioIncorrectamente(f)) {
 
-                errores.add("Cada fila tendria que ser una cadena continua, sin celdas vacias en el medio.");
+                errores.add(getErrorIndiceTexto(index)+Constantes.CELDAS_VACIAS_MSJ);
+            }
+            
+            if(isRelacionFlotando(f)){
+                
+                errores.add(getErrorIndiceTexto(index)+Constantes.RELACION_SIN_CDU_DESPUES_MSJ);
             }
         }
 
         return errores;
     }
-
+    
+    public String getErrorIndiceTexto(int index){
+        
+        return "Error en Fila "+index+".  ";
+    }
+    
     public void guardarFilas(List<Fila> filas, Diagrama diagrama, UsuarioTable usuario) {
 
         Map<Integer, Boolean> viejasFilasIds = new HashMap<Integer, Boolean>();
@@ -620,6 +619,14 @@ public class CrearCasosService {
                 || ((f.getCasoDeUso3ID() != null && f.getCasoDeUso4ID() != null) && f.getCasoDeUso3ID().getText().equals(f.getCasoDeUso4ID().getText()))
                 || ((f.getCasoDeUso3ID() != null && f.getCasoDeUso5ID() != null) && f.getCasoDeUso3ID().getText().equals(f.getCasoDeUso5ID().getText()))
                 || ((f.getCasoDeUso4ID() != null && f.getCasoDeUso5ID() != null) && f.getCasoDeUso4ID().getText().equals(f.getCasoDeUso5ID().getText()));
+    }
+    
+    public Boolean isRelacionFlotando(Fila f){
+        
+        return ((f.getRelacion1ID() != null && f.getCasoDeUso2ID() == null) ||
+                (f.getRelacion2ID() != null && f.getCasoDeUso3ID() == null) ||
+                (f.getRelacion3ID() != null && f.getCasoDeUso4ID() == null) ||
+                (f.getRelacion4ID() != null && f.getCasoDeUso5ID() == null));
     }
 
     public List<CasoDeUso> obtenerCasosDeUsoPorDiagramaID(int diagramaID) {

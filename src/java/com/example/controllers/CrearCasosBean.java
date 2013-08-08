@@ -4,8 +4,10 @@
  */
 package com.example.controllers;
 
+import com.example.controllers.exceptions.NoAccessException;
 import com.example.controllers.exceptions.UserNotRecognizedException;
 import com.example.controllers.util.JsfUtil;
+import com.example.controllers.util.Messages;
 import com.example.entities.Actor;
 import com.example.entities.ActorCasoDeUso;
 import com.example.entities.CasoDeUso;
@@ -29,7 +31,6 @@ import java.lang.String;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +42,7 @@ import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.jms.Message;
 import javax.servlet.ServletContext;
 import sun.misc.BASE64Decoder;
 
@@ -77,6 +79,7 @@ public class CrearCasosBean implements Serializable {
     private String dataURL;
     private Boolean mostrarImagenEstatico;
     private Boolean isError;
+    private Boolean esInvalido;
     private Image diagramaImagen;
     private List<CasoDeUso> filasCdus;
     private org.primefaces.component.datatable.DataTable casoTabla;
@@ -131,9 +134,10 @@ public class CrearCasosBean implements Serializable {
 
         if (!FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest() && !FacesContext.getCurrentInstance().isPostback()
                 && conversation.isTransient()) {
-
+            
             conversation.begin();
 
+            esInvalido = false;
             usuarioLogueado = getCrearCasosService().getUsuarioLogueado();
 
             if (usuarioLogueado != null && usuarioLogueado.getIduser() != null) {
@@ -146,27 +150,34 @@ public class CrearCasosBean implements Serializable {
                         diagramaActual = crearCasosService.obtenerDiagramaPorId(diagInt);
 
                         diagramaImagen = dibujarService.obtenerImagenPorDiagramaId(diagramaActual);
-
-                        if (diagramaImagen != null && diagramaImagen.getPath() != null) {
-
-                            mostrarImagenEstatico = true;
+                        
+                        //checkeo de seguridad
+                        if(diagramaActual != null && diagramaActual.getUsuario() != null && diagramaActual.getUsuario().equals(usuarioLogueado)){
+                            filas = crearCasosService.getFilasPrecargadas(diagInt);
+                        }else{
+                            //NoAccessException e = new NoAccessException("No tiene permiso de ver este diagrama!");
+                            //JsfUtil.addErrorMessage(e, "No tiene permiso de ver este diagrama!");
+                            Messages.addError("No tiene permiso de ver este diagrama!");
+                            esInvalido = true;
                         }
 
-                        filas = crearCasosService.getFilasPrecargadas(diagInt);
-
                     } catch (NumberFormatException e) {
-                        JsfUtil.addErrorMessage(e, "Parametro invalido");
+                        Messages.addError("Error al cargar el diagrama.  Contacte un administrador.");
+                        esInvalido = true;
                     }
 
-                    if (filas.size() > 0) {
+                    if(!getEsInvalido()){
+                    
+                        if (filas.size() > 0) {
 
-                        filasActores = precargarFilas();
+                            filasActores = precargarFilas();
 
-                    } else {
+                        } else {
 
-                        //si no hay filas
-                        Fila cduRow = new Fila();
-                        filas.add(cduRow);
+                            //si no hay filas
+                            Fila cduRow = new Fila();
+                            filas.add(cduRow);
+                        }
                     }
 
                 } else {
@@ -178,7 +189,7 @@ public class CrearCasosBean implements Serializable {
             } else {
 
                 UserNotRecognizedException e = new UserNotRecognizedException("Ha producido un error de autentificacion.");
-                System.exit(1);
+                JsfUtil.addErrorMessage(e, "Ha producido un error de autentificacion.");
             }
         }
     }
@@ -200,14 +211,13 @@ public class CrearCasosBean implements Serializable {
                 ImageIO.write(imag, "png", new File(filename));
 
                 Image i = crearCasosService.guardarNuevoImagen(diagramaImagen, usuarioLogueado, diagramaActual, "test", relativeFilename);
-                JsfUtil.addSuccessMessage("Su imagen ha sido guardado.");
+                Messages.addInfo("Su imagen ha sido guardado.");
                 diagramaImagen = i;
                 mostrarImagenEstatico = true;
 
             } catch (IOException e) {
 
-                JsfUtil.addErrorMessage(e, "Error al guardar el imagen.");
-
+                Messages.addError("Error al guardar el imagen.");
             }
         }
 
@@ -362,7 +372,7 @@ public class CrearCasosBean implements Serializable {
             }
         }
 
-        nombreNuevoActor = null;
+        nombreNuevoCdu = null;
     }
 
     public void generarDiagrama() {
@@ -386,7 +396,7 @@ public class CrearCasosBean implements Serializable {
     }
 
     public void guardarInformacionFilas() {
-
+        
         List<String> errorMsgs = getCrearCasosService().validar(filas);
 
         if (errorMsgs.isEmpty()) {
@@ -407,6 +417,7 @@ public class CrearCasosBean implements Serializable {
 
             isError = true;
             JsfUtil.addErrorMessages(errorMsgs);
+            errorMsgs = null;
         }
     }
 
@@ -847,5 +858,19 @@ public class CrearCasosBean implements Serializable {
      */
     public void setCduRel(List<CasosDeUsoRelaciones> cduRel) {
         this.cduRel = cduRel;
+    }
+
+    /**
+     * @return the esInvalido
+     */
+    public Boolean getEsInvalido() {
+        return esInvalido;
+    }
+
+    /**
+     * @param esInvalido the esInvalido to set
+     */
+    public void setEsInvalido(Boolean esInvalido) {
+        this.esInvalido = esInvalido;
     }
 }
