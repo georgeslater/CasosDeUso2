@@ -123,7 +123,7 @@ function dibujar(objetos, nombreDiagrama){
                         //alert('increased counter');
                     }
                     
-                    alert(objeto.text);
+                    //alert(objeto.text);
                 
                 }else if(j%2==1){
                     
@@ -166,7 +166,7 @@ function dibujar(objetos, nombreDiagrama){
                     ctx.lineTo(lineToX-10*Math.cos(angle+Math.PI/6),lineToY-10*Math.sin(angle+Math.PI/6));
                     //flecha end
                     ctx.stroke();
-                    alert("stroke from "+moveToX+", "+moveToY+" to "+lineToX+", "+lineToY);
+                    //alert("stroke from "+moveToX+", "+moveToY+" to "+lineToX+", "+lineToY);
 
                 }
             }

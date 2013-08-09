@@ -1,0 +1,17 @@
+/* 
+    Document   : MisDiagramas
+    Created on : 08-ago-2013, 21:37:15
+    Author     : George
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+root { 
+    display: block;
+}
+
+.ui-state-highlight a{
+    
+    color: white !important;
+}
+

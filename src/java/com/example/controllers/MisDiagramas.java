@@ -4,6 +4,7 @@
  */
 package com.example.controllers;
 
+import com.example.controllers.util.DiagramaDataModel;
 import com.example.dao.DiagramaFacade;
 import com.example.dao.UsuarioTableFacade;
 import com.example.entities.Diagrama;
@@ -12,17 +13,22 @@ import java.io.Serializable;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Named;
+import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
+import org.primefaces.event.RowEditEvent;
 
 /**
  *
  * @author George
  */
 @Named(value = "misDiagramas")
-@SessionScoped
+@RequestScoped
 public class MisDiagramas implements Serializable{
+    
+    private String nombreNuevoDiagrama;
+    private Diagrama diagramaSeleccionado;
+    private DiagramaDataModel diagramaModel; 
     
     private List<Diagrama> misDiagramas;
     @EJB
@@ -34,6 +40,26 @@ public class MisDiagramas implements Serializable{
      * Creates a new instance of MisDiagramas
      */
     public MisDiagramas() {
+    }
+    
+    public void editar(RowEditEvent event){
+        
+        Diagrama diagramaAEditar = (Diagrama) event.getObject();
+        getDiagFacade().edit(diagramaAEditar);
+    }
+    
+    public String agregarDiagrama(){
+        
+        if(nombreNuevoDiagrama != null && !nombreNuevoDiagrama.equals("")){
+            
+            Diagrama d = new Diagrama();
+            d.setNombre(nombreNuevoDiagrama);
+            d.setUsuario(usuarioLogueado);
+            getDiagFacade().create(d);
+            return "CrearCasosDeUso.xhtml?faces-redirect=true&id="+d.getId();
+        }
+        
+        return null;
     }
     
     @PostConstruct
@@ -49,6 +75,7 @@ public class MisDiagramas implements Serializable{
             if (getUsuarioLogueado() != null && getUsuarioLogueado().getIduser() != null) {
                 
                 misDiagramas = getDiagFacade().obtenerDiagramaPorUserID(usuarioLogueado.getIduser());
+                diagramaModel = new DiagramaDataModel(misDiagramas);
             }
         }
     }
@@ -107,5 +134,47 @@ public class MisDiagramas implements Serializable{
      */
     public void setUtFacade(UsuarioTableFacade utFacade) {
         this.utFacade = utFacade;
+    }
+
+    /**
+     * @return the nombreNuevoDiagrama
+     */
+    public String getNombreNuevoDiagrama() {
+        return nombreNuevoDiagrama;
+    }
+
+    /**
+     * @param nombreNuevoDiagrama the nombreNuevoDiagrama to set
+     */
+    public void setNombreNuevoDiagrama(String nombreNuevoDiagrama) {
+        this.nombreNuevoDiagrama = nombreNuevoDiagrama;
+    }
+
+    /**
+     * @return the diagramaSeleccionado
+     */
+    public Diagrama getDiagramaSeleccionado() {
+        return diagramaSeleccionado;
+    }
+
+    /**
+     * @param diagramaSeleccionado the diagramaSeleccionado to set
+     */
+    public void setDiagramaSeleccionado(Diagrama diagramaSeleccionado) {
+        this.diagramaSeleccionado = diagramaSeleccionado;
+    }
+
+    /**
+     * @return the diagramaModel
+     */
+    public DiagramaDataModel getDiagramaModel() {
+        return diagramaModel;
+    }
+
+    /**
+     * @param diagramaModel the diagramaModel to set
+     */
+    public void setDiagramaModel(DiagramaDataModel diagramaModel) {
+        this.diagramaModel = diagramaModel;
     }
 }

@@ -24,7 +24,7 @@
             <h:outputStylesheet name="css/CrearCasos.css"/>
         </ui:define>
         <ui:define name="titulo">
-            Crear Casos de Uso
+            <h:outputText value="#{crearCasosBean.diagramaActual.nombre}"/>
         </ui:define>
         <ui:define name="encabezado">
             <ui:include src="/plantilla/encabezado.xhtml"/>
@@ -36,7 +36,7 @@
                     <script>
                         /* <![CDATA[ */
                         function dibujarPreparacion(){
-                            alert('#{crearCasosBean.isError}');
+                            //alert('#{crearCasosBean.isError}');
                             if('#{crearCasosBean.isError}' != 'true'){
                                 var nombreDiagrama = '#{crearCasosBean.diagramaActual.getNombre()}';
                                 var gson = JSON.stringify(#{crearCasosBean.json});
@@ -59,10 +59,9 @@
                 <div id="casoRowTableDiv">
                     <p:outputPanel id="myPanel" rendered="#{!crearCasosBean.esInvalido}">                        
                         <div>
-                            <p:inplace id="ajaxInplace" editor="true">  
-                                <p:inputText value="#{nombreDiagrama}"  
-                                             label="text" styleClass="diagramaNombreTexto"/>  
-                            </p:inplace>
+                            <p:outputPanel rendered="#{crearCasosBean.diagramaActual != null and crearCasosBean.diagramaActual.nombre != null}">
+                                <h:outputText value="#{crearCasosBean.diagramaActual.nombre}"/>
+                            </p:outputPanel>
                         </div>
                         <div>
                             <p:commandButton value="Agregar Fila" update="myPanel" action="#{crearCasosBean.addRow}"/>
@@ -113,7 +112,7 @@
                             </p:column>
                             <p:column headerText="Relacion">
                                 <p:outputPanel>
-                                    <h:outputText value="#{not empty cduRow.relacion2ID? cduRow.relacion2ID.nombre == 'Includes'? '&lt;---': '---&gt;': '(vacio)'}"></h:outputText>
+                                    <h:outputText value="#{not empty cduRow.relacion2ID? cduRow.relacion2ID.nombre == 'INCLUDES'? '&lt;---': '---&gt;': '(vacio)'}"></h:outputText>
                                     <div data-row="#{row}" data-column="5">
                                         <h:selectBooleanCheckbox styleClass="relCheckbox"></h:selectBooleanCheckbox>
                                     </div>

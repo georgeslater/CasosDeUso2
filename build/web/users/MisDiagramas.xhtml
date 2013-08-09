@@ -9,24 +9,51 @@ and open the template in the editor.
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets">
-    <ui:composition template="./plantilla/template.xhtml">
+    <ui:composition template="/plantilla/template.xhtml">
+        <ui:define name="scripts">
+            <h:outputScript name="js/MisDiagramas.js"></h:outputScript> 
+        </ui:define>
+        <ui:define name="styles">
+            <h:outputStylesheet name="css/MisDiagramas.css"></h:outputStylesheet>
+        </ui:define>
         <ui:define name="titulo">
             Mis Diagramas
         </ui:define>
         <ui:define name="encabezado">
-            <ui:include src="./plantilla/encabezado.xhtml"/>
+            <ui:include src="/plantilla/encabezado.xhtml"/>
         </ui:define>
         <ui:define name="body">
-            <p:dataTable id="diagTable" rowIndexVar="row" var="diag" value="#{misDiagramas.misDiagramas}">
-                <p:column>
-                    <h:outputText value="#{row + 1}"/>
-                </p:column>
-                <p:column>                    
-                    <h:link value="#{diag.nombre}" includeViewParams="true" outcome="CrearCasosDeUso">
-                        <f:param name="id" value="#{diag.id}"/>
-                    </h:link>
-                </p:column>
-            </p:dataTable>
+            <h:form>
+
+                <p:button onclick="dlgDiag.show(); return false;" value="Nuevo"/>
+                <p:dataTable id="diagTable" editable="true" selection="#{misDiagramas.diagramaSeleccionado}" rowIndexVar="row" var="diag" value="#{misDiagramas.diagramaModel}">
+                    <p:column selectionMode="single" style="width:5%"/>
+                    <p:column style="width:50%">
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:link value="#{diag.nombre}" includeViewParams="true" outcome="CrearCasosDeUso">
+                                    <f:param name="id" value="#{diag.id}"/>
+                                </h:link>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputText size="100" value="#{diag.nombre}"/>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column>
+                        <p:rowEditor/>
+                    </p:column>
+                    <p:ajax event="rowEdit" update="@this" listener="#{misDiagramas.editar}"/>
+                </p:dataTable>
+                <p:dialog id="relacionDialog" header="Ingresar Nombre" widgetVar="dlgDiag">
+                    <div>
+                        <h:inputText value="#{misDiagramas.nombreNuevoDiagrama}"/> 
+                    </div>
+                    <div style="margin-top:10px;">
+                        <p:commandButton value="Agregar" action="#{misDiagramas.agregarDiagrama}"/>
+                    </div>
+                </p:dialog>
+            </h:form>
         </ui:define>
     </ui:composition>
 </html>
