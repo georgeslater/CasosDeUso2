@@ -4,18 +4,35 @@
  */
 package com.example.controllers;
 
-import com.example.controllers.util.DiagramaDataModel;
+import com.example.controllers.util.Messages;
+import com.example.dao.ActorCasoDeUsoFacade;
+import com.example.dao.ActorFacade;
+import com.example.dao.CasoDeUsoFacade;
+import com.example.dao.CasosDeUsoRelacionesFacade;
 import com.example.dao.DiagramaFacade;
+import com.example.dao.FilaFacade;
+import com.example.dao.ImageFacade;
 import com.example.dao.UsuarioTableFacade;
+import com.example.entities.Actor;
+import com.example.entities.ActorCasoDeUso;
+import com.example.entities.CasoDeUso;
+import com.example.entities.CasosDeUsoRelaciones;
 import com.example.entities.Diagrama;
+import com.example.entities.Fila;
+import com.example.entities.Image;
 import com.example.entities.UsuarioTable;
+import java.io.File;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.servlet.ServletContext;
 import org.primefaces.event.RowEditEvent;
 
 /**
@@ -24,47 +41,129 @@ import org.primefaces.event.RowEditEvent;
  */
 @Named(value = "misDiagramas")
 @RequestScoped
-public class MisDiagramas implements Serializable{
-    
+public class MisDiagramas implements Serializable {
+
     private String nombreNuevoDiagrama;
-    private Diagrama diagramaSeleccionado;
-    private DiagramaDataModel diagramaModel; 
+    private Diagrama diagramaABorrar;
+    private Map<Integer, String> diagramaImagenes = new HashMap<Integer, String>();
     
     private List<Diagrama> misDiagramas;
     @EJB
     private DiagramaFacade diagFacade;
     @EJB
     private UsuarioTableFacade utFacade;
+    @EJB
+    private FilaFacade filaFacade;
+    @EJB
+    private ActorCasoDeUsoFacade actorCasoDeUsoFacade;
+    @EJB
+    private ActorFacade actorFacade;
+    @EJB
+    private CasoDeUsoFacade cduFacade;
+    @EJB
+    private CasosDeUsoRelacionesFacade cduRelFacade;
+    @EJB
+    private ImageFacade imgFacade;
     private UsuarioTable usuarioLogueado;
+
     /**
      * Creates a new instance of MisDiagramas
      */
     public MisDiagramas() {
     }
-    
-    public void editar(RowEditEvent event){
-        
+
+    public void editar(RowEditEvent event) {
+
         Diagrama diagramaAEditar = (Diagrama) event.getObject();
         getDiagFacade().edit(diagramaAEditar);
     }
-    
-    public String agregarDiagrama(){
-        
-        if(nombreNuevoDiagrama != null && !nombreNuevoDiagrama.equals("")){
-            
+
+    public void borrarDiagrama() {
+
+        if (getDiagramaABorrar() != null) {
+
+            Image i = getImgFacade().obtenerImagenPorDiagramaId(getDiagramaABorrar());
+
+            if (i != null) {
+
+                if (i.getPath() != null) {
+
+                    //borrar archivo
+                    ExternalContext external = FacesContext.getCurrentInstance().getExternalContext();
+                    ServletContext servletContext = (ServletContext) external.getContext();
+                    String relativeFilename = i.getPath();
+                    String filename = servletContext.getRealPath(relativeFilename + ".png");
+                    File f = new File(filename);
+
+                    if (f.exists()) {
+                        
+                        try{
+                            f.delete();
+                        }catch(Exception e){
+                            Messages.addError(e.getMessage());
+                        }
+                    }
+                }
+
+                getImgFacade().remove(i);
+            }
+
+            List<Fila> filasDiagrama = getFilaFacade().obtenerFilasPorDiagramaID(getDiagramaABorrar().getId());
+
+            for (Fila f : filasDiagrama) {
+                getFilaFacade().remove(f);
+            }
+
+            List<ActorCasoDeUso> actCdus = getActorCasoDeUsoFacade().obtenerActorCdusPorDiagramaID(getDiagramaABorrar().getId());
+
+            for (ActorCasoDeUso actCdu : actCdus) {
+
+                getActorCasoDeUsoFacade().remove(actCdu);
+            }
+
+            List<CasosDeUsoRelaciones> cduRels = getCduRelFacade().obtenerCduRelsPorDiagramaID(getDiagramaABorrar().getId());
+
+            for (CasosDeUsoRelaciones cduRel : cduRels) {
+
+                getCduRelFacade().remove(cduRel);
+            }
+
+            List<Actor> acts = getActorFacade().obtenerActoresPorDiagramaID(getDiagramaABorrar().getId());
+
+            for (Actor a : acts) {
+
+                getActorFacade().remove(a);
+            }
+
+            List<CasoDeUso> cdus = getCduFacade().obtenerFilasPorDiagramaID(getDiagramaABorrar().getId());
+
+            for (CasoDeUso cdu : cdus) {
+
+                getCduFacade().remove(cdu);
+            }
+
+            getDiagFacade().remove(getDiagramaABorrar());
+            misDiagramas.remove(diagramaABorrar);
+        }
+    }
+
+    public String agregarDiagrama() {
+
+        if (nombreNuevoDiagrama != null && !nombreNuevoDiagrama.equals("")) {
+
             Diagrama d = new Diagrama();
             d.setNombre(nombreNuevoDiagrama);
             d.setUsuario(usuarioLogueado);
             getDiagFacade().create(d);
-            return "CrearCasosDeUso.xhtml?faces-redirect=true&id="+d.getId();
+            return "CrearCasosDeUso.xhtml?faces-redirect=true&id=" + d.getId();
         }
-        
+
         return null;
     }
-    
+
     @PostConstruct
-    public void init(){
-       
+    public void init() {
+                
         //obtener id del usuario
         String usuario = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
 
@@ -73,9 +172,18 @@ public class MisDiagramas implements Serializable{
             setUsuarioLogueado(getUtFacade().obtenerIDPorNombre(usuario));
 
             if (getUsuarioLogueado() != null && getUsuarioLogueado().getIduser() != null) {
-                
+
                 misDiagramas = getDiagFacade().obtenerDiagramaPorUserID(usuarioLogueado.getIduser());
-                diagramaModel = new DiagramaDataModel(misDiagramas);
+                
+                for(Diagrama d: misDiagramas){
+                    
+                    Image i = getImgFacade().obtenerImagenPorDiagramaId(d);
+                                       
+                    String relativeFilename = i.getPath();
+                    String filename = "http://localhost:8080/CasosDeUso5"+relativeFilename + ".png";
+                    
+                    diagramaImagenes.put(d.getId(), filename);
+                }
             }
         }
     }
@@ -151,30 +259,114 @@ public class MisDiagramas implements Serializable{
     }
 
     /**
-     * @return the diagramaSeleccionado
+     * @return the filaFacade
      */
-    public Diagrama getDiagramaSeleccionado() {
-        return diagramaSeleccionado;
+    public FilaFacade getFilaFacade() {
+        return filaFacade;
     }
 
     /**
-     * @param diagramaSeleccionado the diagramaSeleccionado to set
+     * @param filaFacade the filaFacade to set
      */
-    public void setDiagramaSeleccionado(Diagrama diagramaSeleccionado) {
-        this.diagramaSeleccionado = diagramaSeleccionado;
+    public void setFilaFacade(FilaFacade filaFacade) {
+        this.filaFacade = filaFacade;
     }
 
     /**
-     * @return the diagramaModel
+     * @return the actorCasoDeUsoFacade
      */
-    public DiagramaDataModel getDiagramaModel() {
-        return diagramaModel;
+    public ActorCasoDeUsoFacade getActorCasoDeUsoFacade() {
+        return actorCasoDeUsoFacade;
     }
 
     /**
-     * @param diagramaModel the diagramaModel to set
+     * @param actorCasoDeUsoFacade the actorCasoDeUsoFacade to set
      */
-    public void setDiagramaModel(DiagramaDataModel diagramaModel) {
-        this.diagramaModel = diagramaModel;
+    public void setActorCasoDeUsoFacade(ActorCasoDeUsoFacade actorCasoDeUsoFacade) {
+        this.actorCasoDeUsoFacade = actorCasoDeUsoFacade;
+    }
+
+    /**
+     * @return the actorFacade
+     */
+    public ActorFacade getActorFacade() {
+        return actorFacade;
+    }
+
+    /**
+     * @param actorFacade the actorFacade to set
+     */
+    public void setActorFacade(ActorFacade actorFacade) {
+        this.actorFacade = actorFacade;
+    }
+
+    /**
+     * @return the cduFacade
+     */
+    public CasoDeUsoFacade getCduFacade() {
+        return cduFacade;
+    }
+
+    /**
+     * @param cduFacade the cduFacade to set
+     */
+    public void setCduFacade(CasoDeUsoFacade cduFacade) {
+        this.cduFacade = cduFacade;
+    }
+
+    /**
+     * @return the cduRelFacade
+     */
+    public CasosDeUsoRelacionesFacade getCduRelFacade() {
+        return cduRelFacade;
+    }
+
+    /**
+     * @param cduRelFacade the cduRelFacade to set
+     */
+    public void setCduRelFacade(CasosDeUsoRelacionesFacade cduRelFacade) {
+        this.cduRelFacade = cduRelFacade;
+    }
+
+    /**
+     * @return the imgFacade
+     */
+    public ImageFacade getImgFacade() {
+        return imgFacade;
+    }
+
+    /**
+     * @param imgFacade the imgFacade to set
+     */
+    public void setImgFacade(ImageFacade imgFacade) {
+        this.imgFacade = imgFacade;
+    }
+
+    /**
+     * @return the diagramaABorrar
+     */
+    public Diagrama getDiagramaABorrar() {
+        return diagramaABorrar;
+    }
+
+    /**
+     * @param diagramaABorrar the diagramaABorrar to set
+     */
+    public void setDiagramaABorrar(Diagrama diagramaABorrar) {
+        this.diagramaABorrar = diagramaABorrar;
+    }
+
+    /**
+     * @return the diagramaImagenes
+     */
+    public Map getDiagramaImagenes() {
+        return diagramaImagenes;
+    }
+
+    /**
+     * @param diagramaImagenes the diagramaImagenes to set
+     */
+    public void setDiagramaImagenes(Map diagramaImagenes) {
+        this.diagramaImagenes = diagramaImagenes;
     }
 }

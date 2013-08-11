@@ -22,8 +22,11 @@ function dibujar(objetos, nombreDiagrama){
     diagramaDialog.show();
 
     var canvas = document.getElementById("casosDeUsoCanvas");
-    canvas.width = 2000;
-    canvas.height = 5000;
+    canvas.width = obtenerWidth(objetos);
+    alert(canvas.width);
+    canvas.height = obtenerHeight(objetos);
+    alert(canvas.height);
+    
     var casosDeUsoJSON = objetos;
     var offset = 100;
         
@@ -64,7 +67,7 @@ function dibujar(objetos, nombreDiagrama){
                         counterAct = 0;
                         dibujarActor(j, i, objeto.nombre);
                         actores.push(objeto.nombre);
-                        //alert("pushed "+objeto.nombre);
+                    //alert("pushed "+objeto.nombre);
                     }else{
                         counterAct++;
                     }
@@ -109,7 +112,7 @@ function dibujar(objetos, nombreDiagrama){
                         dibujarCdu(j, i, objeto.text);
                         cdus.push(objeto.text);
                         nroCduTemp = j;
-                        //alert("pushed "+objeto.text);
+                    //alert("pushed "+objeto.text);
                     }else{
                         if(j == 2){
                             counterCdu1++;
@@ -120,10 +123,10 @@ function dibujar(objetos, nombreDiagrama){
                         }else if(j == 8){
                             counterCdu4++;
                         }
-                        //alert('increased counter');
+                    //alert('increased counter');
                     }
                     
-                    //alert(objeto.text);
+                //alert(objeto.text);
                 
                 }else if(j%2==1){
                     
@@ -166,7 +169,7 @@ function dibujar(objetos, nombreDiagrama){
                     ctx.lineTo(lineToX-10*Math.cos(angle+Math.PI/6),lineToY-10*Math.sin(angle+Math.PI/6));
                     //flecha end
                     ctx.stroke();
-                    //alert("stroke from "+moveToX+", "+moveToY+" to "+lineToX+", "+lineToY);
+                //alert("stroke from "+moveToX+", "+moveToY+" to "+lineToX+", "+lineToY);
 
                 }
             }
@@ -185,17 +188,17 @@ function dibujarSistema(tamanio, numeroCdu, nombreDiagrama){
     
     if(tamanio != undefined && tamanio > 0 && numeroCdu != undefined && numeroCdu > 0){
         
-       var canvas = document.getElementById("casosDeUsoCanvas");       
-       var ctx=canvas.getContext("2d");
-       ctx.rect(200, 0, numeroCdu*100, tamanio*130);
+        var canvas = document.getElementById("casosDeUsoCanvas");       
+        var ctx=canvas.getContext("2d");
+        ctx.rect(200, 0, numeroCdu*100, tamanio*130);
        
-       if(nombreDiagrama != undefined && nombreDiagrama != ''){
+        if(nombreDiagrama != undefined && nombreDiagrama != ''){
            
-           ctx.font = "bold 12px arial";
-           ctx.fillText(nombreDiagrama, 210, 30)
-       }
+            ctx.font = "bold 12px arial";
+            ctx.fillText(nombreDiagrama, 210, 30)
+        }
        
-       ctx.stroke();
+        ctx.stroke();
        
     }
 }
@@ -282,6 +285,43 @@ function guardarImagen(){
     }        
 }
 
+function obtenerHeight(losObjetos){
+        
+    //alert(losObjetos.length);
+    for(var i = 0; i < losObjetos.length; i++){
+            
+        var resultado = 100;
+        var cdu = losObjetos[i];
+        //alert(cdu);
+        //alert(cdu[0]);
+        if(cdu[0] == null){
+            //alert('£££');
+            return (resultado * i)+150;
+        }            
+    }
+        
+    return 5000;
+}
+    
+function obtenerWidth(losObjetos){
+        
+    counter = 0;
+
+    for(var i = 0; i < losObjetos.length; i++){
+            
+        var cdu = losObjetos[i];
+        //alert(cdu);
+        //alert(cdu[0]);
+            
+        for(var j = counter; j < cdu.length; j++){
+            if(cdu[j] != null && j > counter){
+                counter = j;
+            }
+        }            
+    }
+        
+    return (180*counter)+100;
+}
 
 
 

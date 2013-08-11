@@ -209,7 +209,6 @@ public class CrearCasosBean implements Serializable {
                 byte[] decodedBytes = decoder.decodeBuffer(dataURL.split("^data:image/(png|jpg);base64,")[1]);
                 BufferedImage imag = ImageIO.read(new ByteArrayInputStream(decodedBytes));
                 ImageIO.write(imag, "png", new File(filename));
-
                 Image i = crearCasosService.guardarNuevoImagen(diagramaImagen, usuarioLogueado, diagramaActual, "test", relativeFilename);
                 Messages.addInfo("Su imagen ha sido guardado.");
                 diagramaImagen = i;
