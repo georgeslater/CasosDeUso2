@@ -178,9 +178,14 @@ public class MisDiagramas implements Serializable {
                 for(Diagrama d: misDiagramas){
                     
                     Image i = getImgFacade().obtenerImagenPorDiagramaId(d);
-                                       
-                    String relativeFilename = i.getPath();
-                    String filename = "http://localhost:8080/CasosDeUso5"+relativeFilename + ".png";
+                    
+                    String filename = null;
+                    
+                    if(i != null && i.getPath() != null && !i.getPath().equals("")){
+                    
+                        String relativeFilename = i.getPath();
+                        filename = "http://localhost:8080/CasosDeUso5"+relativeFilename + ".png";
+                    }
                     
                     diagramaImagenes.put(d.getId(), filename);
                 }

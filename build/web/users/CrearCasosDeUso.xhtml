@@ -52,7 +52,7 @@
                                     return false;
                                 }
                             }
-                        }         
+                        }
                         /* ]]> */
                     </script>
                 </p:outputPanel>
@@ -64,7 +64,7 @@
                             </p:outputPanel>
                         </div>
                         <div>
-                            <p:commandButton value="Agregar Fila" update="myPanel" action="#{crearCasosBean.addRow}"/>
+                            <p:commandButton value="Agregar Fila" update="myPanel msgs" action="#{crearCasosBean.addRow}"/>
                             <p:commandButton value="Editar" onclick="evaluarDialogsAgregar();"></p:commandButton>
                             <p:commandButton value="Eliminar" update="casoRowTable" action="#{crearCasosBean.evaluarDialogsEliminar}"/>
                             <p:commandButton value="Validar &amp; Generar Diagrama" update="canvasPanel preparacionDiv myPanel msgs" action="#{crearCasosBean.guardarInformacionFilas}" oncomplete="if(#{!crearCasosBean.isError}){dibujarPreparacion();}"></p:commandButton><br/><br/>

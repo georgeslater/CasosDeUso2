@@ -6,6 +6,7 @@ package com.example.controllers;
 
 import com.example.controllers.exceptions.NoAccessException;
 import com.example.controllers.exceptions.UserNotRecognizedException;
+import com.example.controllers.util.Constantes;
 import com.example.controllers.util.JsfUtil;
 import com.example.controllers.util.Messages;
 import com.example.entities.Actor;
@@ -124,9 +125,13 @@ public class CrearCasosBean implements Serializable {
     }
 
     public String addRow() {
-
-        Fila newCduRow = new Fila();
-        filas.add(newCduRow);
+        
+        if(filas.size() < Constantes.NRO_MAXIMO_FILAS){
+            Fila newCduRow = new Fila();
+            filas.add(newCduRow);
+        }else{
+            Messages.addWarn(Constantes.NRO_MAXIMO_FILAS_PASADO_MSJ);
+        }
         return null;
     }
 

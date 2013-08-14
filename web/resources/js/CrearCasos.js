@@ -23,9 +23,10 @@ function dibujar(objetos, nombreDiagrama){
 
     var canvas = document.getElementById("casosDeUsoCanvas");
     canvas.width = obtenerWidth(objetos);
-    alert(canvas.width);
+    //alert(canvas.width);
     canvas.height = obtenerHeight(objetos);
-    alert(canvas.height);
+    //canvas.height = 2000;
+    //alert(canvas.height);
     
     var casosDeUsoJSON = objetos;
     var offset = 100;
@@ -83,8 +84,8 @@ function dibujar(objetos, nombreDiagrama){
                     var moveToY = (h/2)+30;
                     ctx.moveTo(moveToX, moveToY);
                     //alert("moved to "+moveToX+", "+moveToY);
-                    var lineToX = objeto.y*offset+30;
-                    var lineToY = objeto.x*offset+80
+                    var lineToX = (objeto.p.y)*offset+30;
+                    var lineToY = (objeto.p.x)*offset+80
                     ctx.lineTo(lineToX, lineToY);
                     var angle = Math.atan2(lineToY-moveToY,lineToX-moveToX);
                     //flecha begin
@@ -145,8 +146,8 @@ function dibujar(objetos, nombreDiagrama){
                     //alert('X -> '+moveToX);
                     //alert('Y -> '+moveToY);
 
-                    var lineToX = objeto.y*offset+50;
-                    var lineToY = objeto.x*offset+80;
+                    var lineToX = objeto.p.y*offset+50;
+                    var lineToY = objeto.p.x*offset+80;
  
                     if(objeto.relacion != undefined && objeto.relacion != null && objeto.relacion.toUpperCase() == 'INCLUDES'){
                         

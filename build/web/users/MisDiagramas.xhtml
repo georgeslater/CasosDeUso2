@@ -26,7 +26,7 @@ and open the template in the editor.
         </ui:define>
         <ui:define name="body">
             <h:form>
-
+            <h:messages id="mssgs"/>
                 <p:button onclick="dlgDiag.show(); return false;" style="margin-bottom: 10px;" value="Crear"/>
                 <p:dataTable id="diagTable" emptyMessage="No hay registros" editable="true" rowIndexVar="row" 
                              var="diag" value="#{misDiagramas.misDiagramas}" style="width: 70%">
@@ -45,10 +45,10 @@ and open the template in the editor.
                             </f:facet>
                         </p:cellEditor>
                     </p:column>
-                    <p:column style="width:3%;">
+                    <p:column style="width:9%;">
                         <p:rowEditor/>
                         <span style="float:left; margin-top: 6px;">
-                            <p:commandLink style="margin: 5px;" process="@this" action="#{misDiagramas.borrarDiagrama}" update="@form">
+                            <p:commandLink ajax="false" style="margin: 5px;" process="@this" action="#{misDiagramas.borrarDiagrama}" update="@form">
                                 <f:setPropertyActionListener value="#{diag}" target="#{misDiagramas.diagramaABorrar}"/>
                                 <h:graphicImage title="Borrar #{diag.nombre}" value="/resources/imagenes/erase.png" width="12px" height="12px" alt="Borrar"/>
                             </p:commandLink>

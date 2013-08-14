@@ -1,25 +1,20 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.example.negocio;
 
 import com.google.gson.annotations.Expose;
-import javax.ejb.Stateless;
 
 /**
  *
  * @author George
+ * 
+ * Clase que representa la posicion de un caso de uso.
+ * 
  */
-@Stateless
-public class Posicion {
-
+public class Posicion implements Cloneable{
+    
     @Expose
     private int x;
     @Expose
     private int y;
-    @Expose
-    private String relacion;
     
     public Posicion(){}
     
@@ -27,13 +22,6 @@ public class Posicion {
 
         this.x = x;
         this.y = y;
-    }
-
-    public Posicion(int x, int y, String relacion) {
-
-        this.x = x;
-        this.y = y;
-        this.relacion = relacion;
     }
 
     /**
@@ -62,19 +50,5 @@ public class Posicion {
      */
     public void setY(int y) {
         this.y = y;
-    }
-
-    /**
-     * @return the relacion
-     */
-    public String getRelacion() {
-        return relacion;
-    }
-
-    /**
-     * @param relacion the relacion to set
-     */
-    public void setRelacion(String relacion) {
-        this.relacion = relacion;
     }
 }

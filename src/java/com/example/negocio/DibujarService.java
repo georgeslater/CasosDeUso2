@@ -32,8 +32,6 @@ public class DibujarService {
         //seteamos a null porque sino las posiciones estaticas conservarian su valor entre llamadas
         posicionesActores = null;
         posicionesCasosDeUso = null;       
-        posicionesActores = new HashMap<Integer, Posicion>();
-        posicionesCasosDeUso = new HashMap<Integer, Posicion>();
     }
 
     public Image obtenerImagenPorDiagramaId(Diagrama diagrama) {
@@ -44,6 +42,7 @@ public class DibujarService {
     public Object[][] generarDiagrama(List<Actor> actores, List<ActorCasoDeUso> actCdus, List<CasoDeUso> cdus, List<CasosDeUsoRelaciones> cduRel) {
 
         //Maximo de 50 filas, Una fila contiene 11 posibles valores (1 actor + 5 relaciones + 5 casos de uso)
+        diagramTabla = null;
         diagramTabla = new Object[50][11];
 
         Map<Integer, ArrayList<CasoDeUso>> actoresCasosDeUso = new HashMap<Integer, ArrayList<CasoDeUso>>();
@@ -105,7 +104,12 @@ public class DibujarService {
                     if (getDiagramTabla()[j][0] == null) {
 
                         getDiagramTabla()[j][0] = a;
-
+                        
+                        if(posicionesActores == null){
+                            
+                            posicionesActores = new HashMap<Integer, Posicion>();
+                        }
+                        
                         // solo la posicion del primero importa, porque todos apuntan a aquel
                         if (!posicionesActores.containsKey(a.getId())) {
                             posicionesActores.put(a.getId(), new Posicion(j, 0));
@@ -134,6 +138,12 @@ public class DibujarService {
                             if (getDiagramTabla()[j][2] == null) {
 
                                 getDiagramTabla()[j][2] = cdu;
+                                
+                                if(posicionesCasosDeUso == null){
+                            
+                                    posicionesCasosDeUso = new HashMap<Integer, Posicion>();
+                                }
+                                
                                 if (!posicionesCasosDeUso.containsKey(cdu.getId())) {
                                     posicionesCasosDeUso.put(cdu.getId(), new Posicion(j, 2));
                                 }
@@ -160,9 +170,8 @@ public class DibujarService {
                                     if (getDiagramTabla()[j][4] == null) {
 
                                         getDiagramTabla()[j][4] = cduEnlazadoACdu1;
-                                        Relacion r = casoDeUsoRelacionesRelation.get(cdu.getId() + "-" + cduEnlazadoACdu1.getId());
                                         if (!posicionesCasosDeUso.containsKey(cduEnlazadoACdu1.getId())) {
-                                            posicionesCasosDeUso.put(cduEnlazadoACdu1.getId(), new Posicion(j, 4, r.getNombre()));
+                                            posicionesCasosDeUso.put(cduEnlazadoACdu1.getId(), new Posicion(j, 4));
                                         }
                                         break;
                                     }
@@ -187,9 +196,8 @@ public class DibujarService {
                                             if (getDiagramTabla()[j][6] == null) {
 
                                                 getDiagramTabla()[j][6] = cduEnlazadoACdu2;
-                                                Relacion r = casoDeUsoRelacionesRelation.get(cduEnlazadoACdu1.getId() + "-" + cduEnlazadoACdu2.getId());
                                                 if (!posicionesCasosDeUso.containsKey(cduEnlazadoACdu2.getId())) {
-                                                    posicionesCasosDeUso.put(cduEnlazadoACdu2.getId(), new Posicion(j, 6, r.getNombre()));
+                                                    posicionesCasosDeUso.put(cduEnlazadoACdu2.getId(), new Posicion(j, 6));
                                                 }
                                                 break;
                                             }
@@ -217,7 +225,7 @@ public class DibujarService {
                                                         getDiagramTabla()[j][8] = cduEnlazadoACdu3;
                                                         Relacion r = casoDeUsoRelacionesRelation.get(cduEnlazadoACdu2.getId() + "-" + cduEnlazadoACdu3.getId());
                                                         if (!posicionesCasosDeUso.containsKey(cduEnlazadoACdu3.getId())) {
-                                                            posicionesCasosDeUso.put(cduEnlazadoACdu3.getId(), new Posicion(j, 8, r.getNombre()));
+                                                            posicionesCasosDeUso.put(cduEnlazadoACdu3.getId(), new Posicion(j, 8));
                                                         }
                                                         break;
                                                     }
@@ -243,7 +251,7 @@ public class DibujarService {
                                                                 getDiagramTabla()[j][10] = cduEnlazadoACdu4;
                                                                 Relacion r = casoDeUsoRelacionesRelation.get(cduEnlazadoACdu3.getId() + "-" + cduEnlazadoACdu4.getId());
                                                                 if (!posicionesCasosDeUso.containsKey(cduEnlazadoACdu4.getId())) {
-                                                                    posicionesCasosDeUso.put(cduEnlazadoACdu4.getId(), new Posicion(j, 10, r.getNombre()));
+                                                                    posicionesCasosDeUso.put(cduEnlazadoACdu4.getId(), new Posicion(j, 10));
                                                                 }
                                                                 break;
                                                             }
@@ -269,8 +277,10 @@ public class DibujarService {
             if (actoresCasosDeUso.get(actorId) != null && actoresCasosDeUso.get(actorId).size() > 0) {
 
                 for (CasoDeUso cdu : actoresCasosDeUso.get(actorId)) {
-
-                    getDiagramTabla()[(posicionesActores.get(actorId).getX()) + contador][1] = posicionesCasosDeUso.get(cdu.getId());
+                    
+                    Posicion pos = posicionesCasosDeUso.get(cdu.getId());
+                    PosicionRelacion pr = new PosicionRelacion(pos, null);
+                    getDiagramTabla()[(posicionesActores.get(actorId).getX()) + contador][1] = pr;
                     contador++;
                 }
             }
@@ -284,8 +294,20 @@ public class DibujarService {
             if (casoDeUsoRelaciones.get(cduId) != null && casoDeUsoRelaciones.get(cduId).size() > 0) {
 
                 for (CasoDeUso cdu : casoDeUsoRelaciones.get(cduId)) {
-
-                    getDiagramTabla()[(posicionesCasosDeUso.get(cduId).getX()) + contador][(posicionesCasosDeUso.get(cduId).getY()) + 1] = posicionesCasosDeUso.get(cdu.getId());
+                    
+                    Posicion p = posicionesCasosDeUso.get(cdu.getId());
+                    
+                    String nombreRel = null;
+                    
+                    if(casoDeUsoRelacionesRelation.get(cduId + "-" + cdu.getId()) != null){
+                        
+                        nombreRel = casoDeUsoRelacionesRelation.get(cduId + "-" + cdu.getId()).getNombre(); 
+                    } 
+                    
+                    PosicionRelacion pr = new PosicionRelacion(p, nombreRel);
+                    
+                    diagramTabla[(posicionesCasosDeUso.get(cduId).getX()) + contador][(posicionesCasosDeUso.get(cduId).getY()) + 1] = pr;
+                    
                     contador++;
                 }
             }
