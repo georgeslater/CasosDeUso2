@@ -9,17 +9,18 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -35,13 +36,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Image.findById", query = "SELECT i FROM Image i WHERE i.id = :id"),
     @NamedQuery(name = "Image.findByTitle", query = "SELECT i FROM Image i WHERE i.title = :title"),
     @NamedQuery(name = "Image.findByDiagram", query = "SELECT i FROM Image i WHERE i.diagramID = :diagramID"),
-    @NamedQuery(name = "Image.countByUser", query = "SELECT COUNT(i) FROM Image i WHERE i.usuario = :userid")})
+    @NamedQuery(name = "Image.countByUser", query = "SELECT COUNT(i) FROM Image i WHERE i.usuario = :userid"),
+    @NamedQuery(name = "Image.findAllAfterLastSync", query = "SELECT i FROM Image i WHERE i.fechaGuardado > :ultimoSync")})
 public class Image implements Serializable {
-    @Basic(optional = false)
-    @NotNull
-    @Size(max = 255)
-    @Column(name = "Path")
-    private String path;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,8 +54,13 @@ public class Image implements Serializable {
     @JoinColumn(name = "UserID", referencedColumnName = "IDUSER")
     @ManyToOne(optional = false)
     private UsuarioTable usuario;
+    @Column(name = "FechaGuardado")
     @Temporal(value= TemporalType.TIMESTAMP)
-    private Date fechaGuardado; 
+    private Date fechaGuardado;
+    @Basic(fetch = FetchType.EAGER)
+    @Lob 
+    @Column(name = "Body")
+    private byte[] body;
     
     public Image() {
     }
@@ -67,11 +69,11 @@ public class Image implements Serializable {
         this.id = id;
     }
 
-    public Image(UsuarioTable usuario, Diagrama diag, String titulo, String path, Date fechaGuardado) {
+    public Image(UsuarioTable usuario, Diagrama diag, String titulo, byte[] body, Date fechaGuardado) {
         this.usuario = usuario;
         this.diagramID = diag;
         this.title = titulo;
-        this.path = path;
+        this.body = body;
         this.fechaGuardado = fechaGuardado;
     }
 
@@ -124,14 +126,6 @@ public class Image implements Serializable {
         return "com.example.entities.Image[ id=" + id + " ]";
     }
 
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
     /**
      * @return the usuario
      */
@@ -158,6 +152,20 @@ public class Image implements Serializable {
      */
     public void setFechaGuardado(Date fechaGuardado) {
         this.fechaGuardado = fechaGuardado;
+    }
+
+    /**
+     * @return the body
+     */
+    public byte[] getBody() {
+        return body;
+    }
+
+    /**
+     * @param body the body to set
+     */
+    public void setBody(byte[] body) {
+        this.body = body;
     }
     
 }

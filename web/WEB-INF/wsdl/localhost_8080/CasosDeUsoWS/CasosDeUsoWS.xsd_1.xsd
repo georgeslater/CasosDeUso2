@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Metro/2.2.0-1 (tags/2.2.0u1-7139; 2012-06-02T10:55:19+0000) JAXWS-RI/2.2.6-2 JAXWS/2.2 svn-revision#unknown. --><xs:schema xmlns:tns="http://rest.example.com/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://rest.example.com/">
+
+<xs:element name="IOException" type="tns:IOException"/>
+
+<xs:element name="getImagenes" type="tns:getImagenes"/>
+
+<xs:element name="getImagenesResponse" type="tns:getImagenesResponse"/>
+
+<xs:element name="getImgFacade" type="tns:getImgFacade"/>
+
+<xs:element name="getImgFacadeResponse" type="tns:getImgFacadeResponse"/>
+
+<xs:element name="getUsuarioId" type="tns:getUsuarioId"/>
+
+<xs:element name="getUsuarioIdResponse" type="tns:getUsuarioIdResponse"/>
+
+<xs:element name="getUtFacade" type="tns:getUtFacade"/>
+
+<xs:element name="getUtFacadeResponse" type="tns:getUtFacadeResponse"/>
+
+<xs:element name="setImgFacade" type="tns:setImgFacade"/>
+
+<xs:element name="setImgFacadeResponse" type="tns:setImgFacadeResponse"/>
+
+<xs:element name="setUtFacade" type="tns:setUtFacade"/>
+
+<xs:element name="setUtFacadeResponse" type="tns:setUtFacadeResponse"/>
+
+<xs:complexType name="setUtFacade">
+<xs:sequence>
+<xs:element name="arg0" type="tns:usuarioTableFacade" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="usuarioTableFacade">
+<xs:complexContent>
+<xs:extension base="tns:abstractFacade">
+<xs:sequence/>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="abstractFacade" abstract="true">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="setUtFacadeResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getUsuarioId">
+<xs:sequence>
+<xs:element name="usuario" type="xs:string" minOccurs="0"/>
+<xs:element name="contrasenia" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getUsuarioIdResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:int" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getImagenes">
+<xs:sequence>
+<xs:element name="usuarioId" type="xs:int"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getImagenesResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:imagenData" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="imagenData">
+<xs:sequence>
+<xs:element name="fechaCreada" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="imagen" type="xs:base64Binary" minOccurs="0"/>
+<xs:element name="titulo" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="IOException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setImgFacade">
+<xs:sequence>
+<xs:element name="arg0" type="tns:imageFacade" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="imageFacade">
+<xs:complexContent>
+<xs:extension base="tns:abstractFacade">
+<xs:sequence/>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="setImgFacadeResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getImgFacade">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getImgFacadeResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:imageFacade" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getUtFacade">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getUtFacadeResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:usuarioTableFacade" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>

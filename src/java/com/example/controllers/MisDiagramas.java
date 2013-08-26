@@ -4,7 +4,6 @@
  */
 package com.example.controllers;
 
-import com.example.controllers.util.Messages;
 import com.example.dao.ActorCasoDeUsoFacade;
 import com.example.dao.ActorFacade;
 import com.example.dao.CasoDeUsoFacade;
@@ -21,6 +20,7 @@ import com.example.entities.Diagrama;
 import com.example.entities.Fila;
 import com.example.entities.Image;
 import com.example.entities.UsuarioTable;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -31,21 +31,27 @@ import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.imageio.ImageIO;
 import javax.inject.Named;
 import javax.servlet.ServletContext;
 import org.primefaces.event.RowEditEvent;
+import com.example.negocio.EncryptionService;
+import java.awt.image.BufferedImage;
 
 /**
  *
  * @author George
  */
+import java.io.IOException;
+import java.io.InputStream;
 @Named(value = "misDiagramas")
 @RequestScoped
 public class MisDiagramas implements Serializable {
 
     private String nombreNuevoDiagrama;
     private Diagrama diagramaABorrar;
-    private Map<Integer, String> diagramaImagenes = new HashMap<Integer, String>();
+    private Map<Integer, String> diagramaImagenes
+            = new HashMap<Integer, String>();
     
     private List<Diagrama> misDiagramas;
     @EJB
@@ -65,7 +71,9 @@ public class MisDiagramas implements Serializable {
     @EJB
     private ImageFacade imgFacade;
     private UsuarioTable usuarioLogueado;
-
+    @EJB
+    private EncryptionService encryptService;
+    
     /**
      * Creates a new instance of MisDiagramas
      */
@@ -83,28 +91,9 @@ public class MisDiagramas implements Serializable {
         if (getDiagramaABorrar() != null) {
 
             Image i = getImgFacade().obtenerImagenPorDiagramaId(getDiagramaABorrar());
-
-            if (i != null) {
-
-                if (i.getPath() != null) {
-
-                    //borrar archivo
-                    ExternalContext external = FacesContext.getCurrentInstance().getExternalContext();
-                    ServletContext servletContext = (ServletContext) external.getContext();
-                    String relativeFilename = i.getPath();
-                    String filename = servletContext.getRealPath(relativeFilename + ".png");
-                    File f = new File(filename);
-
-                    if (f.exists()) {
-                        
-                        try{
-                            f.delete();
-                        }catch(Exception e){
-                            Messages.addError(e.getMessage());
-                        }
-                    }
-                }
-
+            
+            if(i != null){
+            
                 getImgFacade().remove(i);
             }
 
@@ -173,22 +162,7 @@ public class MisDiagramas implements Serializable {
 
             if (getUsuarioLogueado() != null && getUsuarioLogueado().getIduser() != null) {
 
-                misDiagramas = getDiagFacade().obtenerDiagramaPorUserID(usuarioLogueado.getIduser());
-                
-                for(Diagrama d: misDiagramas){
-                    
-                    Image i = getImgFacade().obtenerImagenPorDiagramaId(d);
-                    
-                    String filename = null;
-                    
-                    if(i != null && i.getPath() != null && !i.getPath().equals("")){
-                    
-                        String relativeFilename = i.getPath();
-                        filename = "http://localhost:8080/CasosDeUso5"+relativeFilename + ".png";
-                    }
-                    
-                    diagramaImagenes.put(d.getId(), filename);
-                }
+                misDiagramas = getDiagFacade().obtenerDiagramaPorUserID(usuarioLogueado.getIduser());                                
             }
         }
     }
@@ -373,5 +347,12 @@ public class MisDiagramas implements Serializable {
      */
     public void setDiagramaImagenes(Map diagramaImagenes) {
         this.diagramaImagenes = diagramaImagenes;
+    }
+
+    /**
+     * @return the encryptService
+     */
+    public EncryptionService getEncryptService() {
+        return encryptService;
     }
 }

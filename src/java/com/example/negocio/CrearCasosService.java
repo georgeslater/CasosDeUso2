@@ -103,15 +103,15 @@ public class CrearCasosService {
         return obtenerActorPorNombre(nombre) != null;
     }
 
-    public Image guardarNuevoImagen(Image viejoImagen, UsuarioTable usuario, Diagrama diagrama, String title, String relativeFilename) {
+    public Image guardarNuevoImagen(Image viejoImagen, UsuarioTable usuario, Diagrama diagrama, String title, byte[] body) {
 
         Image imagen;
 
         if (viejoImagen != null) {
-
+                      
             imagen = viejoImagen;
             imagen.setDiagramID(diagrama);
-            imagen.setPath(relativeFilename);
+            imagen.setBody(body);
             imagen.setTitle(title);
             imagen.setUsuario(usuario);
             imagen.setFechaGuardado(new Date());
@@ -119,7 +119,7 @@ public class CrearCasosService {
 
         } else {
 
-            imagen = new Image(usuario, diagrama, title, relativeFilename, new Date());
+            imagen = new Image(usuario, diagrama, title, body, new Date());
             getImageFacade().create(imagen);
         }
 

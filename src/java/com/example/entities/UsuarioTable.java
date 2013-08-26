@@ -5,6 +5,7 @@
 package com.example.entities;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,8 +34,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "UsuarioTable.findByUsernameusuario", query = "SELECT u FROM UsuarioTable u WHERE u.usernameusuario = :usernameusuario"),
     @NamedQuery(name = "UsuarioTable.findByContraseniausuario", query = "SELECT u FROM UsuarioTable u WHERE u.contraseniausuario = :contraseniausuario"),
     @NamedQuery(name = "UsuarioTable.findByNombre", query = "SELECT u FROM UsuarioTable u WHERE u.nombre = :nombre"),
-    @NamedQuery(name = "UsuarioTable.findByApellido", query = "SELECT u FROM UsuarioTable u WHERE u.apellido = :apellido")})
+    @NamedQuery(name = "UsuarioTable.findByApellido", query = "SELECT u FROM UsuarioTable u WHERE u.apellido = :apellido"),
+    @NamedQuery(name = "UsuarioTable.findByUsuarioYContrasenia", query = "SELECT u FROM UsuarioTable u WHERE u.usernameusuario = :usuario AND u.contraseniausuario = :contrasenia")})
 public class UsuarioTable implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,6 +60,9 @@ public class UsuarioTable implements Serializable {
     @Size(max = 255)
     @Column(name = "APELLIDO")
     private String apellido;
+    @Column(name = "ULTIMOSYNC")
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date ultimoSync;
 
     public UsuarioTable() {
     }
@@ -133,5 +141,18 @@ public class UsuarioTable implements Serializable {
     public String toString() {
         return "com.example.entities.UsuarioTable[ iduser=" + iduser + " ]";
     }
-    
+
+    /**
+     * @return the ultimoSync
+     */
+    public Date getUltimoSync() {
+        return ultimoSync;
+    }
+
+    /**
+     * @param ultimoSync the ultimoSync to set
+     */
+    public void setUltimoSync(Date ultimoSync) {
+        this.ultimoSync = ultimoSync;
+    }
 }

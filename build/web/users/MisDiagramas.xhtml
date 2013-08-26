@@ -12,11 +12,9 @@ and open the template in the editor.
     <ui:composition template="/plantilla/template.xhtml">
         <ui:define name="scripts">
             <h:outputScript name="js/MisDiagramas.js"></h:outputScript>
-            <h:outputScript name="js/jquery.fancybox.pack.js"></h:outputScript>
         </ui:define>
         <ui:define name="styles">
             <h:outputStylesheet name="css/MisDiagramas.css"></h:outputStylesheet>
-            <h:outputStylesheet name="css/jquery.fancybox.css"></h:outputStylesheet>
         </ui:define>
         <ui:define name="titulo">
             Mis Diagramas
@@ -52,14 +50,7 @@ and open the template in the editor.
                                 <f:setPropertyActionListener value="#{diag}" target="#{misDiagramas.diagramaABorrar}"/>
                                 <h:graphicImage title="Borrar #{diag.nombre}" value="/resources/imagenes/erase.png" width="12px" height="12px" alt="Borrar"/>
                             </p:commandLink>
-                        </span>
-                        <p:outputPanel rendered="#{misDiagramas.diagramaImagenes[diag.id] != null}">
-                            <span style="float:left;">
-                                <a href="#{misDiagramas.diagramaImagenes[diag.id]}" class="fancybox">
-                                    <h:graphicImage title="Ver Diagrama" value="/resources/imagenes/magnifying-glass-icon.png" alt="Ver Diagrama"/>
-                                </a>
-                            </span>
-                        </p:outputPanel>
+                        </span>                        
                     </p:column>
                     <p:ajax event="rowEdit" update="@this" listener="#{misDiagramas.editar}"/>
                 </p:dataTable>

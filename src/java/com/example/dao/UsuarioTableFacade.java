@@ -8,8 +8,8 @@ import com.example.entities.UsuarioTable;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 /**
  *
@@ -28,6 +28,23 @@ public class UsuarioTableFacade extends AbstractFacade<UsuarioTable> {
     
     public UsuarioTableFacade() {
         super(UsuarioTable.class);
+    }
+    
+    public Integer obtenerIdPorUsuarioYContrasenia(String usuario, String contrasenia){
+        
+        try{
+        
+            UsuarioTable usuarioEncontrado = (UsuarioTable)em.createNamedQuery("UsuarioTable.findByUsuarioYContrasenia")
+                .setParameter("usuario", usuario)
+                    .setParameter("contrasenia", contrasenia)
+                        .getSingleResult();
+            
+            return usuarioEncontrado.getIduser();
+            
+        }catch(NoResultException e){
+            
+            return null;
+        }
     }
     
     public UsuarioTable obtenerIDPorNombre(String nombre){

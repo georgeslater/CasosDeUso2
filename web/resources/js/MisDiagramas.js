@@ -8,9 +8,7 @@ $(document).ready(function(){
    $('.ui-icon.ui-icon-pencil').each(function(){
        
       $(this).attr('title', 'Renombrar'); 
-   });
-   
-    $(".fancybox").fancybox();
+   });   
 });
 
 

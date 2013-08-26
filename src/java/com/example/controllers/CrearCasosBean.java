@@ -28,6 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -200,28 +201,23 @@ public class CrearCasosBean implements Serializable {
     }
 
     public void guardarImagen() {
-
+ 
         if (dataURL != null && !dataURL.equals("")) {
-
-            try {
-
-                ExternalContext external = FacesContext.getCurrentInstance().getExternalContext();
-                ServletContext servletContext = (ServletContext) external.getContext();
-                String md5path = encryptService.encryptar(usuarioLogueado.getUsernameusuario() + "_" + diagramaID);
-                String relativeFilename = "/resources/imagenes/" + md5path;
-                String filename = servletContext.getRealPath(relativeFilename + ".png");
+            
+            try{
+                
                 BASE64Decoder decoder = new BASE64Decoder();
-                byte[] decodedBytes = decoder.decodeBuffer(dataURL.split("^data:image/(png|jpg);base64,")[1]);
-                BufferedImage imag = ImageIO.read(new ByteArrayInputStream(decodedBytes));
-                ImageIO.write(imag, "png", new File(filename));
-                Image i = crearCasosService.guardarNuevoImagen(diagramaImagen, usuarioLogueado, diagramaActual, "test", relativeFilename);
+                byte[] b = decoder.decodeBuffer(dataURL.split("^data:image/(png|jpg);base64,")[1]);
+                //byte[] b;
+                //b = dataURL.getBytes("UTF-8");
+            
+                Image i = crearCasosService.guardarNuevoImagen(diagramaImagen, usuarioLogueado, diagramaActual, "test", b);
                 Messages.addInfo("Su imagen ha sido guardado.");
                 diagramaImagen = i;
-                mostrarImagenEstatico = true;
-
-            } catch (IOException e) {
-
-                Messages.addError("Error al guardar el imagen.");
+            
+            }catch(IOException e){
+                
+                
             }
         }
 
