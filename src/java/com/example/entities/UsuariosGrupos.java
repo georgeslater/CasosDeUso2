@@ -8,7 +8,11 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -29,19 +33,19 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "UsuariosGrupos.findById", query = "SELECT u FROM UsuariosGrupos u WHERE u.id = :id")})
 public class UsuariosGrupos implements Serializable {
     private static final long serialVersionUID = 1L;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "USUARIOID")
-    private int usuarioid;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "GRUPOID")
-    private int grupoid;
     @Id
     @Basic(optional = false)
-    @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Integer id;
+    @JoinColumn(name = "USUARIOID", referencedColumnName = "IDUSER")
+    @ManyToOne(optional = false)
+    @NotNull
+    private UsuarioTable usuarioid;
+    @ManyToOne(optional = false)
+    @NotNull
+    @JoinColumn(name = "GRUPOID", referencedColumnName="IDGROUP")
+    private Grupo grupoid;
 
     public UsuariosGrupos() {
     }
@@ -50,28 +54,8 @@ public class UsuariosGrupos implements Serializable {
         this.id = id;
     }
 
-    public UsuariosGrupos(Integer id, int usuarioid, int grupoid) {
-        this.id = id;
-        this.usuarioid = usuarioid;
-        this.grupoid = grupoid;
-    }
-
-    public int getUsuarioid() {
-        return usuarioid;
-    }
-
-    public void setUsuarioid(int usuarioid) {
-        this.usuarioid = usuarioid;
-    }
-
-    public int getGrupoid() {
-        return grupoid;
-    }
-
-    public void setGrupoid(int grupoid) {
-        this.grupoid = grupoid;
-    }
-
+    
+    
     public Integer getId() {
         return id;
     }
@@ -103,6 +87,34 @@ public class UsuariosGrupos implements Serializable {
     @Override
     public String toString() {
         return "com.example.entities.UsuariosGrupos[ id=" + id + " ]";
+    }
+
+    /**
+     * @return the usuarioid
+     */
+    public UsuarioTable getUsuarioid() {
+        return usuarioid;
+    }
+
+    /**
+     * @param usuarioid the usuarioid to set
+     */
+    public void setUsuarioid(UsuarioTable usuarioid) {
+        this.usuarioid = usuarioid;
+    }
+
+    /**
+     * @return the grupoid
+     */
+    public Grupo getGrupoid() {
+        return grupoid;
+    }
+
+    /**
+     * @param grupoid the grupoid to set
+     */
+    public void setGrupoid(Grupo grupoid) {
+        this.grupoid = grupoid;
     }
     
 }

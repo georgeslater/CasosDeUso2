@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListActorCasoDeUsoTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:form styleClass="jsfcrud_list_form">
+                <h:panelGroup id="messagePanel" layout="block">
+                    <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+                </h:panelGroup>
+                <h:outputText escape="false" value="#{bundle.ListActorCasoDeUsoEmpty}" rendered="#{actorCasoDeUsoController.items.rowCount == 0}"/>
+                <h:panelGroup rendered="#{actorCasoDeUsoController.items.rowCount > 0}">
+                    <h:outputText value="#{actorCasoDeUsoController.pagination.pageFirstItem + 1}..#{actorCasoDeUsoController.pagination.pageLastItem + 1}/#{actorCasoDeUsoController.pagination.itemsCount}"/>&nbsp;
+                    <h:commandLink action="#{actorCasoDeUsoController.previous}" value="#{bundle.Previous} #{actorCasoDeUsoController.pagination.pageSize}" rendered="#{actorCasoDeUsoController.pagination.hasPreviousPage}"/>&nbsp;
+                    <h:commandLink action="#{actorCasoDeUsoController.next}" value="#{bundle.Next} #{actorCasoDeUsoController.pagination.pageSize}" rendered="#{actorCasoDeUsoController.pagination.hasNextPage}"/>&nbsp;
+                    <h:dataTable value="#{actorCasoDeUsoController.items}" var="item" border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px">
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListActorCasoDeUsoTitle_id}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.id}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListActorCasoDeUsoTitle_diagramid}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.diagramid}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListActorCasoDeUsoTitle_casodeusoid}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.casodeusoid}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListActorCasoDeUsoTitle_actorid}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.actorid}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="&nbsp;"/>
+                            </f:facet>
+                            <h:commandLink action="#{actorCasoDeUsoController.prepareView}" value="#{bundle.ListActorCasoDeUsoViewLink}"/>
+                            <h:outputText value=" "/>
+                            <h:commandLink action="#{actorCasoDeUsoController.prepareEdit}" value="#{bundle.ListActorCasoDeUsoEditLink}"/>
+                            <h:outputText value=" "/>
+                            <h:commandLink action="#{actorCasoDeUsoController.destroy}" value="#{bundle.ListActorCasoDeUsoDestroyLink}"/>
+                        </h:column>
+                    </h:dataTable>
+                </h:panelGroup>
+                <br />
+                <h:commandLink action="#{actorCasoDeUsoController.prepareCreate}" value="#{bundle.ListActorCasoDeUsoCreateLink}"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.ListActorCasoDeUsoIndexLink}"/>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

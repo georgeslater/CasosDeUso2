@@ -4,7 +4,6 @@
  */
 package com.example.controllers;
 
-import com.example.controllers.exceptions.NoAccessException;
 import com.example.controllers.exceptions.UserNotRecognizedException;
 import com.example.controllers.util.Constantes;
 import com.example.controllers.util.JsfUtil;
@@ -23,12 +22,8 @@ import com.example.negocio.DibujarService;
 import com.example.negocio.EncryptionService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,13 +34,9 @@ import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.jms.Message;
-import javax.servlet.ServletContext;
 import sun.misc.BASE64Decoder;
 
 /**

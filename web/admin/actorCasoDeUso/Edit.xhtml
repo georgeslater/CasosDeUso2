@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.EditActorCasoDeUsoTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.EditActorCasoDeUsoLabel_id}" for="id" />
+                    <h:inputText id="id" value="#{actorCasoDeUsoController.selected.id}" title="#{bundle.EditActorCasoDeUsoTitle_id}" required="true" requiredMessage="#{bundle.EditActorCasoDeUsoRequiredMessage_id}"/>
+                    <h:outputLabel value="#{bundle.EditActorCasoDeUsoLabel_diagramid}" for="diagramid" />
+                    <h:selectOneMenu id="diagramid" value="#{actorCasoDeUsoController.selected.diagramid}" title="#{bundle.EditActorCasoDeUsoTitle_diagramid}" >
+                        <f:selectItems value="#{diagramaController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="#{bundle.EditActorCasoDeUsoLabel_casodeusoid}" for="casodeusoid" />
+                    <h:selectOneMenu id="casodeusoid" value="#{actorCasoDeUsoController.selected.casodeusoid}" title="#{bundle.EditActorCasoDeUsoTitle_casodeusoid}" >
+                        <f:selectItems value="#{casoDeUsoController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="#{bundle.EditActorCasoDeUsoLabel_actorid}" for="actorid" />
+                    <h:selectOneMenu id="actorid" value="#{actorCasoDeUsoController.selected.actorid}" title="#{bundle.EditActorCasoDeUsoTitle_actorid}" >
+                        <f:selectItems value="#{actorController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                </h:panelGrid>
+                <h:commandLink action="#{actorCasoDeUsoController.update}" value="#{bundle.EditActorCasoDeUsoSaveLink}"/>
+                <br />
+                <br />
+                <h:link outcome="View" value="#{bundle.EditActorCasoDeUsoViewLink}"/>
+                <br />
+                <h:commandLink action="#{actorCasoDeUsoController.prepareList}" value="#{bundle.EditActorCasoDeUsoShowAllLink}" immediate="true"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.EditActorCasoDeUsoIndexLink}" />
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

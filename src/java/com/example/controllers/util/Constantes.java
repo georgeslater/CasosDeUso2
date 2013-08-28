@@ -16,4 +16,6 @@ public class Constantes {
     
     public static final int NRO_MAXIMO_FILAS = 50;
     public static final String NRO_MAXIMO_FILAS_PASADO_MSJ = "No puede haber más de "+Constantes.NRO_MAXIMO_FILAS+" filas.";
+    
+    public static final String USER_GRUPO_NOMBRE = "USER";
 }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.CreateCasosDeUsoRelacionesTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.CreateCasosDeUsoRelacionesLabel_id}" for="id" />
+                    <h:inputText id="id" value="#{casosDeUsoRelacionesController.selected.id}" title="#{bundle.CreateCasosDeUsoRelacionesTitle_id}" required="true" requiredMessage="#{bundle.CreateCasosDeUsoRelacionesRequiredMessage_id}"/>
+                    <h:outputLabel value="#{bundle.CreateCasosDeUsoRelacionesLabel_diagramid}" for="diagramid" />
+                    <h:selectOneMenu id="diagramid" value="#{casosDeUsoRelacionesController.selected.diagramid}" title="#{bundle.CreateCasosDeUsoRelacionesTitle_diagramid}" >
+                        <f:selectItems value="#{diagramaController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="#{bundle.CreateCasosDeUsoRelacionesLabel_relacionid}" for="relacionid" />
+                    <h:selectOneMenu id="relacionid" value="#{casosDeUsoRelacionesController.selected.relacionid}" title="#{bundle.CreateCasosDeUsoRelacionesTitle_relacionid}" required="true" requiredMessage="#{bundle.CreateCasosDeUsoRelacionesRequiredMessage_relacionid}">
+                        <f:selectItems value="#{relacionController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="#{bundle.CreateCasosDeUsoRelacionesLabel_casodeuso2id}" for="casodeuso2id" />
+                    <h:selectOneMenu id="casodeuso2id" value="#{casosDeUsoRelacionesController.selected.casodeuso2id}" title="#{bundle.CreateCasosDeUsoRelacionesTitle_casodeuso2id}" required="true" requiredMessage="#{bundle.CreateCasosDeUsoRelacionesRequiredMessage_casodeuso2id}">
+                        <f:selectItems value="#{casoDeUsoController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="#{bundle.CreateCasosDeUsoRelacionesLabel_casodeuso1id}" for="casodeuso1id" />
+                    <h:selectOneMenu id="casodeuso1id" value="#{casosDeUsoRelacionesController.selected.casodeuso1id}" title="#{bundle.CreateCasosDeUsoRelacionesTitle_casodeuso1id}" required="true" requiredMessage="#{bundle.CreateCasosDeUsoRelacionesRequiredMessage_casodeuso1id}">
+                        <f:selectItems value="#{casoDeUsoController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{casosDeUsoRelacionesController.create}" value="#{bundle.CreateCasosDeUsoRelacionesSaveLink}" />
+                <br />
+                <br />
+                <h:commandLink action="#{casosDeUsoRelacionesController.prepareList}" value="#{bundle.CreateCasosDeUsoRelacionesShowAllLink}" immediate="true"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.CreateCasosDeUsoRelacionesIndexLink}"/>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>
