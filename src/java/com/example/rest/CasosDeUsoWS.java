@@ -95,7 +95,13 @@ public class CasosDeUsoWS {
         }
 
         if (!imagenData.isEmpty()) {
+
+           //actualizar ultimoSync del usuario
+           usuario.setUltimoSync(new Date());
+           getUtFacade().edit(usuario);
+            
             return imagenData;
+            
         } else {
             return null;
         }

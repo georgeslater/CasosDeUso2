@@ -202,7 +202,7 @@ public class CrearCasosBean implements Serializable {
                 //byte[] b;
                 //b = dataURL.getBytes("UTF-8");
             
-                Image i = crearCasosService.guardarNuevoImagen(diagramaImagen, usuarioLogueado, diagramaActual, "test", b);
+                Image i = crearCasosService.guardarNuevoImagen(diagramaImagen, usuarioLogueado, diagramaActual, diagramaActual.getNombre(), b);
                 Messages.addInfo("Su imagen ha sido guardado.");
                 diagramaImagen = i;
             

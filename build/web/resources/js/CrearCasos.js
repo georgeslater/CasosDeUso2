@@ -132,6 +132,7 @@ function dibujar(objetos, nombreDiagrama){
                 }else if(j%2==1){
                     
                     //es una flecha caso de uso - caso de uso
+                    
                     //verificar cuantos hijos tiene el caso anterior
                     var counterCdu = j == 3? counterCdu1: j == 5? counterCdu2: j == 7? counterCdu3: j == 9? counterCdu4: 0;
                     var h = ((i-counterCdu) * 200)+100;
@@ -147,8 +148,8 @@ function dibujar(objetos, nombreDiagrama){
                     //alert('Y -> '+moveToY);
 
                     var lineToX = objeto.p.y*offset+50;
-                    var lineToY = objeto.p.x*offset+80;
- 
+                    var lineToY = objeto.p.x*offset+80;                                        
+                    
                     if(objeto.relacion != undefined && objeto.relacion != null && objeto.relacion.toUpperCase() == 'INCLUDES'){
                         
                         var moveToXTemp = moveToX;
@@ -163,13 +164,16 @@ function dibujar(objetos, nombreDiagrama){
                     
                     ctx.moveTo(moveToX, moveToY);                    
                     ctx.lineTo(lineToX, lineToY);
-                    var angle = Math.atan2(lineToY-moveToY,lineToX-moveToX);
+                    var angulo = Math.atan2(lineToY-moveToY,lineToX-moveToX);
                     //flecha begin
-                    ctx.lineTo(lineToX-10*Math.cos(angle-Math.PI/6),lineToY-10*Math.sin(angle-Math.PI/6));
+                    ctx.lineTo(lineToX-10*Math.cos(angulo-Math.PI/6),lineToY-10*Math.sin(angulo-Math.PI/6));
                     ctx.moveTo(lineToX, lineToY);
-                    ctx.lineTo(lineToX-10*Math.cos(angle+Math.PI/6),lineToY-10*Math.sin(angle+Math.PI/6));
+                    ctx.lineTo(lineToX-10*Math.cos(angulo+Math.PI/6),lineToY-10*Math.sin(angulo+Math.PI/6));
                     //flecha end
                     ctx.stroke();
+                    
+                    dibujarNombreRelacion(ctx, "«"+objeto.relacion.toLowerCase()+"»", moveToX, moveToY, lineToX, lineToY)
+                    
                 //alert("stroke from "+moveToX+", "+moveToY+" to "+lineToX+", "+lineToY);
 
                 }
@@ -183,6 +187,31 @@ function dibujar(objetos, nombreDiagrama){
     }
     
     dibujarSistema(tamanio, nroCdu, nombreDiagrama);
+}
+
+function dibujarNombreRelacion( ctx, text, moveToX, moveToY, lineToX, lineToY){
+
+    var dx = lineToX - moveToX;
+    var dy = lineToY - moveToY;   
+    var pad;
+    pad = 1/2;
+    
+    var angle = Math.atan2(dy,dx);
+    
+    if (angle < -Math.PI/2 || angle > Math.PI/2){        
+        moveToX = lineToX;
+        moveToY = lineToY;
+        dx *= -1;
+        dy *= -1;
+        angle -= Math.PI;
+    }
+    
+    ctx.save();
+    ctx.textAlign = "center";
+    ctx.translate(moveToX+dx*pad,moveToY+dy*pad);
+    ctx.rotate(Math.atan2(dy,dx));
+    ctx.fillText(text,0,0);
+    ctx.restore();
 }
 
 function dibujarSistema(tamanio, numeroCdu, nombreDiagrama){
