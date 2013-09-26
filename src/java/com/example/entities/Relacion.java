@@ -46,6 +46,7 @@ public class Relacion implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "Nombre")
     private String nombre;
+    /*
     @OneToMany(mappedBy = "relacion4ID")
     private Collection<Fila> filaCollection;
     @OneToMany(mappedBy = "relacion3ID")
@@ -56,7 +57,8 @@ public class Relacion implements Serializable {
     private Collection<Fila> filaCollection3;
     @OneToMany(mappedBy = "relacionid")
     private Collection<CasosDeUsoRelaciones> casosDeUsoRelacionesCollection;
-
+    */
+    
     public Relacion() {
     }
 
@@ -84,7 +86,8 @@ public class Relacion implements Serializable {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
+    
+    /*
     @XmlTransient
     public Collection<Fila> getFilaCollection() {
         return filaCollection;
@@ -121,6 +124,7 @@ public class Relacion implements Serializable {
         this.filaCollection3 = filaCollection3;
     }
 
+    /*
     @XmlTransient
     public Collection<CasosDeUsoRelaciones> getCasosDeUsoRelacionesCollection() {
         return casosDeUsoRelacionesCollection;
@@ -129,6 +133,7 @@ public class Relacion implements Serializable {
     public void setCasosDeUsoRelacionesCollection(Collection<CasosDeUsoRelaciones> casosDeUsoRelacionesCollection) {
         this.casosDeUsoRelacionesCollection = casosDeUsoRelacionesCollection;
     }
+    * */
 
     @Override
     public int hashCode() {

@@ -42,26 +42,31 @@ public class RegistrarBean implements Serializable {
         //if(ut != null && ut.getUsernameusuario() != null && ut.getContraseniausuario() != null){
 
         try {
-            
-            
-            getUtFacade().create(ut);
-            Boolean isExito = regService.asignarGrupoAUsuario(ut);
 
-            if (isExito) {
+            if (regService.usuarioNoExiste(ut.getUsernameusuario()) == true) {
 
-                String successMsg = ut.getNombre() != null ? ", " + ut.getNombre() : "";
-                Messages.addInfo("Bienvenido" + successMsg + "!");
-                mostrarLink = true;
+                getUtFacade().create(ut);
+                Boolean isExito = regService.asignarGrupoAUsuario(ut);
 
+                if (isExito) {
+
+                    String successMsg = ut.getNombre() != null ? ", " + ut.getNombre() : "";
+                    Messages.addInfo("Bienvenido" + successMsg + "!");
+                    mostrarLink = true;
+
+                } else {
+
+                    Messages.addFatal("Ha pasado un error de registracion");
+                }
             } else {
-
-                Messages.addFatal("Ha pasado un error de registracion");
+                
+                Messages.addWarn("El nombre de usuario que Ud. ha elegido no esta disponible.  Por favor, elige otro.");
             }
         } catch (ConstraintViolationException e) {
-            
+
             Set<ConstraintViolation<?>> cves = e.getConstraintViolations();
         }
-        
+
         return null;
         //       }
     }

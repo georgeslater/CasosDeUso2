@@ -43,7 +43,7 @@ public class LoginBean implements Serializable{
     
     public String logout() {
                 
-        String result="/welcome.xhtml?faces-redirect=true";
+        String result="/users/MisDiagramas.xhtml?faces-redirect=true";
 
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest)context.getExternalContext().getRequest();
@@ -52,7 +52,7 @@ public class LoginBean implements Serializable{
           request.logout();
         } catch (ServletException e) {
           log.log(Level.SEVERE, "Failed to logout user!", e);
-          result = "/ErrorLogin.xhtml?faces-redirect=true";
+          result = "/Login.xhtml?faces-redirect=true";
         }
 
         return result;

@@ -5,6 +5,7 @@
 package com.example.negocio;
 
 import com.example.dao.GrupoFacade;
+import com.example.dao.UsuarioTableFacade;
 import com.example.dao.UsuariosGruposFacade;
 import com.example.entities.Grupo;
 import com.example.entities.UsuarioTable;
@@ -19,6 +20,13 @@ public class RegistrarService {
     private GrupoFacade gf;
     @EJB
     private UsuariosGruposFacade ugf;
+    @EJB
+    private UsuarioTableFacade utf;
+    
+    public Boolean usuarioNoExiste(String usuario){
+        
+        return utf.obtenerIDPorNombre(usuario) == null? true: false; 
+    }
     
     public Boolean asignarGrupoAUsuario(UsuarioTable user) {
         
@@ -65,5 +73,19 @@ public class RegistrarService {
      */
     public void setUgf(UsuariosGruposFacade ugf) {
         this.ugf = ugf;
+    }
+
+    /**
+     * @return the utf
+     */
+    public UsuarioTableFacade getUtf() {
+        return utf;
+    }
+
+    /**
+     * @param utf the utf to set
+     */
+    public void setUtf(UsuarioTableFacade utf) {
+        this.utf = utf;
     }
 }

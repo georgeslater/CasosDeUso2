@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.faces.context.FacesContext;
@@ -287,6 +286,7 @@ public class CrearCasosService {
 
                         f.getCasoDeUso1ID().setDiagramid(diagrama);
                         getCduFacade().create(f.getCasoDeUso1ID());
+                        cduFoundMap.put(f.getCasoDeUso1ID().getId(), true);
 
                     } else if (cduFoundMap.get(cdu1.getId()) != null) {
 
@@ -306,6 +306,7 @@ public class CrearCasosService {
 
                         f.getCasoDeUso2ID().setDiagramid(diagrama);
                         getCduFacade().create(f.getCasoDeUso2ID());
+                        cduFoundMap.put(f.getCasoDeUso2ID().getId(), true);
 
                     } else if (cduFoundMap.get(cdu2.getId()) != null) {
                         f.setCasoDeUso2ID(cdu2);
@@ -395,10 +396,13 @@ public class CrearCasosService {
             }
 
             if (f.getCasoDeUso1ID() != null && f.getCasoDeUso1ID().getText() != null && f.getRelacion1ID() != null && f.getRelacion1ID().getNombre() != null && f.getCasoDeUso2ID() != null && f.getCasoDeUso2ID().getText() != null) {
-                
-                //las relaciones son INCLUDES y EXTENDS
-                rel1 = getRelFacade().obtenerRelacionPorNombre(f.getRelacion1ID().getNombre().toUpperCase());
                                 
+                //las relaciones son INCLUDES y EXTENDS
+                
+                //rel1 = getRelFacade().obtenerRelacionPorNombre(f.getRelacion1ID().getNombre().toUpperCase());
+                rel1 = getRelFacade().obtenerRelacionPorNombre("EXTENDS");
+
+                
                 if (rel1 != null) {
 
                     f.setRelacion1ID(rel1);
@@ -422,6 +426,7 @@ public class CrearCasosService {
                         cduRel1.setDiagramid(diagrama);
                         cduRel1.setRelacionid(rel1);
                         getCduRelFacade().create(cduRel1);
+                        cduRel1 = null;
                     
                     } else {
                        

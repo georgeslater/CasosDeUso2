@@ -5,7 +5,7 @@
 package com.example.dao;
 
 import com.example.entities.Diagrama;
-import java.util.ArrayList;
+import com.example.entities.UsuarioTable;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -30,7 +30,21 @@ public class DiagramaFacade extends AbstractFacade<Diagrama> {
     public DiagramaFacade() {
         super(Diagrama.class);
     }
-
+    
+    public List<Diagrama> obtenerDiagramaPorNombreYUsuario(String nombre, UsuarioTable usuario){
+        
+        List<Diagrama> resultados = em.createNamedQuery("Diagrama.findByNombreYUserId")
+                .setParameter("nombre", nombre)
+                .setParameter("usuario", usuario)
+                .getResultList();
+        
+        if (resultados == null) {
+            return null;
+        } else {
+            return resultados;
+        }
+    }
+    
     public List<Diagrama> obtenerDiagramaPorUserID(Integer userID) {
 
         List<Diagrama> resultados = em.createNamedQuery("Diagrama.findByUserid")

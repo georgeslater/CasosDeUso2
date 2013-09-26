@@ -31,7 +31,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Diagrama.findAll", query = "SELECT d FROM Diagrama d"),
     @NamedQuery(name = "Diagrama.findById", query = "SELECT d FROM Diagrama d WHERE d.id = :id"),
     @NamedQuery(name = "Diagrama.findByNombre", query = "SELECT d FROM Diagrama d WHERE d.nombre = :nombre"),
-    @NamedQuery(name = "Diagrama.findByUserid", query = "SELECT d FROM Diagrama d WHERE d.usuario.iduser = :userid")})
+    @NamedQuery(name = "Diagrama.findByUserid", query = "SELECT d FROM Diagrama d WHERE d.usuario.iduser = :userid"),
+    @NamedQuery(name = "Diagrama.findByNombreYUserId", query = "SELECT d FROM Diagrama d WHERE d.nombre = :nombre AND d.usuario = :usuario")})
 public class Diagrama implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

@@ -24,7 +24,7 @@ and open the template in the editor.
         </ui:define>
         <ui:define name="body">
             <h:form>
-            <h:messages id="mssgs"/>
+            <p:messages id="mssgs"/>
                 <p:button onclick="dlgDiag.show(); return false;" style="margin-bottom: 10px;" value="Crear"/>
                 <p:dataTable id="diagTable" emptyMessage="No hay registros" editable="true" rowIndexVar="row" 
                              var="diag" value="#{misDiagramas.misDiagramas}" style="width: 70%">
@@ -59,7 +59,7 @@ and open the template in the editor.
                         <h:inputText value="#{misDiagramas.nombreNuevoDiagrama}"/> 
                     </div>
                     <div style="margin-top:10px;">
-                        <p:commandButton value="Agregar" action="#{misDiagramas.agregarDiagrama}"/>
+                        <p:commandButton value="Agregar" action="#{misDiagramas.agregarDiagrama}" update="mssgs" oncomplete="dlgDiag.hide()"/>
                     </div>
                 </p:dialog>
             </h:form>

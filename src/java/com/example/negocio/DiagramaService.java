@@ -4,6 +4,9 @@
  */
 package com.example.negocio;
 
+import com.example.dao.DiagramaFacade;
+import com.example.entities.UsuarioTable;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 /**
@@ -13,7 +16,26 @@ import javax.ejb.Stateless;
 @Stateless
 public class DiagramaService {
     
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    @EJB
+    private DiagramaFacade diagFacade;
+    
+    public Boolean nombreDiagramaExiste(String nombre, UsuarioTable usuario){
+               
+        return !diagFacade.obtenerDiagramaPorNombreYUsuario(nombre, usuario).isEmpty();
+    }
+
+    /**
+     * @return the diagFacade
+     */
+    public DiagramaFacade getDiagFacade() {
+        return diagFacade;
+    }
+
+    /**
+     * @param diagFacade the diagFacade to set
+     */
+    public void setDiagFacade(DiagramaFacade diagFacade) {
+        this.diagFacade = diagFacade;
+    }
 
 }

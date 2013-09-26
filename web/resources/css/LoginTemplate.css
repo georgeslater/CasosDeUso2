@@ -1,0 +1,17 @@
+/* 
+    Document   : LoginTemplate
+    Created on : 15-sep-2013, 19:34:13
+    Author     : George
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+root { 
+    display: block;
+}
+
+#header .ui-layout-unit-content.ui-widget-content{
+    
+    overflow-y: hidden;
+}
+

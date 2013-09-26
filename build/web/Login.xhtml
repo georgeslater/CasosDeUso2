@@ -4,16 +4,15 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:ui="http://java.sun.com/jsf/facelets">
     <h:head>   
-
-
+        <h:outputStylesheet name="css/LoginTemplate.css"/>
     </h:head>
-    <p:layout fullPage="true" >
-        <p:layoutUnit position="north" size="35%" >
-            <div align="center"> <h:graphicImage value="/resources/imagenes/logo.png" height="11%" width="16%"/>
-                <h1>Modelacion de Casos de Uso</h1>
+    <p:layout fullPage="true">
+        <p:layoutUnit id="header" position="north" size="200">
+            <div align="center"> <h:graphicImage value="/resources/imagenes/logo.png" height="120px" width="150px"/>
+                <h1>Modelación de Casos de Uso</h1>
             </div>           
         </p:layoutUnit>
-        <p:layoutUnit position="center" size="25%">
+        <p:layoutUnit position="center">
             <div align="center">
                 <form method="POST" action="j_security_check">
 
@@ -33,16 +32,13 @@
                     </div>
                     <br></br>
                     <div>
-                        <a href="RegistroUsuario.xhtml">No registrado?  Clickee aqui!</a>
+                        <a href="http://localhost:8080/CasosDeUso5/RegistroUsuario.xhtml">No registrado?  Clickee aqui!</a>
                     </div>
-
-
-
                 </form>
             </div>
         </p:layoutUnit>
 
-        <p:layoutUnit position="south" size="25%">
+        <p:layoutUnit position="south" size="150">
             <div align="center"> 
                  <h3>
                     <p>Carlos Navarro/

@@ -4,6 +4,7 @@
  */
 package com.example.controllers;
 
+import com.example.controllers.util.Messages;
 import com.example.dao.ActorCasoDeUsoFacade;
 import com.example.dao.ActorFacade;
 import com.example.dao.CasoDeUsoFacade;
@@ -20,8 +21,7 @@ import com.example.entities.Diagrama;
 import com.example.entities.Fila;
 import com.example.entities.Image;
 import com.example.entities.UsuarioTable;
-import java.io.ByteArrayInputStream;
-import java.io.File;
+import com.example.negocio.DiagramaService;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -29,21 +29,10 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.imageio.ImageIO;
 import javax.inject.Named;
-import javax.servlet.ServletContext;
 import org.primefaces.event.RowEditEvent;
 import com.example.negocio.EncryptionService;
-import java.awt.image.BufferedImage;
-
-/**
- *
- * @author George
- */
-import java.io.IOException;
-import java.io.InputStream;
 @Named(value = "misDiagramas")
 @RequestScoped
 public class MisDiagramas implements Serializable {
@@ -71,6 +60,8 @@ public class MisDiagramas implements Serializable {
     @EJB
     private ImageFacade imgFacade;
     private UsuarioTable usuarioLogueado;
+    @EJB
+    private DiagramaService diagramaService;
     @EJB
     private EncryptionService encryptService;
     
@@ -139,12 +130,19 @@ public class MisDiagramas implements Serializable {
     public String agregarDiagrama() {
 
         if (nombreNuevoDiagrama != null && !nombreNuevoDiagrama.equals("")) {
-
-            Diagrama d = new Diagrama();
-            d.setNombre(nombreNuevoDiagrama);
-            d.setUsuario(usuarioLogueado);
-            getDiagFacade().create(d);
-            return "CrearCasosDeUso.xhtml?faces-redirect=true&id=" + d.getId();
+            
+            if(!diagramaService.nombreDiagramaExiste(nombreNuevoDiagrama, usuarioLogueado)){
+            
+                Diagrama d = new Diagrama();
+                d.setNombre(nombreNuevoDiagrama);
+                d.setUsuario(usuarioLogueado);
+                getDiagFacade().create(d);
+                return "CrearCasosDeUso.xhtml?faces-redirect=true&id=" + d.getId();
+            
+            }else{
+                
+                Messages.addError("Un diagrama ya existe con ese nombre.  Intente de nuevo.");
+            }
         }
 
         return null;
@@ -354,5 +352,19 @@ public class MisDiagramas implements Serializable {
      */
     public EncryptionService getEncryptService() {
         return encryptService;
+    }
+
+    /**
+     * @return the diagramaService
+     */
+    public DiagramaService getDiagramaService() {
+        return diagramaService;
+    }
+
+    /**
+     * @param diagramaService the diagramaService to set
+     */
+    public void setDiagramaService(DiagramaService diagramaService) {
+        this.diagramaService = diagramaService;
     }
 }
