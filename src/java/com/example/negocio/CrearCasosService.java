@@ -399,9 +399,7 @@ public class CrearCasosService {
                                 
                 //las relaciones son INCLUDES y EXTENDS
                 
-                //rel1 = getRelFacade().obtenerRelacionPorNombre(f.getRelacion1ID().getNombre().toUpperCase());
-                rel1 = getRelFacade().obtenerRelacionPorNombre("EXTENDS");
-
+                rel1 = getRelFacade().obtenerRelacionPorNombre(f.getRelacion1ID().getNombre().toUpperCase());
                 
                 if (rel1 != null) {
 
@@ -636,7 +634,7 @@ public class CrearCasosService {
 
     public List<CasoDeUso> obtenerCasosDeUsoPorDiagramaID(int diagramaID) {
 
-        return getCduFacade().obtenerFilasPorDiagramaID(diagramaID);
+        return getCduFacade().obtenerCdusPorDiagramaID(diagramaID);
     }
 
     public List<ActorCasoDeUso> obtenerActorCasoDeUsosPorDiagramaID(int diagramaID) {

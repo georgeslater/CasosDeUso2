@@ -4,6 +4,7 @@
  */
 package com.example.dao;
 
+import com.example.entities.CasoDeUso;
 import com.example.entities.CasosDeUsoRelaciones;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -26,6 +27,20 @@ public class CasosDeUsoRelacionesFacade extends AbstractFacade<CasosDeUsoRelacio
 
     public CasosDeUsoRelacionesFacade() {
         super(CasosDeUsoRelaciones.class);
+    }
+    
+    public List<CasosDeUsoRelaciones> obtenerCduRelsPorCdu(CasoDeUso cdu){
+        
+        List<CasosDeUsoRelaciones> resultados = em.createNamedQuery("CasosDeUsoRelaciones.findByCdu")
+                .setParameter("cdu", cdu)
+                    .getResultList();
+        
+        if (resultados == null) {
+            return null;
+        }        
+        else {
+            return resultados;
+        }
     }
     
     public List<CasosDeUsoRelaciones> obtenerCduRelsPorDiagramaID(int diagramaID){

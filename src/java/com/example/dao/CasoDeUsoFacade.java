@@ -28,7 +28,7 @@ public class CasoDeUsoFacade extends AbstractFacade<CasoDeUso> {
         super(CasoDeUso.class);
     }
     
-    public List<CasoDeUso> obtenerFilasPorDiagramaID(Integer diagramaID){
+    public List<CasoDeUso> obtenerCdusPorDiagramaID(Integer diagramaID){
         
         List<CasoDeUso> resultados = em.createNamedQuery("CasoDeUso.findByDiagramaId")
                 .setParameter("diagramaid", diagramaID)

@@ -29,14 +29,29 @@ public class ActorCasoDeUsoFacade extends AbstractFacade<ActorCasoDeUso> {
         super(ActorCasoDeUso.class);
     }
     
+    public List<ActorCasoDeUso> obtenerActoresPorCdu(CasoDeUso cdu){
+        
+        List<ActorCasoDeUso> resultados = em.createNamedQuery("ActorCasoDeUso.findByCdu")
+                .setParameter("cdu", cdu)
+                    .getResultList();
+        
+        if(resultados == null){
+            
+            return null;
+        
+        }else{
+            
+            return resultados;
+        }
+    
+    }
+    
     public List<ActorCasoDeUso> obtenerActorCdusPorDiagramaID(int diagramaID){
         
         List<ActorCasoDeUso> resultados = em.createNamedQuery("ActorCasoDeUso.findByDiagramaId")
                 .setParameter("diagramaid", diagramaID)
                     .getResultList();
         
-        assert(resultados != null);
-
         if (resultados == null) {
             return null;
         }        

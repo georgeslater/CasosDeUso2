@@ -67,7 +67,8 @@
                             <p:commandButton value="Agregar Fila" update="myPanel msgs" action="#{crearCasosBean.addRow}"/>
                             <p:commandButton value="Editar" onclick="evaluarDialogsAgregar();"></p:commandButton>
                             <p:commandButton value="Eliminar" update="casoRowTable" action="#{crearCasosBean.evaluarDialogsEliminar}"/>
-                            <p:commandButton value="Validar &amp; Generar Diagrama" update="canvasPanel preparacionDiv myPanel msgs" action="#{crearCasosBean.guardarInformacionFilas}" oncomplete="if(#{!crearCasosBean.isError}){dibujarPreparacion();}"></p:commandButton><br/><br/>
+                            <p:commandButton value="Validar &amp; Generar Diagrama" update="canvasPanel preparacionDiv myPanel msgs" action="#{crearCasosBean.guardarInformacionFilas}" oncomplete="if(#{!crearCasosBean.isError}){dibujarPreparacion();}"></p:commandButton>
+                            <br/><br/>
                         </div>
                         <p:dataTable id="casoRowTable" rowIndexVar="row" styleClass="casoRowTable" var="cduRow" value="#{crearCasosBean.filas}">
                             <p:column>

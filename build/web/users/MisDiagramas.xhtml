@@ -50,7 +50,13 @@ and open the template in the editor.
                                 <f:setPropertyActionListener value="#{diag}" target="#{misDiagramas.diagramaABorrar}"/>
                                 <h:graphicImage title="Borrar #{diag.nombre}" value="/resources/imagenes/erase.png" width="12px" height="12px" alt="Borrar"/>
                             </p:commandLink>
-                        </span>                        
+                        </span>
+                        <span style="float:left;">                            
+                            <h:link outcome="FichasExpandidas/ElegirCaso" includeViewParams="true">
+                                <h:graphicImage title="Ver Fichas Expandidas" value="/resources/imagenes/rsz_ficha_icono.png" style="margin-left:3px; margin-top: 4px;" alt="Ver Fichas Expandidas"/>
+                                <f:param name="diagramaId" value="#{diag.id}"/>
+                            </h:link>
+                        </span>
                     </p:column>
                     <p:ajax event="rowEdit" update="@this" listener="#{misDiagramas.editar}"/>
                 </p:dataTable>

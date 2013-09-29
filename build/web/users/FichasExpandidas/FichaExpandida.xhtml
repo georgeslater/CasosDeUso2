@@ -1,0 +1,99 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <ui:composition template="/plantilla/template.xhtml">
+        <ui:define name="metadata">
+            <f:metadata>
+                <f:viewParam name="cduId" value="#{fichaExpandidaBean.cduId}" required="true"/>
+            </f:metadata>
+        </ui:define>
+        <ui:define name="scripts">           
+            <!--<h:outputScript name=""></h:outputScript> -->
+        </ui:define>
+        <ui:define name="styles">
+            <h:outputStylesheet name="css/FichaExpandida.css"/>
+        </ui:define>
+        <ui:define name="titulo">
+            <h:outputText value="Ficha Expandida - #{fichaExpandidaBean.cduActual.text}"/>
+        </ui:define>
+        <ui:define name="encabezado">
+            <ui:include src="/plantilla/encabezado.xhtml"/>
+        </ui:define>
+        <ui:define name="body">
+            <h2>#{fichaExpandidaBean.cduActual.text}</h2>
+            <h:form id="feForm">
+                <p:messages id="mssgs" globalOnly="true"/>
+                <div id="fichaExpandidaWrapper">
+                    <table>
+                        <tr>
+                            <td>Nombre del diagrama de casos de uso:</td>
+                            <td>#{fichaExpandidaBean.cduActual.diagramid.nombre}</td>
+                        </tr>
+                        <tr>
+                            <td>Caso de uso:</td>
+                            <td>
+                                <h:outputText value="#{fichaExpandidaBean.cduActual.text}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Actores:</td>
+                            <td>
+                                <h:outputText value="#{fichaExpandidaBean.actores}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Prioridad:</td>
+                            <td>
+                                <h:selectOneMenu value="#{fichaExpandidaBean.encabezado.prioridad}">
+                                    <f:selectItem noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="Alta" itemValue="Alta"/>
+                                    <f:selectItem itemLabel="Media" itemValue="Media"/>
+                                    <f:selectItem itemLabel="Baja" itemValue="Baja"/>                                
+                                </h:selectOneMenu>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Puntos de inclusion:</td>
+                            <td>
+                                <h:outputText value="#{fichaExpandidaBean.puntosDeInclusion}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Puntos de extension:</td>
+                            <td>
+                                <h:outputText value="#{fichaExpandidaBean.puntosDeExtension}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Extiende a:</td>
+                            <td>
+                                <h:outputText value="#{fichaExpandidaBean.extiendeA}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Incluye a:</td>
+                            <td>
+                                <h:outputText value="#{fichaExpandidaBean.puntosDeInclusion}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Precondiciones:</td>
+                            <td>
+                                <h:inputTextarea required="false" rows="12" value="#{fichaExpandidaBean.encabezado.precondiciones}" styleClass="unresizable"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Postcondiciones:</td>
+                            <td>
+                                <h:inputTextarea required="false" rows="12" value="#{fichaExpandidaBean.encabezado.postcondiciones}" styleClass="unresizable"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+               <p:commandButton value="Guardar" action="#{fichaExpandidaBean.guardarFichaExpandida}" update="mssgs"/>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

@@ -115,7 +115,7 @@ public class MisDiagramas implements Serializable {
                 getActorFacade().remove(a);
             }
 
-            List<CasoDeUso> cdus = getCduFacade().obtenerFilasPorDiagramaID(getDiagramaABorrar().getId());
+            List<CasoDeUso> cdus = getCduFacade().obtenerCdusPorDiagramaID(getDiagramaABorrar().getId());
 
             for (CasoDeUso cdu : cdus) {
 

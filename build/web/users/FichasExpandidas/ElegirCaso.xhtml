@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <ui:composition template="/plantilla/template.xhtml">
+        <ui:define name="metadata">
+            <f:metadata>
+                <f:viewParam name="diagramaId" value="#{elegirCasoBean.diagramaId}" required="true"/>
+            </f:metadata>
+        </ui:define>
+        <ui:define name="scripts">           
+            <!--<h:outputScript name=""></h:outputScript> -->
+        </ui:define>
+        <ui:define name="styles">
+            <h:outputStylesheet name="css/ElegirCaso.css"/>
+            <style>
+                .cduDiv{
+
+                    width:230px;
+                    height:180px;
+                    background-image: url(#{resource['imagenes/Ellipse.png']});
+                    background-size:185px 185px;
+                    background-repeat: no-repeat;
+                    background-position: 25px 0px;
+                    display: table-cell;
+                    line-height:200px;
+                    text-align: center;
+                    float:left;
+                }
+                
+                .cduDiv:hover{
+                    
+                    background-image: url(#{resource['imagenes/EllipseRelleno.png']});
+                }
+            </style>
+        </ui:define>
+        <ui:define name="titulo">
+            <h:outputText value="Elegir Caso de Uso"/>
+        </ui:define>
+        <ui:define name="encabezado">
+            <ui:include src="/plantilla/encabezado.xhtml"/>
+        </ui:define>
+        <ui:define name="body">
+            <h:outputText value="Elige el caso de uso para ver la ficha expandida"/>            
+
+            <div>                
+                <ui:repeat value="#{elegirCasoBean.cdus}" var="cdu">                    
+                    <h:link outcome="FichaExpandida" includeViewParams="true">
+                        <div class="cduDiv">
+                            <h:outputText id="cduDivText" value="#{cdu.text}"/>                            
+                        </div>
+                        <f:param value="#{cdu.id}" name="cduId"/>
+                    </h:link>
+                </ui:repeat>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>

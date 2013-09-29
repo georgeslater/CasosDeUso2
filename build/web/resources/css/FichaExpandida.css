@@ -1,0 +1,48 @@
+/* 
+    Document   : FichaExpandida
+    Created on : 28-sep-2013, 19:48:09
+    Author     : George
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+table{
+    
+    border-collapse: collapse;
+}
+
+table, th, td{
+    
+    border: 1px solid black;
+}
+
+td{
+    
+    padding: 5px;
+}
+
+td:nth-child(1){
+    
+    font-weight: bold;
+}
+
+td:nth-child(2){
+    
+    min-width: 400px;
+}
+
+.unresizable{
+    
+    resize: none;
+}
+
+textarea{
+    
+    min-width:400px;
+}
+
+#fichaExpandidaWrapper{
+    
+    font-size: 13px;
+}
+
