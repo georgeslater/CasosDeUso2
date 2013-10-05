@@ -23,7 +23,7 @@
         </ui:define>
         <ui:define name="body">
             <h2>#{fichaExpandidaBean.cduActual.text}</h2>
-            <h:form id="feForm">
+            <p:form id="feForm">
                 <p:messages id="mssgs" globalOnly="true"/>
                 <div id="fichaExpandidaWrapper">
                     <table>
@@ -92,8 +92,30 @@
                         </tr>
                     </table>
                 </div>
+                <h3>Flujo de eventos</h3>
+                <div id="flujoEventos">
+                    <div id="flujoNormal">
+                        Flujo Normal:
+                        <p:dataTable value="#{fichaExpandidaBean.feFlujoNormalList}" binding="#{table}" var="fn">
+                            <p:column headerText="Paso:">
+                                <h:outputText value="#{fn.orden}-"/>
+                            </p:column>
+                            <p:column headerText="Descripcion:">
+                                <h:inputText value="#{fn.descripcion}" style="width:98%;"/>
+                            </p:column>
+                            <p:column headerText="Acciones">
+                                <p:commandLink style="margin: 5px;" action="#{fichaExpandidaBean.agregarFilaFlujoNormal(table.rowIndex)}" update="@form">
+                                    <h:graphicImage title="Agregar fila abajo." value="/resources/imagenes/agregarFila.png" alt="AgregarFila"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                    <div id="flujoAlternativo">
+                        Flujo Alternativo:
+                    </div>
+                </div>
                <p:commandButton value="Guardar" action="#{fichaExpandidaBean.guardarFichaExpandida}" update="mssgs"/>
-            </h:form>
+            </p:form>
         </ui:define>
     </ui:composition>
 </html>

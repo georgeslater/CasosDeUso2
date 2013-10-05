@@ -38,6 +38,7 @@ td:nth-child(2){
 
 textarea{
     
+    outline: none;
     min-width:400px;
 }
 

@@ -33,7 +33,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "FeFlujonormal.findAll", query = "SELECT f FROM FeFlujonormal f"),
     @NamedQuery(name = "FeFlujonormal.findById", query = "SELECT f FROM FeFlujonormal f WHERE f.id = :id"),
-    @NamedQuery(name = "FeFlujonormal.findByOrden", query = "SELECT f FROM FeFlujonormal f WHERE f.orden = :orden")})
+    @NamedQuery(name = "FeFlujonormal.findByOrden", query = "SELECT f FROM FeFlujonormal f WHERE f.orden = :orden"),
+    @NamedQuery(name = "FeFlujonormal.findByFeEncabezado", query = "SELECT f FROM FeFlujonormal f WHERE f.fEEncabezadoID = :feEnc ORDER BY f.orden asc")})
 public class FeFlujonormal implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

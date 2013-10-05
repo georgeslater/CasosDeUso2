@@ -9,6 +9,7 @@ import com.example.entities.ActorCasoDeUso;
 import com.example.entities.CasoDeUso;
 import com.example.entities.CasosDeUsoRelaciones;
 import com.example.entities.FeEncabezado;
+import com.example.entities.FeFlujonormal;
 import com.example.negocio.FichaExpandidaService;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -48,11 +49,13 @@ public class FichaExpandidaBean implements Serializable {
     private String puntosDeExtension;
     private List<ActorCasoDeUso> actoresRelacionadosACdu;
     private List<CasosDeUsoRelaciones> cduRelRelacionadosACdu;
-
+    private List<FeFlujonormal> feFlujoNormalList;
+    
     public FichaExpandidaBean() {
 
         actoresRelacionadosACdu = new ArrayList<ActorCasoDeUso>();
         cduRelRelacionadosACdu = new ArrayList<CasosDeUsoRelaciones>();
+        feFlujoNormalList = new ArrayList<FeFlujonormal>();
     }
 
     @PostConstruct
@@ -92,6 +95,9 @@ public class FichaExpandidaBean implements Serializable {
                             }
                         }
                     }
+                }else{
+                    
+                    feFlujoNormalList = feService.obtenerFlujoNormalPasosPorEncabezado(encabezado);                    
                 }
 
                 setActoresRelacionadosACdu(feService.obtenerFeActoresPorCdu(cduActual));
@@ -147,13 +153,12 @@ public class FichaExpandidaBean implements Serializable {
                                 puntosDeInclusion += cduRel.getCasodeuso1id().getText() + ", ";
                             }
                         }
-
-                        extiendeA = extiendeA.replaceAll(", $", "");
-                        incluyeA = incluyeA.replaceAll(", $", "");
-                        puntosDeExtension = puntosDeExtension.replaceAll(", $", "");
-                        puntosDeInclusion = puntosDeInclusion.replaceAll(", $", "");
-
                     }
+
+                    extiendeA = extiendeA.replaceAll(", $", "");
+                    incluyeA = incluyeA.replaceAll(", $", "");
+                    puntosDeExtension = puntosDeExtension.replaceAll(", $", "");
+                    puntosDeInclusion = puntosDeInclusion.replaceAll(", $", "");
                 }
 
 
@@ -178,7 +183,22 @@ public class FichaExpandidaBean implements Serializable {
             Messages.addInfo("Sus datos han sido guardados.");
         }
     }
-
+    
+    public String agregarFilaFlujoNormal(int row){
+        
+        FeFlujonormal fn = new FeFlujonormal();
+        fn.setOrden(row + 2);
+        feFlujoNormalList.add(row + 1, fn);
+        
+        for(int i = row + 2; i < feFlujoNormalList.size(); i++){
+            
+            FeFlujonormal feTemp = feFlujoNormalList.get(i);
+            feTemp.setOrden(feTemp.getOrden()+1);
+        }
+        
+        return null;
+    }
+    
     /**
      * @return the cduId
      */
@@ -345,5 +365,19 @@ public class FichaExpandidaBean implements Serializable {
      */
     public void setCduRelRelacionadosACdu(List<CasosDeUsoRelaciones> cduRelRelacionadosACdu) {
         this.cduRelRelacionadosACdu = cduRelRelacionadosACdu;
+    }
+
+    /**
+     * @return the feFlujoNormalList
+     */
+    public List<FeFlujonormal> getFeFlujoNormalList() {
+        return feFlujoNormalList;
+    }
+
+    /**
+     * @param feFlujoNormalList the feFlujoNormalList to set
+     */
+    public void setFeFlujoNormalList(List<FeFlujonormal> feFlujoNormalList) {
+        this.feFlujoNormalList = feFlujoNormalList;
     }
 }

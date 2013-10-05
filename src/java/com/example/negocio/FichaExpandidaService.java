@@ -8,10 +8,12 @@ import com.example.dao.ActorCasoDeUsoFacade;
 import com.example.dao.CasoDeUsoFacade;
 import com.example.dao.CasosDeUsoRelacionesFacade;
 import com.example.dao.FeEncabezadoFacade;
+import com.example.dao.FeFlujoNormalFacade;
 import com.example.entities.ActorCasoDeUso;
 import com.example.entities.CasoDeUso;
 import com.example.entities.CasosDeUsoRelaciones;
 import com.example.entities.FeEncabezado;
+import com.example.entities.FeFlujonormal;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -27,7 +29,9 @@ public class FichaExpandidaService {
     private ActorCasoDeUsoFacade feActorFacade;
     @EJB
     private CasosDeUsoRelacionesFacade cduRelFacade;
-
+    @EJB
+    private FeFlujoNormalFacade feFnFacade;
+    
     public CasoDeUso obtenerCasoDeUsoPorId(int cduId) {
 
         return cduFacade.find(cduId);
@@ -47,7 +51,12 @@ public class FichaExpandidaService {
         
         return cduRelFacade.obtenerCduRelsPorCdu(cdu);
     }
-
+    
+    public List<FeFlujonormal> obtenerFlujoNormalPasosPorEncabezado(FeEncabezado feEnc){
+        
+        return feFnFacade.obtenerFlujoNormalPasosPorEncabezado(feEnc); 
+    }
+    
     public boolean guardarEncabezado(FeEncabezado fe, Boolean esNuevo) {
 
         //try {
@@ -80,5 +89,19 @@ public class FichaExpandidaService {
      */
     public void setCduRelFacade(CasosDeUsoRelacionesFacade cduRelFacade) {
         this.cduRelFacade = cduRelFacade;
+    }
+
+    /**
+     * @return the feFnFacade
+     */
+    public FeFlujoNormalFacade getFeFnFacade() {
+        return feFnFacade;
+    }
+
+    /**
+     * @param feFnFacade the feFnFacade to set
+     */
+    public void setFeFnFacade(FeFlujoNormalFacade feFnFacade) {
+        this.feFnFacade = feFnFacade;
     }
 }
