@@ -5,6 +5,7 @@ package com.example.controllers;
  * and open the template in the editor.
  */
 
+import com.example.controllers.util.Constantes;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 public class LoginBean implements Serializable{
     
     private String user;
-    private static Logger log = Logger.getLogger(LoginBean.class.getName());
     
     public String getUser(){
         return user;
@@ -51,7 +51,6 @@ public class LoginBean implements Serializable{
         try {
           request.logout();
         } catch (ServletException e) {
-          log.log(Level.SEVERE, "Failed to logout user!", e);
           result = "/Login.xhtml?faces-redirect=true";
         }
 

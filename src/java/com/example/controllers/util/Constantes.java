@@ -4,6 +4,8 @@
  */
 package com.example.controllers.util;
 
+import javax.faces.context.FacesContext;
+
 /**
  *
  * @author George

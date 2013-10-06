@@ -97,6 +97,13 @@ public class FichaExpandidaBean implements Serializable {
                     encabezado.setCasoDeUso(cduActual);
                     try {
                         feService.guardarEncabezado(encabezado, true);
+
+                        FeFlujonormal fn = new FeFlujonormal();
+                        fn.setFEEncabezadoID(encabezado);
+                        fn.setOrden(1);
+                        feService.getFeFnFacade().create(fn);
+                        feFlujoNormalList.add(fn);
+
                     } catch (EJBTransactionRolledbackException e) {
 
                         Throwable t = e.getCause();
@@ -116,7 +123,33 @@ public class FichaExpandidaBean implements Serializable {
 
                     if (!feFlujoNormalList.isEmpty()) {
 
+                        feFlujoAlternativoList = feService.obtenerFlujosAlternativosPorFlujosNormales(feFlujoNormalList);
+
+                        for (FeFlujoalternativo fa : feFlujoAlternativoList) {
+
+                            if (!fnFaMap.containsKey(fa.getFEFlujoNormalID().getId())) {
+
+                                fnFaMap.put(fa.getFEFlujoNormalID().getId(), new ArrayList<FeFlujoalternativo>());
+                            }
+
+                            fnFaMap.get(fa.getFEFlujoNormalID().getId()).add(fa);
+                        }
+
                         if (!feFlujoAlternativoList.isEmpty()) {
+
+                            feFlujoAlternativoPasoList = feService.obtenerFlujosAlternativoPasosPorFlujosAlternativos(feFlujoAlternativoList);
+
+                            for (FeFlujoalternativopaso fap : feFlujoAlternativoPasoList) {
+
+                                if (!faFapMap.containsKey(fap.getFEFlujoAlternativoID().getId())) {
+
+                                    faFapMap.put(fap.getFEFlujoAlternativoID().getId(), new ArrayList<FeFlujoalternativopaso>());
+                                }
+
+                                faFapMap.get(fap.getFEFlujoAlternativoID().getId()).add(fap);
+                            }
+
+                            Collections.sort(feFlujoAlternativoPasoList);
                         }
                     }
                 }
@@ -206,29 +239,81 @@ public class FichaExpandidaBean implements Serializable {
         }
     }
 
+    public String borrarFilaFlujoAlternativoPaso() {
+
+        int row = fapTable.getRowIndex();
+
+        FeFlujoalternativopaso fapABorrar = feFlujoAlternativoPasoList.get(row);
+        boolean esUltimoFap;
+
+        if (faFapMap.containsKey(fapABorrar.getFEFlujoAlternativoID().getId())) {
+
+            List<FeFlujoalternativopaso> faps = faFapMap.get(fapABorrar.getFEFlujoAlternativoID().getId());
+
+            esUltimoFap = faps.size() == 1;
+
+            int index = -1;
+
+            for (int i = 0; i < faps.size(); i++) {
+
+                if (fapABorrar.equals(faps.get(i))) {
+
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index != -1) {
+
+                faps.remove(index);
+
+                for (int j = faps.size() - 1; j > index - 1; j--) {
+
+                    faps.get(j).setOrden(faps.get(j).getOrden() - 1);
+                    feService.getFapFacade().edit(faps.get(j));
+                }
+            }
+
+            feFlujoAlternativoPasoList.remove(fapABorrar);
+            feService.getFapFacade().remove(fapABorrar);
+
+            if (esUltimoFap) {
+
+                fnFaMap.get(fapABorrar.getFEFlujoAlternativoID().getFEFlujoNormalID().getId()).remove(fapABorrar.getFEFlujoAlternativoID());
+                feService.getFaFacade().remove(fapABorrar.getFEFlujoAlternativoID());
+            }
+        }
+
+        Collections.sort(feFlujoAlternativoPasoList);
+
+        return null;
+    }
+
     public String agregarFilaFlujoAlternativoPaso() {
-        
+
         int row = fapTable.getRowIndex();
         FeFlujoalternativopaso fap = feFlujoAlternativoPasoList.get(row);
+        int ordenActual = fap.getOrden();
+        int ordenNuevo = ordenActual + 1;
 
         FeFlujoalternativopaso newFap = new FeFlujoalternativopaso();
-        newFap.setOrden(row + 2);
+
+        newFap.setOrden(ordenNuevo);
         newFap.setFEFlujoAlternativoID(fap.getFEFlujoAlternativoID());
-        getFeService().crearFlujoAlternativoPaso(newFap);
-        
+
         feFlujoAlternativoPasoList.add(newFap);
         Collections.sort(feFlujoAlternativoPasoList);
-        
+
         for (int i = row + 2; i < feFlujoAlternativoPasoList.size(); i++) {
-                        
+
             FeFlujoalternativopaso fapTemp = feFlujoAlternativoPasoList.get(i);
-            
+
             //No debemos tocar el orden de 3.2.4 si se agrega un paso al 3.1.1
-            if(fap.getFEFlujoAlternativoID().getId() != fapTemp.getFEFlujoAlternativoID().getId()){
-                
-                break; 
+            if (fap.getFEFlujoAlternativoID().getId() != fapTemp.getFEFlujoAlternativoID().getId()) {
+
+                break;
             }
-            
+
             fapTemp.setOrden(fapTemp.getOrden() + 1);
             getFeService().editarFlujoAlternativoPaso(fapTemp);
         }
@@ -296,16 +381,73 @@ public class FichaExpandidaBean implements Serializable {
         return null;
     }
 
+    public String borrarFilaFlujoNormal(int row) {
+
+        FeFlujonormal fnABorrar = feFlujoNormalList.get(row);
+
+        for (int i = row + 1; i < feFlujoNormalList.size(); i++) {
+
+            FeFlujonormal feTemp = feFlujoNormalList.get(i);
+            feTemp.setOrden(feTemp.getOrden() - 1);
+            getFeService().getFeFnFacade().edit(feTemp);
+        }
+
+        if (fnFaMap.containsKey(fnABorrar.getId()) && fnFaMap.get(fnABorrar.getId()) != null && fnFaMap.get(fnABorrar.getId()).size() > 0) {
+
+            List<FeFlujoalternativo> faList = fnFaMap.get(fnABorrar.getId());
+
+            for (FeFlujoalternativo fa : faList) {
+
+                if (faFapMap.containsKey(fa.getId()) && faFapMap.get(fa.getId()) != null && faFapMap.get(fa.getId()).size() > 0) {
+
+                    List<FeFlujoalternativopaso> fapList = faFapMap.get(fa.getId());
+
+                    for (FeFlujoalternativopaso fap : fapList) {
+
+                        getFeFlujoAlternativoPasoList().remove(fap);
+                        getFeService().getFapFacade().remove(fap);
+                    }
+                    
+                    fapList.removeAll(fapList);
+                }
+
+                feFlujoAlternativoList.remove(fa);
+                getFeService().getFaFacade().remove(fa);
+            }
+            
+            faList.removeAll(faList);
+        }
+
+        feFlujoNormalList.remove(fnABorrar);
+        getFeService().getFeFnFacade().remove(fnABorrar);
+
+        if (feFlujoNormalList.isEmpty()) {
+
+            FeFlujonormal fn = new FeFlujonormal();
+            fn.setFEEncabezadoID(encabezado);
+            fn.setOrden(1);
+            getFeService().getFeFnFacade().create(fn);
+            feFlujoNormalList.add(fn);
+        }
+
+        return null;
+    }
+
     public String agregarFilaFlujoNormal(int row) {
 
         FeFlujonormal fn = new FeFlujonormal();
         fn.setOrden(row + 2);
+        fn.setFEEncabezadoID(encabezado);
+
+        getFeService().getFeFnFacade().create(fn);
+
         feFlujoNormalList.add(row + 1, fn);
 
         for (int i = row + 2; i < feFlujoNormalList.size(); i++) {
 
             FeFlujonormal feTemp = feFlujoNormalList.get(i);
             feTemp.setOrden(feTemp.getOrden() + 1);
+            getFeService().getFeFnFacade().edit(feTemp);
         }
 
         return null;

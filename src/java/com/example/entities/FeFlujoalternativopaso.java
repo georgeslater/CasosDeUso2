@@ -30,7 +30,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "FeFlujoalternativopaso.findAll", query = "SELECT f FROM FeFlujoalternativopaso f"),
     @NamedQuery(name = "FeFlujoalternativopaso.findById", query = "SELECT f FROM FeFlujoalternativopaso f WHERE f.id = :id"),
-    @NamedQuery(name = "FeFlujoalternativopaso.findByOrden", query = "SELECT f FROM FeFlujoalternativopaso f WHERE f.orden = :orden")})
+    @NamedQuery(name = "FeFlujoalternativopaso.findByOrden", query = "SELECT f FROM FeFlujoalternativopaso f WHERE f.orden = :orden"),
+    @NamedQuery(name = "FeFlujoalternativopaso.findByFlujosAlternativos", query = "SELECT f FROM FeFlujoalternativopaso f WHERE f.fEFlujoAlternativoID.id IN :faList")})
 public class FeFlujoalternativopaso implements Serializable, Comparable {
     private static final long serialVersionUID = 1L;
     @Id

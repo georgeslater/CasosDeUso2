@@ -4,7 +4,9 @@
  */
 package com.example.dao;
 
+import com.example.entities.FeFlujoalternativo;
 import com.example.entities.FeFlujoalternativopaso;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,5 +28,14 @@ public class FeFlujoAlternativoPasoFacade extends AbstractFacade<FeFlujoalternat
 
     public FeFlujoAlternativoPasoFacade() {
         super(FeFlujoalternativopaso.class);
+    }
+    
+    public List<FeFlujoalternativopaso> obtenerFlujosAlternativoPasosPorFlujosAlternativos(List<Integer> faIdList){
+        
+        List<FeFlujoalternativopaso> fap = em.createNamedQuery("FeFlujoalternativopaso.findByFlujosAlternativos")
+                .setParameter("faList", faIdList)
+                .getResultList();
+
+        return fap;
     }
 }

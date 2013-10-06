@@ -18,6 +18,7 @@ import com.example.entities.FeEncabezado;
 import com.example.entities.FeFlujoalternativo;
 import com.example.entities.FeFlujoalternativopaso;
 import com.example.entities.FeFlujonormal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -63,6 +64,30 @@ public class FichaExpandidaService {
     public List<FeFlujonormal> obtenerFlujoNormalPasosPorEncabezado(FeEncabezado feEnc) {
 
         return feFnFacade.obtenerFlujoNormalPasosPorEncabezado(feEnc);
+    }
+    
+    public List<FeFlujoalternativo> obtenerFlujosAlternativosPorFlujosNormales(List<FeFlujonormal> fnList){
+        
+        List<Integer> fnIds = new ArrayList<Integer>();
+        
+        for(FeFlujonormal fn: fnList){
+            
+            fnIds.add(fn.getId());
+        }
+        
+        return faFacade.obtenerFlujosAlternativosPorFlujosNormales(fnIds);
+    }
+    
+    public List<FeFlujoalternativopaso> obtenerFlujosAlternativoPasosPorFlujosAlternativos(List<FeFlujoalternativo> faList){
+        
+        List<Integer> faIds = new ArrayList<Integer>();
+        
+        for(FeFlujoalternativo fa: faList){
+            
+            faIds.add(fa.getId());
+        }
+        
+        return fapFacade.obtenerFlujosAlternativoPasosPorFlujosAlternativos(faIds);
     }
     
     public void crearFlujoAlternativo(FeFlujoalternativo fa){

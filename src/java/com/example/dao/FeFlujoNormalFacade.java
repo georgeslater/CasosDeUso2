@@ -14,6 +14,7 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class FeFlujoNormalFacade extends AbstractFacade<FeFlujonormal> {
+
     @PersistenceContext(unitName = "CasosDeUso5PU")
     private EntityManager em;
 
@@ -26,21 +27,12 @@ public class FeFlujoNormalFacade extends AbstractFacade<FeFlujonormal> {
         super(FeFlujonormal.class);
     }
 
-    public List<FeFlujonormal> obtenerFlujoNormalPasosPorEncabezado(FeEncabezado feEnc){
-        
-        try{
-            
-            List<FeFlujonormal> fe = em.createNamedQuery("FeFlujonormal.findByFeEncabezado")
-                    .setParameter("feEnc", feEnc)
-                        .getResultList();
-            
-            return fe;
-            
-        }catch(NoResultException e){
-            
-            return null;
-        }
+    public List<FeFlujonormal> obtenerFlujoNormalPasosPorEncabezado(FeEncabezado feEnc) {
+
+        List<FeFlujonormal> fe = em.createNamedQuery("FeFlujonormal.findByFeEncabezado")
+                .setParameter("feEnc", feEnc)
+                .getResultList();
+
+        return fe;
     }
 }
-
-

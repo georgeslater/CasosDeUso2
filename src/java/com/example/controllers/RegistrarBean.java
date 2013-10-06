@@ -13,6 +13,7 @@ import com.example.controllers.util.Messages;
 import java.io.Serializable;
 import java.util.Set;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -29,8 +30,8 @@ public class RegistrarBean implements Serializable {
     @EJB
     private RegistrarService regService;
     @EJB
-    private UsuarioTableFacade utFacade;
-
+    private UsuarioTableFacade utFacade;    
+    
     public RegistrarBean() {
 
         ut = new UsuarioTable();
