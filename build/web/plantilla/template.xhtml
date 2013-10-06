@@ -20,7 +20,7 @@
                 <ui:insert name="encabezado">titulo</ui:insert>
                 <h:form>
                     <p:menubar id="elMenuBar">  
-                        <p:menuitem value="Mis Diagramas" url="http://localhost:8080/CasosDeUso5/users/MisDiagramas.xhtml" icon="ui-icon-star" />  
+                        <p:menuitem value="Mis Diagramas" url="/users/MisDiagramas.xhtml" icon="ui-icon-star" />  
                         <p:menuitem value="Ayuda" url="http://es.wikipedia.org/wiki/Diagrama_de_casos_de_uso" icon="ui-icon-info" />  
                         <p:menuitem rendered="#{request.remoteUser != null}" styleClass="logoutBtn" action="#{loginBean.logout}" value="Salir" icon="ui-icon-extlink"/>  
                         <p:menuitem rendered="#{request.remoteUser != null}" styleClass="logoutBtn" value="Bienvenido, #{request.remoteUser}!" />
@@ -28,7 +28,7 @@
                 </h:form>
             </p:layoutUnit>
             <p:layoutUnit position="center" >
-                <ui:insert name="body">contenido</ui:insert>
+                <ui:insert name="body"></ui:insert>
             </p:layoutUnit>
         </p:layout>
     </h:body>

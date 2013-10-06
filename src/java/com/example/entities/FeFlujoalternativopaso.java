@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "FeFlujoalternativopaso.findAll", query = "SELECT f FROM FeFlujoalternativopaso f"),
     @NamedQuery(name = "FeFlujoalternativopaso.findById", query = "SELECT f FROM FeFlujoalternativopaso f WHERE f.id = :id"),
     @NamedQuery(name = "FeFlujoalternativopaso.findByOrden", query = "SELECT f FROM FeFlujoalternativopaso f WHERE f.orden = :orden")})
-public class FeFlujoalternativopaso implements Serializable {
+public class FeFlujoalternativopaso implements Serializable, Comparable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -110,6 +110,44 @@ public class FeFlujoalternativopaso implements Serializable {
     @Override
     public String toString() {
         return "com.example.entities.FeFlujoalternativopaso[ id=" + id + " ]";
+    }
+    
+    //Ordenamos por orden del abuelo, despues por orden del padre
+    @Override
+    public int compareTo(Object o){
+        
+        FeFlujoalternativopaso other = (FeFlujoalternativopaso)o;
+        
+        if(this.fEFlujoAlternativoID.getFEFlujoNormalID().getOrden() < other.fEFlujoAlternativoID.getFEFlujoNormalID().getOrden()){
+            
+            return -1;
+        
+        }else if(this.fEFlujoAlternativoID.getFEFlujoNormalID().getOrden() > other.fEFlujoAlternativoID.getFEFlujoNormalID().getOrden()){
+            
+            return 1;
+        
+        }else{
+            
+            if(this.fEFlujoAlternativoID.getOrden() < other.fEFlujoAlternativoID.getOrden()){
+                
+                return -1;
+            
+            }else if(this.fEFlujoAlternativoID.getOrden() > other.fEFlujoAlternativoID.getOrden()){
+                
+                return 1;
+            }
+            
+            if(this.getOrden() < other.getOrden()){
+                
+                return -1;
+            
+            }else if(this.getOrden() > other.getOrden()){
+                
+                return 1;
+            }
+        }
+        
+        return 0;
     }
     
 }

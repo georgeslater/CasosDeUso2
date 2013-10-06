@@ -8,11 +8,15 @@ import com.example.dao.ActorCasoDeUsoFacade;
 import com.example.dao.CasoDeUsoFacade;
 import com.example.dao.CasosDeUsoRelacionesFacade;
 import com.example.dao.FeEncabezadoFacade;
+import com.example.dao.FeFlujoAlternativoFacade;
+import com.example.dao.FeFlujoAlternativoPasoFacade;
 import com.example.dao.FeFlujoNormalFacade;
 import com.example.entities.ActorCasoDeUso;
 import com.example.entities.CasoDeUso;
 import com.example.entities.CasosDeUsoRelaciones;
 import com.example.entities.FeEncabezado;
+import com.example.entities.FeFlujoalternativo;
+import com.example.entities.FeFlujoalternativopaso;
 import com.example.entities.FeFlujonormal;
 import java.util.List;
 import javax.ejb.EJB;
@@ -31,50 +35,98 @@ public class FichaExpandidaService {
     private CasosDeUsoRelacionesFacade cduRelFacade;
     @EJB
     private FeFlujoNormalFacade feFnFacade;
-    
+    @EJB
+    private FeFlujoAlternativoFacade faFacade;
+    @EJB
+    private FeFlujoAlternativoPasoFacade fapFacade;
+
     public CasoDeUso obtenerCasoDeUsoPorId(int cduId) {
 
-        return cduFacade.find(cduId);
+        return getCduFacade().find(cduId);
     }
 
     public FeEncabezado obtenerFeEncabezadoPorCdu(CasoDeUso cdu) {
 
-        return feEncFacade.obtenerEncabezadoPorCdu(cdu);
+        return getFeEncFacade().obtenerEncabezadoPorCdu(cdu);
     }
 
     public List<ActorCasoDeUso> obtenerFeActoresPorCdu(CasoDeUso cdu) {
 
-        return feActorFacade.obtenerActoresPorCdu(cdu);
+        return getFeActorFacade().obtenerActoresPorCdu(cdu);
     }
-    
-    public List<CasosDeUsoRelaciones> obtenerCduRelacionesPorCdu(CasoDeUso cdu){
-        
+
+    public List<CasosDeUsoRelaciones> obtenerCduRelacionesPorCdu(CasoDeUso cdu) {
+
         return cduRelFacade.obtenerCduRelsPorCdu(cdu);
     }
-    
-    public List<FeFlujonormal> obtenerFlujoNormalPasosPorEncabezado(FeEncabezado feEnc){
-        
-        return feFnFacade.obtenerFlujoNormalPasosPorEncabezado(feEnc); 
+
+    public List<FeFlujonormal> obtenerFlujoNormalPasosPorEncabezado(FeEncabezado feEnc) {
+
+        return feFnFacade.obtenerFlujoNormalPasosPorEncabezado(feEnc);
     }
     
+    public void crearFlujoAlternativo(FeFlujoalternativo fa){
+        
+        getFaFacade().create(fa);
+    }
+    
+    public void crearFlujoAlternativoPaso(FeFlujoalternativopaso fap){
+        
+        getFapFacade().create(fap);
+    }
+    
+    public void editarFlujoAlternativo(FeFlujoalternativo fa){
+        
+        getFaFacade().edit(fa);
+    }
+    
+    public void editarFlujoAlternativoPaso(FeFlujoalternativopaso fap){
+        
+        getFapFacade().edit(fap);
+    }
+    
+    public boolean guardarFeFlujoNormal(List<FeFlujonormal> fnList) {
+        
+        try{
+        
+            for (FeFlujonormal fn : fnList) {
+
+                if (fn.getId() == null) {
+
+                    feFnFacade.create(fn);
+                
+                }else{
+                    
+                    feFnFacade.edit(fn);
+                }
+            }
+            
+            return true;
+            
+        }catch(Exception e){
+            
+            return false;
+        }
+    }
+
     public boolean guardarEncabezado(FeEncabezado fe, Boolean esNuevo) {
 
-        //try {
+        try {
 
             if (esNuevo) {
 
-                feEncFacade.create(fe);
+                getFeEncFacade().create(fe);
 
             } else {
 
-                feEncFacade.edit(fe);
+                getFeEncFacade().edit(fe);
             }
 
             return true;
 
-        //}/* catch (Exception e) {
-          //  return false;
-        //}*/
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
@@ -103,5 +155,75 @@ public class FichaExpandidaService {
      */
     public void setFeFnFacade(FeFlujoNormalFacade feFnFacade) {
         this.feFnFacade = feFnFacade;
+    }
+
+    /**
+     * @return the cduFacade
+     */
+    public CasoDeUsoFacade getCduFacade() {
+        return cduFacade;
+    }
+
+    /**
+     * @param cduFacade the cduFacade to set
+     */
+    public void setCduFacade(CasoDeUsoFacade cduFacade) {
+        this.cduFacade = cduFacade;
+    }
+
+    /**
+     * @return the feEncFacade
+     */
+    public FeEncabezadoFacade getFeEncFacade() {
+        return feEncFacade;
+    }
+
+    /**
+     * @param feEncFacade the feEncFacade to set
+     */
+    public void setFeEncFacade(FeEncabezadoFacade feEncFacade) {
+        this.feEncFacade = feEncFacade;
+    }
+
+    /**
+     * @return the feActorFacade
+     */
+    public ActorCasoDeUsoFacade getFeActorFacade() {
+        return feActorFacade;
+    }
+
+    /**
+     * @param feActorFacade the feActorFacade to set
+     */
+    public void setFeActorFacade(ActorCasoDeUsoFacade feActorFacade) {
+        this.feActorFacade = feActorFacade;
+    }
+
+    /**
+     * @return the faFacade
+     */
+    public FeFlujoAlternativoFacade getFaFacade() {
+        return faFacade;
+    }
+
+    /**
+     * @param faFacade the faFacade to set
+     */
+    public void setFaFacade(FeFlujoAlternativoFacade faFacade) {
+        this.faFacade = faFacade;
+    }
+
+    /**
+     * @return the fapFacade
+     */
+    public FeFlujoAlternativoPasoFacade getFapFacade() {
+        return fapFacade;
+    }
+
+    /**
+     * @param fapFacade the fapFacade to set
+     */
+    public void setFapFacade(FeFlujoAlternativoPasoFacade fapFacade) {
+        this.fapFacade = fapFacade;
     }
 }

@@ -9,18 +9,24 @@ import com.example.entities.ActorCasoDeUso;
 import com.example.entities.CasoDeUso;
 import com.example.entities.CasosDeUsoRelaciones;
 import com.example.entities.FeEncabezado;
+import com.example.entities.FeFlujoalternativo;
+import com.example.entities.FeFlujoalternativopaso;
 import com.example.entities.FeFlujonormal;
 import com.example.negocio.FichaExpandidaService;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.component.UIData;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -50,12 +56,21 @@ public class FichaExpandidaBean implements Serializable {
     private List<ActorCasoDeUso> actoresRelacionadosACdu;
     private List<CasosDeUsoRelaciones> cduRelRelacionadosACdu;
     private List<FeFlujonormal> feFlujoNormalList;
-    
+    private List<FeFlujoalternativo> feFlujoAlternativoList;
+    private List<FeFlujoalternativopaso> feFlujoAlternativoPasoList;
+    private Map<Integer, List<FeFlujoalternativo>> fnFaMap;
+    private Map<Integer, List<FeFlujoalternativopaso>> faFapMap;
+    private UIData fapTable;
+
     public FichaExpandidaBean() {
 
         actoresRelacionadosACdu = new ArrayList<ActorCasoDeUso>();
         cduRelRelacionadosACdu = new ArrayList<CasosDeUsoRelaciones>();
         feFlujoNormalList = new ArrayList<FeFlujonormal>();
+        feFlujoAlternativoList = new ArrayList<FeFlujoalternativo>();
+        feFlujoAlternativoPasoList = new ArrayList<FeFlujoalternativopaso>();
+        fnFaMap = new HashMap<Integer, List<FeFlujoalternativo>>();
+        faFapMap = new HashMap<Integer, List<FeFlujoalternativopaso>>();
     }
 
     @PostConstruct
@@ -95,9 +110,15 @@ public class FichaExpandidaBean implements Serializable {
                             }
                         }
                     }
-                }else{
-                    
-                    feFlujoNormalList = feService.obtenerFlujoNormalPasosPorEncabezado(encabezado);                    
+                } else {
+
+                    feFlujoNormalList = feService.obtenerFlujoNormalPasosPorEncabezado(encabezado);
+
+                    if (!feFlujoNormalList.isEmpty()) {
+
+                        if (!feFlujoAlternativoList.isEmpty()) {
+                        }
+                    }
                 }
 
                 setActoresRelacionadosACdu(feService.obtenerFeActoresPorCdu(cduActual));
@@ -173,8 +194,9 @@ public class FichaExpandidaBean implements Serializable {
     public void guardarFichaExpandida() {
 
         boolean esExito = feService.guardarEncabezado(encabezado, false);
+        boolean esExitoFN = feService.guardarFeFlujoNormal(feFlujoNormalList);
 
-        if (!esExito) {
+        if (!esExito || !esExitoFN) {
 
             Messages.addFatal("Se ha producido un error.  Intente mas tarde.");
 
@@ -183,22 +205,112 @@ public class FichaExpandidaBean implements Serializable {
             Messages.addInfo("Sus datos han sido guardados.");
         }
     }
-    
-    public String agregarFilaFlujoNormal(int row){
+
+    public String agregarFilaFlujoAlternativoPaso() {
         
+        int row = fapTable.getRowIndex();
+        FeFlujoalternativopaso fap = feFlujoAlternativoPasoList.get(row);
+
+        FeFlujoalternativopaso newFap = new FeFlujoalternativopaso();
+        newFap.setOrden(row + 2);
+        newFap.setFEFlujoAlternativoID(fap.getFEFlujoAlternativoID());
+        getFeService().crearFlujoAlternativoPaso(newFap);
+        
+        feFlujoAlternativoPasoList.add(newFap);
+        Collections.sort(feFlujoAlternativoPasoList);
+        
+        for (int i = row + 2; i < feFlujoAlternativoPasoList.size(); i++) {
+                        
+            FeFlujoalternativopaso fapTemp = feFlujoAlternativoPasoList.get(i);
+            
+            //No debemos tocar el orden de 3.2.4 si se agrega un paso al 3.1.1
+            if(fap.getFEFlujoAlternativoID().getId() != fapTemp.getFEFlujoAlternativoID().getId()){
+                
+                break; 
+            }
+            
+            fapTemp.setOrden(fapTemp.getOrden() + 1);
+            getFeService().editarFlujoAlternativoPaso(fapTemp);
+        }
+
+        return null;
+    }
+
+    public String agregarFilaFlujoAlternativo(int row) {
+
+        if (!feFlujoNormalList.isEmpty() && feFlujoNormalList.get(row) != null) {
+
+            FeFlujonormal fn = feFlujoNormalList.get(row);
+
+            FeFlujoalternativo fa = new FeFlujoalternativo();
+            fa.setFEFlujoNormalID(fn);
+
+            FeFlujoalternativopaso fap = new FeFlujoalternativopaso();
+            fap.setFEFlujoAlternativoID(fa);
+
+            if (fnFaMap != null && fnFaMap.get(fn.getId()) != null && fnFaMap.get(fn.getId()).size() > 0) {
+
+                fa.setOrden(fnFaMap.get(fn.getId()).size() + 1);
+
+                if (faFapMap != null && faFapMap.get(fa.getId()) != null && faFapMap.get(fa.getId()).size() > 0) {
+
+                    fap.setOrden(faFapMap.get(fa.getId()).size() + 1);
+
+                } else {
+
+                    fap.setOrden(1);
+                }
+
+            } else {
+
+                fa.setOrden(1);
+                fap.setOrden(1);
+            }
+
+            getFeService().crearFlujoAlternativo(fa);
+            feFlujoAlternativoList.add(fa);
+
+            if (!fnFaMap.containsKey(fn.getId())) {
+
+                fnFaMap.put(fn.getId(), new ArrayList<FeFlujoalternativo>());
+            }
+
+            fnFaMap.get(fn.getId()).add(fa);
+
+            fap.setOrden(1);
+
+            getFeService().crearFlujoAlternativoPaso(fap);
+
+            feFlujoAlternativoPasoList.add(fap);
+
+            if (!faFapMap.containsKey(fa.getId())) {
+
+                faFapMap.put(fa.getId(), new ArrayList<FeFlujoalternativopaso>());
+            }
+
+            faFapMap.get(fa.getId()).add(fap);
+
+            Collections.sort(feFlujoAlternativoPasoList);
+        }
+
+        return null;
+    }
+
+    public String agregarFilaFlujoNormal(int row) {
+
         FeFlujonormal fn = new FeFlujonormal();
         fn.setOrden(row + 2);
         feFlujoNormalList.add(row + 1, fn);
-        
-        for(int i = row + 2; i < feFlujoNormalList.size(); i++){
-            
+
+        for (int i = row + 2; i < feFlujoNormalList.size(); i++) {
+
             FeFlujonormal feTemp = feFlujoNormalList.get(i);
-            feTemp.setOrden(feTemp.getOrden()+1);
+            feTemp.setOrden(feTemp.getOrden() + 1);
         }
-        
+
         return null;
     }
-    
+
     /**
      * @return the cduId
      */
@@ -379,5 +491,75 @@ public class FichaExpandidaBean implements Serializable {
      */
     public void setFeFlujoNormalList(List<FeFlujonormal> feFlujoNormalList) {
         this.feFlujoNormalList = feFlujoNormalList;
+    }
+
+    /**
+     * @return the feFlujoAlternativoList
+     */
+    public List<FeFlujoalternativo> getFeFlujoAlternativoList() {
+        return feFlujoAlternativoList;
+    }
+
+    /**
+     * @param feFlujoAlternativoList the feFlujoAlternativoList to set
+     */
+    public void setFeFlujoAlternativoList(List<FeFlujoalternativo> feFlujoAlternativoList) {
+        this.feFlujoAlternativoList = feFlujoAlternativoList;
+    }
+
+    /**
+     * @return the feFlujoAlternativoPasoList
+     */
+    public List<FeFlujoalternativopaso> getFeFlujoAlternativoPasoList() {
+        return feFlujoAlternativoPasoList;
+    }
+
+    /**
+     * @param feFlujoAlternativoPasoList the feFlujoAlternativoPasoList to set
+     */
+    public void setFeFlujoAlternativoPasoList(List<FeFlujoalternativopaso> feFlujoAlternativoPasoList) {
+        this.feFlujoAlternativoPasoList = feFlujoAlternativoPasoList;
+    }
+
+    /**
+     * @return the fnFaMap
+     */
+    public Map<Integer, List<FeFlujoalternativo>> getFnFaMap() {
+        return fnFaMap;
+    }
+
+    /**
+     * @param fnFaMap the fnFaMap to set
+     */
+    public void setFnFaMap(Map<Integer, List<FeFlujoalternativo>> fnFaMap) {
+        this.fnFaMap = fnFaMap;
+    }
+
+    /**
+     * @return the faFapMap
+     */
+    public Map<Integer, List<FeFlujoalternativopaso>> getFaFapMap() {
+        return faFapMap;
+    }
+
+    /**
+     * @param faFapMap the faFapMap to set
+     */
+    public void setFaFapMap(Map<Integer, List<FeFlujoalternativopaso>> faFapMap) {
+        this.faFapMap = faFapMap;
+    }
+
+    /**
+     * @return the fapTable
+     */
+    public UIData getFapTable() {
+        return fapTable;
+    }
+
+    /**
+     * @param fapTable the fapTable to set
+     */
+    public void setFapTable(UIData fapTable) {
+        this.fapTable = fapTable;
     }
 }
