@@ -228,8 +228,9 @@ public class FichaExpandidaBean implements Serializable {
 
         boolean esExito = feService.guardarEncabezado(encabezado, false);
         boolean esExitoFN = feService.guardarFeFlujoNormal(feFlujoNormalList);
-
-        if (!esExito || !esExitoFN) {
+        boolean esExitoFAP = feService.guardarFeFlujoAlternativoPaso(feFlujoAlternativoPasoList);
+        
+        if (!esExito || !esExitoFN || !esExitoFAP) {
 
             Messages.addFatal("Se ha producido un error.  Intente mas tarde.");
 
@@ -280,7 +281,17 @@ public class FichaExpandidaBean implements Serializable {
             if (esUltimoFap) {
 
                 fnFaMap.get(fapABorrar.getFEFlujoAlternativoID().getFEFlujoNormalID().getId()).remove(fapABorrar.getFEFlujoAlternativoID());
-                feService.getFaFacade().remove(fapABorrar.getFEFlujoAlternativoID());
+
+                for(FeFlujoalternativo fa: fnFaMap.get(fapABorrar.getFEFlujoAlternativoID().getFEFlujoNormalID().getId())){
+                    
+                    if(fa.getOrden() > row){
+                        
+                        fa.setOrden(fa.getOrden() - 1);
+                        getFeService().getFaFacade().edit(fa);
+                    }
+                }
+                
+                feService.getFaFacade().remove(fapABorrar.getFEFlujoAlternativoID());                
             }
         }
 
@@ -302,6 +313,14 @@ public class FichaExpandidaBean implements Serializable {
         newFap.setFEFlujoAlternativoID(fap.getFEFlujoAlternativoID());
 
         feFlujoAlternativoPasoList.add(newFap);
+        
+        if(!faFapMap.containsKey(newFap.getFEFlujoAlternativoID().getId())){
+            
+            faFapMap.put(newFap.getFEFlujoAlternativoID().getId(), new ArrayList<FeFlujoalternativopaso>());
+        }
+        
+        faFapMap.get(newFap.getFEFlujoAlternativoID().getId()).add(newFap);
+        
         Collections.sort(feFlujoAlternativoPasoList);
 
         for (int i = row + 2; i < feFlujoAlternativoPasoList.size(); i++) {

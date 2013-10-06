@@ -110,6 +110,30 @@ public class FichaExpandidaService {
         getFapFacade().edit(fap);
     }
     
+    public boolean guardarFeFlujoAlternativoPaso(List<FeFlujoalternativopaso> fapList){
+        
+        try{
+        
+            for (FeFlujoalternativopaso fap : fapList) {
+
+                if (fap.getId() == null) {
+
+                    fapFacade.create(fap);
+                
+                }else{
+                    
+                    fapFacade.edit(fap);
+                }
+            }
+            
+            return true;
+            
+        }catch(Exception e){
+            
+            return false;
+        }
+    }
+    
     public boolean guardarFeFlujoNormal(List<FeFlujonormal> fnList) {
         
         try{
