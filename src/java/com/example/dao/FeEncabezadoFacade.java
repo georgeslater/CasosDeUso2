@@ -2,6 +2,7 @@ package com.example.dao;
 
 import com.example.entities.CasoDeUso;
 import com.example.entities.FeEncabezado;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -39,6 +40,15 @@ public class FeEncabezadoFacade extends AbstractFacade<FeEncabezado> {
             
             return null;
         }
+    }
+    
+    public List<FeEncabezado> obtenerEncabezadosPorCdus(List<Integer> cdus){
+        
+         List<FeEncabezado> fes = em.createNamedQuery("FeEncabezado.findByCdus")
+                .setParameter("cdus", cdus)
+                .getResultList();
+
+        return fes;
     }
 }
 

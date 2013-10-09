@@ -7,6 +7,7 @@ package com.example.entities;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -35,7 +36,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "FeEncabezado.findAll", query = "SELECT f FROM FeEncabezado f"),
     @NamedQuery(name = "FeEncabezado.findById", query = "SELECT f FROM FeEncabezado f WHERE f.id = :id"),
     @NamedQuery(name = "FeEncabezado.findByPrioridad", query = "SELECT f FROM FeEncabezado f WHERE f.prioridad = :prioridad"),
-    @NamedQuery(name = "FeEncabezado.findByCasoDeUso", query = "SELECT f FROM FeEncabezado f WHERE f.casoDeUso = :cdu")})
+    @NamedQuery(name = "FeEncabezado.findByCasoDeUso", query = "SELECT f FROM FeEncabezado f WHERE f.casoDeUso = :cdu"),
+    @NamedQuery(name = "FeEncabezado.findByCdus", query = "SELECT f FROM FeEncabezado f WHERE f.casoDeUso.id IN :cdus")})
     
 public class FeEncabezado implements Serializable {
     private static final long serialVersionUID = 1L;

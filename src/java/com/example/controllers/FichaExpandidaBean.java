@@ -32,6 +32,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import org.primefaces.event.RowEditEvent;
+
 
 /**
  *
@@ -223,14 +225,24 @@ public class FichaExpandidaBean implements Serializable {
             }
         }
     }
+    
+    public void editarFn(RowEditEvent event) {
 
+        FeFlujonormal fnAEditar = (FeFlujonormal) event.getObject();
+        getFeService().getFeFnFacade().edit(fnAEditar);
+    }
+    
+    public void editarFap(RowEditEvent event){
+        
+        FeFlujoalternativopaso fapAEditar = (FeFlujoalternativopaso) event.getObject();
+        getFeService().getFapFacade().edit(fapAEditar);
+    }
+    
     public void guardarFichaExpandida() {
 
-        boolean esExito = feService.guardarEncabezado(encabezado, false);
-        boolean esExitoFN = feService.guardarFeFlujoNormal(feFlujoNormalList);
-        boolean esExitoFAP = feService.guardarFeFlujoAlternativoPaso(feFlujoAlternativoPasoList);
+        boolean esExito = feService.guardarEncabezado(encabezado, false);       
         
-        if (!esExito || !esExitoFN || !esExitoFAP) {
+        if (!esExito) {
 
             Messages.addFatal("Se ha producido un error.  Intente mas tarde.");
 
