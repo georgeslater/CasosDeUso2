@@ -75,7 +75,7 @@
                         <tr>
                             <td>Incluye a:</td>
                             <td>
-                                <h:outputText value="#{fichaExpandidaBean.puntosDeInclusion}"/>
+                                <h:outputText value="#{fichaExpandidaBean.incluyeA}"/>
                             </td>
                         </tr>
                         <tr>
@@ -91,7 +91,6 @@
                             </td>
                         </tr>
                     </table>
-                    <p:commandButton value="Guardar" action="#{fichaExpandidaBean.guardarFichaExpandida}" ajax="false"/>
                 </div>
                 <h3>Flujo de eventos</h3>
                 <div id="flujoEventos">
@@ -102,18 +101,10 @@
                             <p:column headerText="Paso:">
                                 <h:outputText value="#{fn.orden}"/>
                             </p:column>
-                            <p:column headerText="Descripcion:">
-                                <p:cellEditor>
-                                    <f:facet name="output">
-                                        <h:outputText value="#{fn.descripcion}"/>
-                                    </f:facet>
-                                    <f:facet name="input">
-                                        <p:inputText size="75" value="#{fn.descripcion}"/>
-                                    </f:facet>
-                                </p:cellEditor>
+                            <p:column headerText="Descripción:">
+                                <p:inputText size="32794" style="width:98%;" value="#{fn.descripcion}"/>
                             </p:column>
                             <p:column headerText="Acciones">
-                                <p:rowEditor/>
                                 <p:commandLink style="margin: 5px;" action="#{fichaExpandidaBean.agregarFilaFlujoNormal(table.rowIndex)}" ajax="false">
                                     <h:graphicImage title="Agregar fila abajo" value="/resources/imagenes/agregarFila.png" alt="AgregarFila"/>
                                 </p:commandLink>
@@ -124,29 +115,20 @@
                                     <h:graphicImage title="Agregar Flujo Alternativo para este paso" value="/resources/imagenes/flujoAlternativo.png" />
                                 </p:commandLink>
                             </p:column>
-                            <p:ajax event="rowEdit" update="@this" listener="#{fichaExpandidaBean.editarFn}"/>                            
                         </p:dataTable>
                     </div>
                     <br/>
                     <div id="flujoAlternativo">
                         Flujos Alternativos:
                         <p:dataTable value="#{fichaExpandidaBean.feFlujoAlternativoPasoList}" binding="#{fichaExpandidaBean.fapTable}" var="fap"
-                                     emptyMessage="No hay registros" editable="true">
+                                     emptyMessage="No hay registros">
                             <p:column headerText="Paso:">
                                 <h:outputText value="#{fap.FEFlujoAlternativoID.FEFlujoNormalID.orden}-#{fap.FEFlujoAlternativoID.orden}-#{fap.orden}"/>
                             </p:column>
-                            <p:column headerText="Descripcion:">
-                                <p:cellEditor>
-                                    <f:facet name="output">
-                                        <h:outputText value="#{fap.descripcion}"/>
-                                    </f:facet>
-                                    <f:facet name="input">
-                                        <p:inputText size="75" value="#{fap.descripcion}"/>
-                                    </f:facet>
-                                </p:cellEditor>
+                            <p:column headerText="Descripción:">                               
+                                <p:inputText size="32794" style="width:98%;" value="#{fap.descripcion}"/>
                             </p:column>
                             <p:column headerText="Acciones">
-                                <p:rowEditor/>
                                 <p:commandLink style="margin: 5px;" action="#{fichaExpandidaBean.agregarFilaFlujoAlternativoPaso}" ajax="false">
                                     <h:graphicImage title="Agregar fila abajo" value="/resources/imagenes/agregarFila.png" alt="Agregar fila abajo"/>
                                 </p:commandLink> 
@@ -154,9 +136,9 @@
                                     <h:graphicImage title="Borrar este paso" value="/resources/imagenes/SacarFlujoAlternativo.png" alt="Sacar este paso"/>
                                 </p:commandLink> 
                             </p:column>
-                            <p:ajax event="rowEdit" update="@this" listener="#{fichaExpandidaBean.editarFap}"/>
                         </p:dataTable>
                     </div>
+                    <p:commandButton value="Guardar" action="#{fichaExpandidaBean.guardarFichaExpandida}" ajax="false"/>
                 </div>
             </h:form>
         </ui:define>

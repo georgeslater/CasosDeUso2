@@ -34,7 +34,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import org.primefaces.event.RowEditEvent;
 
-
 /**
  *
  * @author George
@@ -73,6 +72,11 @@ public class FichaExpandidaBean implements Serializable {
         feFlujoAlternativoPasoList = new ArrayList<FeFlujoalternativopaso>();
         fnFaMap = new HashMap<Integer, List<FeFlujoalternativo>>();
         faFapMap = new HashMap<Integer, List<FeFlujoalternativopaso>>();
+    }
+
+    public String getConversationId() {
+
+        return conversation.getId();
     }
 
     @PostConstruct
@@ -153,6 +157,13 @@ public class FichaExpandidaBean implements Serializable {
 
                             Collections.sort(feFlujoAlternativoPasoList);
                         }
+                    } else {
+
+                        FeFlujonormal fn = new FeFlujonormal();
+                        fn.setFEEncabezadoID(encabezado);
+                        fn.setOrden(1);
+                        feService.getFeFnFacade().create(fn);
+                        feFlujoNormalList.add(fn);
                     }
                 }
 
@@ -192,7 +203,7 @@ public class FichaExpandidaBean implements Serializable {
 
                                 extiendeA += cduRel.getCasodeuso2id().getText() + ", ";
 
-                            } else if (cduRel.getRelacionid().getNombre().equals("EXTENDS")) {
+                            } else if (cduRel.getRelacionid().getNombre().equals("INCLUDES")) {
 
                                 incluyeA += cduRel.getCasodeuso2id().getText() + ", ";
                             }
@@ -204,7 +215,7 @@ public class FichaExpandidaBean implements Serializable {
 
                                 puntosDeExtension += cduRel.getCasodeuso1id().getText() + ", ";
 
-                            } else if (cduRel.getRelacionid().getNombre().equals("EXTENDS")) {
+                            } else if (cduRel.getRelacionid().getNombre().equals("INCLUDES")) {
 
                                 puntosDeInclusion += cduRel.getCasodeuso1id().getText() + ", ";
                             }
@@ -225,24 +236,14 @@ public class FichaExpandidaBean implements Serializable {
             }
         }
     }
-    
-    public void editarFn(RowEditEvent event) {
 
-        FeFlujonormal fnAEditar = (FeFlujonormal) event.getObject();
-        getFeService().getFeFnFacade().edit(fnAEditar);
-    }
-    
-    public void editarFap(RowEditEvent event){
-        
-        FeFlujoalternativopaso fapAEditar = (FeFlujoalternativopaso) event.getObject();
-        getFeService().getFapFacade().edit(fapAEditar);
-    }
-    
     public void guardarFichaExpandida() {
 
-        boolean esExito = feService.guardarEncabezado(encabezado, false);       
+        boolean esExito = feService.guardarEncabezado(encabezado, false);
+        boolean esExitoFN = feService.guardarFeFlujoNormal(feFlujoNormalList);
+        boolean esExitoFAP = feService.guardarFeFlujoAlternativoPaso(feFlujoAlternativoPasoList);
         
-        if (!esExito) {
+        if (!esExito || !esExitoFN || !esExitoFAP) {
 
             Messages.addFatal("Se ha producido un error.  Intente mas tarde.");
 
@@ -294,16 +295,16 @@ public class FichaExpandidaBean implements Serializable {
 
                 fnFaMap.get(fapABorrar.getFEFlujoAlternativoID().getFEFlujoNormalID().getId()).remove(fapABorrar.getFEFlujoAlternativoID());
 
-                for(FeFlujoalternativo fa: fnFaMap.get(fapABorrar.getFEFlujoAlternativoID().getFEFlujoNormalID().getId())){
-                    
-                    if(fa.getOrden() > row){
-                        
+                for (FeFlujoalternativo fa : fnFaMap.get(fapABorrar.getFEFlujoAlternativoID().getFEFlujoNormalID().getId())) {
+
+                    if (fa.getOrden() > row) {
+
                         fa.setOrden(fa.getOrden() - 1);
                         getFeService().getFaFacade().edit(fa);
                     }
                 }
-                
-                feService.getFaFacade().remove(fapABorrar.getFEFlujoAlternativoID());                
+
+                feService.getFaFacade().remove(fapABorrar.getFEFlujoAlternativoID());
             }
         }
 
@@ -325,14 +326,14 @@ public class FichaExpandidaBean implements Serializable {
         newFap.setFEFlujoAlternativoID(fap.getFEFlujoAlternativoID());
 
         feFlujoAlternativoPasoList.add(newFap);
-        
-        if(!faFapMap.containsKey(newFap.getFEFlujoAlternativoID().getId())){
-            
+
+        if (!faFapMap.containsKey(newFap.getFEFlujoAlternativoID().getId())) {
+
             faFapMap.put(newFap.getFEFlujoAlternativoID().getId(), new ArrayList<FeFlujoalternativopaso>());
         }
-        
+
         faFapMap.get(newFap.getFEFlujoAlternativoID().getId()).add(newFap);
-        
+
         Collections.sort(feFlujoAlternativoPasoList);
 
         for (int i = row + 2; i < feFlujoAlternativoPasoList.size(); i++) {
@@ -438,14 +439,14 @@ public class FichaExpandidaBean implements Serializable {
                         getFeFlujoAlternativoPasoList().remove(fap);
                         getFeService().getFapFacade().remove(fap);
                     }
-                    
+
                     fapList.removeAll(fapList);
                 }
 
                 feFlujoAlternativoList.remove(fa);
                 getFeService().getFaFacade().remove(fa);
             }
-            
+
             faList.removeAll(faList);
         }
 
@@ -461,7 +462,32 @@ public class FichaExpandidaBean implements Serializable {
             feFlujoNormalList.add(fn);
         }
 
+        //Collections.sort(feFlujoAlternativoPasoList);
+        refreshFapTable();
+
         return null;
+    }
+
+    public void refreshFapTable() {
+
+        if (!feFlujoAlternativoList.isEmpty()) {
+            
+            feFlujoAlternativoPasoList = new ArrayList<FeFlujoalternativopaso>();
+            
+            feFlujoAlternativoPasoList = feService.obtenerFlujosAlternativoPasosPorFlujosAlternativos(feFlujoAlternativoList);
+
+            for (FeFlujoalternativopaso fap : feFlujoAlternativoPasoList) {
+
+                if (!faFapMap.containsKey(fap.getFEFlujoAlternativoID().getId())) {
+
+                    faFapMap.put(fap.getFEFlujoAlternativoID().getId(), new ArrayList<FeFlujoalternativopaso>());
+                }
+
+                faFapMap.get(fap.getFEFlujoAlternativoID().getId()).add(fap);
+            }
+
+            Collections.sort(feFlujoAlternativoPasoList);
+        }
     }
 
     public String agregarFilaFlujoNormal(int row) {
@@ -481,6 +507,10 @@ public class FichaExpandidaBean implements Serializable {
             getFeService().getFeFnFacade().edit(feTemp);
         }
 
+        //si no refrescamos, el nuevo orden no se releja en la datatable de pasos alternativos.
+        //no deberia ser necesario si usamos ajax="false" pero lo es.
+        refreshFapTable();
+        
         return null;
     }
 

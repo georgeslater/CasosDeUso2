@@ -54,7 +54,7 @@ and open the template in the editor.
                 <ui:repeat value="#{elegirCasoBean.cdus}" var="cdu">                    
                     <h:link outcome="FichaExpandida" includeViewParams="true">
                         <div class="cduDiv">
-                            <h:outputText id="cduDivText" value="#{cdu.text}"/>                            
+                            <h:outputText title="#{cdu.text}" id="cduDivText" value="#{elegirCasoBean.obtenerTexto(cdu.text)}"/>                            
                         </div>
                         <f:param value="#{cdu.id}" name="cduId"/>
                     </h:link>

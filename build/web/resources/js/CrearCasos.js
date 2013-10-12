@@ -149,19 +149,7 @@ function dibujar(objetos, nombreDiagrama){
 
                     var lineToX = objeto.p.y*offset+50;
                     var lineToY = objeto.p.x*offset+80;                                        
-                    
-                    if(objeto.relacion != undefined && objeto.relacion != null && objeto.relacion.toUpperCase() == 'INCLUDES'){
-                        
-                        var moveToXTemp = moveToX;
-                        var moveToYTemp = moveToY;
-                        var lineToXTemp = lineToX;
-                        var lineToYTemp = lineToY;
-                        moveToY = lineToYTemp;
-                        moveToX = lineToXTemp;
-                        lineToX = moveToXTemp;
-                        lineToY = moveToYTemp;
-                    }
-                    
+                   
                     ctx.moveTo(moveToX, moveToY);                    
                     ctx.lineTo(lineToX, lineToY);
                     var angulo = Math.atan2(lineToY-moveToY,lineToX-moveToX);

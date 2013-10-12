@@ -41,6 +41,11 @@ public class ElegirCasoBean{
         
     }
     
+    public String obtenerTexto(String cduTexto){
+        
+        return cduTexto.length() > 15? cduTexto.substring(0, 14)+"...": cduTexto;
+    }
+    
     @PostConstruct
     public void init(){
         

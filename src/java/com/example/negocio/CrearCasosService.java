@@ -286,10 +286,8 @@ public class CrearCasosService {
 
                         f.getCasoDeUso1ID().setDiagramid(diagrama);
                         getCduFacade().create(f.getCasoDeUso1ID());
-                        cduFoundMap.put(f.getCasoDeUso1ID().getId(), true);
 
-                    } else if (cduFoundMap.get(cdu1.getId()) != null) {
-
+                    }else{
                         f.setCasoDeUso1ID(cdu1);
                         cduFoundMap.put(cdu1.getId(), true);
                     }
@@ -306,9 +304,8 @@ public class CrearCasosService {
 
                         f.getCasoDeUso2ID().setDiagramid(diagrama);
                         getCduFacade().create(f.getCasoDeUso2ID());
-                        cduFoundMap.put(f.getCasoDeUso2ID().getId(), true);
 
-                    } else if (cduFoundMap.get(cdu2.getId()) != null) {
+                    } else {
                         f.setCasoDeUso2ID(cdu2);
                         cduFoundMap.put(cdu2.getId(), true);
                     }
@@ -326,7 +323,7 @@ public class CrearCasosService {
                         f.getCasoDeUso3ID().setDiagramid(diagrama);
                         getCduFacade().create(f.getCasoDeUso3ID());
 
-                    } else if (cduFoundMap.get(cdu3.getId()) != null) {
+                    } else {
 
                         f.setCasoDeUso3ID(cdu3);
                         cduFoundMap.put(cdu3.getId(), true);
@@ -345,7 +342,7 @@ public class CrearCasosService {
                         f.getCasoDeUso4ID().setDiagramid(diagrama);
                         getCduFacade().create(f.getCasoDeUso4ID());
 
-                    } else if (cduFoundMap.get(cdu4.getId()) != null) {
+                    } else {
 
                         f.setCasoDeUso4ID(cdu4);
                         cduFoundMap.put(cdu4.getId(), true);
@@ -364,7 +361,7 @@ public class CrearCasosService {
                         f.getCasoDeUso5ID().setDiagramid(diagrama);
                         getCduFacade().create(f.getCasoDeUso5ID());
 
-                    } else if (cduFoundMap.get(cdu5.getId()) != null) {
+                    } else {
 
                         f.setCasoDeUso5ID(cdu5);
                         cduFoundMap.put(cdu5.getId(), true);
@@ -398,7 +395,7 @@ public class CrearCasosService {
             if (f.getCasoDeUso1ID() != null && f.getCasoDeUso1ID().getText() != null && f.getRelacion1ID() != null && f.getRelacion1ID().getNombre() != null && f.getCasoDeUso2ID() != null && f.getCasoDeUso2ID().getText() != null) {
                                 
                 //las relaciones son INCLUDES y EXTENDS
-                
+                                
                 rel1 = getRelFacade().obtenerRelacionPorNombre(f.getRelacion1ID().getNombre().toUpperCase());
                 
                 if (rel1 != null) {
