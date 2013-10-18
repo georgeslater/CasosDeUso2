@@ -140,73 +140,76 @@ public class MisDiagramas implements Serializable {
                 cduIds.add(cdu.getId());
             }
             
-            List<FeEncabezado> fes = getFeFacade().obtenerEncabezadosPorCdus(cduIds);
+            if(!cduIds.isEmpty()){
+            
+                List<FeEncabezado> fes = getFeFacade().obtenerEncabezadosPorCdus(cduIds);
 
-            List<FeFlujonormal> fns = new ArrayList<FeFlujonormal>();
+                List<FeFlujonormal> fns = new ArrayList<FeFlujonormal>();
 
-            List<FeFlujoalternativo> fas = new ArrayList<FeFlujoalternativo>();
+                List<FeFlujoalternativo> fas = new ArrayList<FeFlujoalternativo>();
 
-            List<FeFlujoalternativopaso> faps = new ArrayList<FeFlujoalternativopaso>();
+                List<FeFlujoalternativopaso> faps = new ArrayList<FeFlujoalternativopaso>();
 
-            for (FeEncabezado fe : fes) {
+                for (FeEncabezado fe : fes) {
 
-                List<FeFlujonormal> tempFns = getFnFacade().obtenerFlujoNormalPasosPorEncabezado(fe);
-                fns.addAll(tempFns);
-            }
+                    List<FeFlujonormal> tempFns = getFnFacade().obtenerFlujoNormalPasosPorEncabezado(fe);
+                    fns.addAll(tempFns);
+                }            
 
-            if (!fns.isEmpty()) {
+                if (!fns.isEmpty()) {
 
-                List<Integer> fnIds = new ArrayList<Integer>();
+                    List<Integer> fnIds = new ArrayList<Integer>();
 
-                for (FeFlujonormal fn : fns) {
+                    for (FeFlujonormal fn : fns) {
 
-                    fnIds.add(fn.getId());
-                }
-
-                fas = getFaFacade().obtenerFlujosAlternativosPorFlujosNormales(fnIds);
-
-                if (!fas.isEmpty()) {
-                    
-                    List<Integer> faIds = new ArrayList<Integer>();
-                    
-                    for(FeFlujoalternativo fa: fas){
-                        
-                        faIds.add(fa.getId());
+                        fnIds.add(fn.getId());
                     }
-                    
-                    faps = getFapFacade().obtenerFlujosAlternativoPasosPorFlujosAlternativos(faIds);
+
+                    fas = getFaFacade().obtenerFlujosAlternativosPorFlujosNormales(fnIds);
+
+                    if (!fas.isEmpty()) {
+
+                        List<Integer> faIds = new ArrayList<Integer>();
+
+                        for(FeFlujoalternativo fa: fas){
+
+                            faIds.add(fa.getId());
+                        }
+
+                        faps = getFapFacade().obtenerFlujosAlternativoPasosPorFlujosAlternativos(faIds);
+                    }
                 }
-            }
-            
-            if(!faps.isEmpty()){
-                
-                for(FeFlujoalternativopaso fap: faps){
-                    
-                    getFapFacade().remove(fap);
+
+                if(!faps.isEmpty()){
+
+                    for(FeFlujoalternativopaso fap: faps){
+
+                        getFapFacade().remove(fap);
+                    }
                 }
-            }
-            
-            if(!fas.isEmpty()){
-                
-                for(FeFlujoalternativo fa: fas){
-                    
-                    getFaFacade().remove(fa);
+
+                if(!fas.isEmpty()){
+
+                    for(FeFlujoalternativo fa: fas){
+
+                        getFaFacade().remove(fa);
+                    }
                 }
-            }
-            
-            if(!fns.isEmpty()){
-                
-                for(FeFlujonormal fn: fns){
-                    
-                    getFnFacade().remove(fn);
+
+                if(!fns.isEmpty()){
+
+                    for(FeFlujonormal fn: fns){
+
+                        getFnFacade().remove(fn);
+                    }
                 }
-            }
-            
-            if(!fes.isEmpty()){
-                
-                for(FeEncabezado fe: fes){
-                    
-                    getFeFacade().remove(fe);
+
+                if(!fes.isEmpty()){
+
+                    for(FeEncabezado fe: fes){
+
+                        getFeFacade().remove(fe);
+                    }
                 }
             }
 

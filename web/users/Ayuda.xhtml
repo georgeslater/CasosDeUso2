@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/plantilla/template.xhtml">
+        <ui:define name="encabezado">
+            <ui:include src="/plantilla/encabezado.xhtml"/>
+        </ui:define>
+        <ui:define name="titulo">
+            <h:outputText value="Ayuda"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <div style="margin-left: 60px;">
+                <div>
+                    Mirar los videos para poder entender el funcionamiento de como crear un diagrama, poder generar el dibujo y sus fichas expandidas.
+                </div>
+                <div>
+                    <ul>
+                        <li>
+                            <h:link value="Crear el diagrama y su dibujo" fragment="crearDiagrama"/>
+                        </li>
+                        <li>
+                            <h:link value="Crear las fichas expandidas" fragment="crearFichasExpandidas"/>                        
+                        </li>
+                    </ul>
+                    <div id="crearDiagrama">
+                        <h3>Crear el diagrama y su dibujo</h3>
+                        <p:media value="http://www.youtube.com/v/PyXH4CDdut8" width="420" height="315" player="flash"/>  
+                    </div>
+                    <div id="crearFichasExpandidas">
+                        <h3>Crear las fichas expandidas</h3>
+                        <p:media value="http://www.youtube.com/v/jAnoiZsrfRg" width="420" height="315" player="flash"/>  
+                    </div>
+                </div> 
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>

@@ -21,7 +21,7 @@
                 <h:form>
                     <p:menubar id="elMenuBar">  
                         <p:menuitem value="Mis Diagramas" url="/users/MisDiagramas.xhtml" icon="ui-icon-star" />  
-                        <p:menuitem value="Ayuda" url="http://es.wikipedia.org/wiki/Diagrama_de_casos_de_uso" icon="ui-icon-info" />  
+                        <p:menuitem value="Ayuda" url="/users/Ayuda.xhtml" icon="ui-icon-info" />  
                         <p:menuitem rendered="#{request.remoteUser != null}" styleClass="logoutBtn" action="#{loginBean.logout}" value="Salir" icon="ui-icon-extlink"/>  
                         <p:menuitem rendered="#{request.remoteUser != null}" styleClass="logoutBtn" value="Bienvenido, #{request.remoteUser}!" />
                     </p:menubar>
